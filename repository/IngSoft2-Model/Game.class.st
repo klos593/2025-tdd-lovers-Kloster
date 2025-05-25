@@ -96,7 +96,7 @@ Game >> move: aShip [
 
 	| rolledNumber shipInitialPosition shipAuxiliaryPosition shipFinalPosition squaresTraveled |
 	rolledNumber := self rollDices.
-	shipInitialPosition := aShip actualPosition.
+	shipInitialPosition := aShip currentPosition.
 	shipAuxiliaryPosition := board
 		                         update: shipInitialPosition
 		                         with: rolledNumber.

@@ -76,7 +76,7 @@ GameTest >> testWhenAShipMakesOneLapOnTheBoardThenThePositionChangesAccordingly 
 
 	aGame nextTurn.
 
-	self assert: (aBlueShip actualPosition equals: expectedPosition)
+	self assert: (aBlueShip currentPosition equals: expectedPosition)
 ]
 
 { #category : 'tests' }

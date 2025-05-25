@@ -24,12 +24,6 @@ Position >> actualLap [
 	^ lap
 ]
 
-{ #category : 'comparing' }
-Position >> actualSquare [
-
-	^ square
-]
-
 { #category : 'adding' }
 Position >> add: aRolledNumber with: aBoardLength [
 
@@ -64,6 +58,12 @@ Position >> adjustSquare: aSquare [
 Position >> asString [
 
 	^ 'Lap: ' , lap asString , ' ' , 'Square: ' , square asString
+]
+
+{ #category : 'comparing' }
+Position >> currentSquare [
+
+	^ square
 ]
 
 { #category : 'comparing' }
@@ -102,7 +102,7 @@ Position >> squaresAwayFrom: aPosition with: aBoardLength [
 
 	| squaresTraveled |
 	squaresTraveled := aPosition actualLap * aBoardLength
-	                   + aPosition actualSquare
+	                   + aPosition currentSquare
 	                   - (lap * aBoardLength + square).
 	^ squaresTraveled
 ]

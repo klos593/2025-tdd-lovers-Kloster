@@ -19,23 +19,23 @@ Ship class >> called: aName [
 	^ self new initializeCalled: aName
 ]
 
-{ #category : 'accessing' }
-Ship >> actualPosition [
-
-	^ position
-]
-
-{ #category : 'accessing' }
-Ship >> actualSquare [
-
-	^ position actualSquare
-]
-
 { #category : 'update' }
 Ship >> consumeFuel: squaresTraveled [
 	
 	self hasEnoughFuelToTravel: squaresTraveled.
 	fuel := fuel - squaresTraveled
+]
+
+{ #category : 'accessing' }
+Ship >> currentPosition [
+
+	^ position
+]
+
+{ #category : 'accessing' }
+Ship >> currentSquare [
+
+	^ position currentSquare
 ]
 
 { #category : 'accessing' }
