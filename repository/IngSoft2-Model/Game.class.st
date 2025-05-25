@@ -48,7 +48,6 @@ Game class >> maximumRoll: someDices [
 
 	| rolledNumber |
 	rolledNumber := someDices sum: [ :aDice | aDice rollMaximum ].
-
 	^ rolledNumber
 ]
 
@@ -94,17 +93,21 @@ Game >> initializeWith: aBoard for: someLaps and: someShips and: someDices [
 { #category : 'action' }
 Game >> move: aShip [
 
-	| rolledNumber shipInitialPosition shipAuxiliaryPosition shipFinalPosition squaresTraveled |
+	| rolledNumber shipInitialPosition shipPositionBeforeSquareEffect shipFinalPosition squaresTraveled |
 	rolledNumber := self rollDices.
 	shipInitialPosition := aShip currentPosition.
-	shipAuxiliaryPosition := board
-		                         update: shipInitialPosition
-		                         with: rolledNumber.
-	(shipAuxiliaryPosition hasCompleted: laps) ifTrue: [ self finish ].
-	shipFinalPosition := board moveIfWormHoleAt: shipAuxiliaryPosition.
-	squaresTraveled := shipInitialPosition
-		                   squaresAwayFrom: shipAuxiliaryPosition
+	shipPositionBeforeSquareEffect := board
+		                                  update: shipInitialPosition
+		                                  with: rolledNumber.
+	(shipPositionBeforeSquareEffect hasCompleted: laps) ifTrue: [
+		self finish ].
+	shipFinalPosition := board moveIfWormHoleAt:  "Aca iria un mensaje al propio game que sea algo asi como aplicarEfectoDeLaSquare: shipPositionBeforeSquareEffect. y eso es lo que hace es mandar un mensaje polimorfico a la square que corresponda y retorna la posicion final, para esto deberiamos tener un array que tenga el efecto de cada square y lo comparamos con eso"
+		                     shipPositionBeforeSquareEffect.
+	squaresTraveled := shipInitialPosition  "Este se llamaria: squaresTraveledBeforeSquareEffect"
+		                   squaresAwayFrom: shipPositionBeforeSquareEffect
 		                   with: board length.
+	"squaresTraveledAfterSquareEffect := shipPositionBeforeSquareEffect squaresAwayFrom: shipFinalPosition with: board length"
+	"squaresTraveled := squaresTraveledBeforeSquareEffect + squaresTraveledAfterSquareEffect"
 	aShip moveTo: shipFinalPosition.
 	[ aShip consumeFuel: squaresTraveled ]
 		on: Error

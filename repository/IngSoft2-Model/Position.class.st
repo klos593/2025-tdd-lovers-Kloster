@@ -101,8 +101,8 @@ Position >> squareEquals: aSquare [
 Position >> squaresAwayFrom: aPosition with: aBoardLength [
 
 	| squaresTraveled |
-	squaresTraveled := aPosition actualLap * aBoardLength
-	                   + aPosition currentSquare
-	                   - (lap * aBoardLength + square).
+	squaresTraveled := ((aPosition actualLap - 1) * aBoardLength
+	                    + aPosition currentSquare
+	                    - ((lap - 1) * aBoardLength + square)) abs.
 	^ squaresTraveled
 ]
