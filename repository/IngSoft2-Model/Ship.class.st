@@ -28,15 +28,6 @@ Ship >> applyGravityPenalty: aGravitySquare [
 ]
 
 { #category : 'testing' }
-Ship >> canPlay [
-
-	turnsLeftToWait > 0 ifTrue: [
-		self reducePenalty.
-		^ false ].
-	^ true
-]
-
-{ #category : 'testing' }
 Ship >> canPlay: rolledNumber [
 
 	turnsLeftToWait > 0 ifTrue: [
