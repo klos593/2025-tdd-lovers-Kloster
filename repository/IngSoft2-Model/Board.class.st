@@ -64,7 +64,7 @@ Board >> distribution [
 	^ distribution
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 Board >> effectIn: aSquare [
 
 	^ distribution at: aSquare

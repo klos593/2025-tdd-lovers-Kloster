@@ -68,7 +68,7 @@ Game class >> with: aBoard for: someLaps and: someShips and: someDices [
 	^ self new initializeWith: aBoard for: someLaps and: someShips and: someDices
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'action' }
 Game >> applyEffect: aShip and: aPosition [
 
 	| effect |
@@ -109,26 +109,32 @@ Game >> initializeWith: aBoard for: someLaps and: someShips and: someDices [
 { #category : 'action' }
 Game >> move: aShip with: rolledNumber [
 
-	| shipInitialPosition shipPositionBeforeSquareEffect shipFinalPosition squaresTraveled |
+	| shipInitialPosition shipPositionBeforeSquareEffect shipFinalPosition squaresTraveled squaresTraveledBeforeSquareEffect squaresTraveledAfterSquareEffect |
 	shipInitialPosition := aShip currentPosition.
 	shipPositionBeforeSquareEffect := board
 		                                  update: shipInitialPosition
 		                                  with: rolledNumber.
 	(shipPositionBeforeSquareEffect hasCompleted: laps) ifTrue: [
 		self finish ].
-	shipFinalPosition := board moveIfWormHoleAt: shipPositionBeforeSquareEffect.
+	shipFinalPosition := board moveIfWormHoleAt:
+		                     shipPositionBeforeSquareEffect.
 	((board moveIfWormHoleAt: shipPositionBeforeSquareEffect) equals:
-		 shipPositionBeforeSquareEffect) ifTrue: [
-		shipFinalPosition := self
-			                     applyEffect: aShip
-			                     and: shipPositionBeforeSquareEffect ].
-	
-	"shipFinalPosition := self applyEffect: aShip and: shipPositionBeforeSquareEffect." "Aca iria un mensaje al propio game que sea algo asi como aplicarEfectoDeLaSquare: shipPositionBeforeSquareEffect. y eso es lo que hace es mandar un mensaje polimorfico a la square que corresponda y retorna la posicion final, para esto deberiamos tener un array que tenga el efecto de cada square y lo comparamos con eso"
-	squaresTraveled := shipInitialPosition
-		                   squaresAwayFrom: shipPositionBeforeSquareEffect
-		                   with: board length. "Este se llamaria: squaresTraveledBeforeSquareEffect"
-	"squaresTraveledAfterSquareEffect := shipPositionBeforeSquareEffect squaresAwayFrom: shipFinalPosition with: board length"
-	"squaresTraveled := squaresTraveledBeforeSquareEffect + squaresTraveledAfterSquareEffect"
+		 shipPositionBeforeSquareEffect)
+		ifTrue: [
+			shipFinalPosition := self
+				                     applyEffect: aShip
+				                     and: shipPositionBeforeSquareEffect.
+			squaresTraveledAfterSquareEffect := shipPositionBeforeSquareEffect
+				                                    squaresAwayFrom:
+				                                    shipFinalPosition
+				                                    with: board length ]
+		ifFalse: [ squaresTraveledAfterSquareEffect := 0 ].
+	squaresTraveledBeforeSquareEffect := shipInitialPosition
+		                                     squaresAwayFrom:
+		                                     shipPositionBeforeSquareEffect
+		                                     with: board length.
+	squaresTraveled := squaresTraveledBeforeSquareEffect
+	                   + squaresTraveledAfterSquareEffect.
 	aShip moveTo: shipFinalPosition.
 	[ aShip consumeFuel: squaresTraveled ]
 		on: Error

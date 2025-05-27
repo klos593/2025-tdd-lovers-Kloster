@@ -21,7 +21,7 @@ Ship class >> called: aName [
 	^ self new initializeCalled: aName
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'penalty' }
 Ship >> applyGravityPenalty: aGravitySquare [
 
 	gravityPenalty := aGravitySquare 
