@@ -18,12 +18,6 @@ Position class >> at: aSquare in: aLap [
 	^ self new initializeAt: aSquare in: aLap
 ]
 
-{ #category : 'comparing' }
-Position >> actualLap [
-
-	^ lap
-]
-
 { #category : 'adding' }
 Position >> add: aRolledNumber with: aBoardLength [
 
@@ -33,10 +27,14 @@ Position >> add: aRolledNumber with: aBoardLength [
 	lapsToAdd := squaresMoved // aBoardLength.
 
 	newSquare := squaresMoved % aBoardLength.
-	
+
 	newLap := lap + lapsToAdd.
-	
-	^ self class at: newSquare in: newLap.
+
+	newLap = 0 ifTrue: [
+		newLap := 1.
+		newSquare := 0 ].
+
+	^ self class at: newSquare in: newLap
 ]
 
 { #category : 'adding' }
@@ -61,6 +59,12 @@ Position >> asString [
 ]
 
 { #category : 'comparing' }
+Position >> currentLap [
+
+	^ lap
+]
+
+{ #category : 'comparing' }
 Position >> currentSquare [
 
 	^ square
@@ -73,20 +77,9 @@ Position >> equals: aPosition [
 ]
 
 { #category : 'converting' }
-Position >> goBackfourPlaces [
+Position >> goBackfourPlacesIn: aBoardLength [
 
-	| newSquare newLap |
-	newSquare := square - 4.
-	newLap := lap - 1.
-	
-	lap = 1
-		ifTrue: [
-			newLap := 1.
-			square - 4 < 0 ifTrue: [ newSquare := 0 ] ]
-		ifFalse: [
-			square - 4 < 0 ifTrue: [ newSquare := 4 - square ] ].
-
-	^ self class at: newSquare in: newLap
+	^ self add: -4 with: aBoardLength 
 ]
 
 { #category : 'testing' }
@@ -118,7 +111,7 @@ Position >> squareEquals: aSquare [
 Position >> squaresAwayFrom: aPosition with: aBoardLength [
 
 	| squaresTraveled |
-	squaresTraveled := ((aPosition actualLap - 1) * aBoardLength
+	squaresTraveled := ((aPosition currentLap - 1) * aBoardLength
 	                    + aPosition currentSquare
 	                    - ((lap - 1) * aBoardLength + square)) abs.
 	^ squaresTraveled

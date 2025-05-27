@@ -12,7 +12,7 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-HyperGravitySquare >> applyOn: aShip and: aPosition [
+HyperGravitySquare >> applyOn: aShip and: aPosition in: aGame [
 
 	aShip applyGravityPenalty: rollToContinue.
 	^ aPosition

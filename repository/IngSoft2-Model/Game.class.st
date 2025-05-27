@@ -74,7 +74,13 @@ Game >> applyEffect: aShip and: aPosition [
 	| effect |
 	effect := board effectIn: aPosition currentSquare + 1.
 
-	^ effect applyOn: aShip and: aPosition 
+	^ effect applyOn: aShip and: aPosition in: self
+]
+
+{ #category : 'as yet unclassified' }
+Game >> boardLength [
+
+	^ board length
 ]
 
 { #category : 'validation' }
@@ -109,39 +115,42 @@ Game >> initializeWith: aBoard for: someLaps and: someShips and: someDices [
 { #category : 'action' }
 Game >> move: aShip with: rolledNumber [
 
-	| shipInitialPosition shipPositionBeforeSquareEffect shipFinalPosition squaresTraveled squaresTraveledBeforeSquareEffect squaresTraveledAfterSquareEffect |
+	| shipInitialPosition  squaresTraveled shipPositionBeforeWormHole shipPositionAfterWormHole shipPositionAfterSquareEffect squaresTraveledWithDice squaresTraveledWithSquareEffect |
 	shipInitialPosition := aShip currentPosition.
-	shipPositionBeforeSquareEffect := board
-		                                  update: shipInitialPosition
-		                                  with: rolledNumber.
-	(shipPositionBeforeSquareEffect hasCompleted: laps) ifTrue: [
-		self finish ].
-	shipFinalPosition := board moveIfWormHoleAt:
-		                     shipPositionBeforeSquareEffect.
-	((board moveIfWormHoleAt: shipPositionBeforeSquareEffect) equals:
-		 shipPositionBeforeSquareEffect)
-		ifTrue: [
-			shipFinalPosition := self
-				                     applyEffect: aShip
-				                     and: shipPositionBeforeSquareEffect.
-			squaresTraveledAfterSquareEffect := shipPositionBeforeSquareEffect
-				                                    squaresAwayFrom:
-				                                    shipFinalPosition
-				                                    with: board length ]
-		ifFalse: [ squaresTraveledAfterSquareEffect := 0 ].
-	squaresTraveledBeforeSquareEffect := shipInitialPosition
-		                                     squaresAwayFrom:
-		                                     shipPositionBeforeSquareEffect
-		                                     with: board length.
-	squaresTraveled := squaresTraveledBeforeSquareEffect
-	                   + squaresTraveledAfterSquareEffect.
-	aShip moveTo: shipFinalPosition.
+
+	shipPositionBeforeWormHole := board
+		                              update: shipInitialPosition
+		                              with: rolledNumber.
+
+	squaresTraveledWithDice := shipInitialPosition
+		                           squaresAwayFrom:
+		                           shipPositionBeforeWormHole
+		                           with: board length.
+
+	shipPositionAfterWormHole := board moveIfWormHoleAt:
+		                             shipPositionBeforeWormHole.
+
+	shipPositionAfterSquareEffect := self
+		                         applyEffect: aShip
+		                         and: shipPositionAfterWormHole.
+
+	squaresTraveledWithSquareEffect := shipPositionAfterWormHole
+		                                   squaresAwayFrom:
+		                                   shipPositionAfterSquareEffect
+		                                   with: board length.
+
+	squaresTraveled := squaresTraveledWithDice
+	                   + squaresTraveledWithSquareEffect.
+
+	aShip moveTo: shipPositionAfterSquareEffect.
 	[ aShip consumeFuel: squaresTraveled ]
 		on: Error
 		do: [
 			aShip moveTo: shipInitialPosition.
 			aShip losesTwoTurns.
-			aShip fuel: (self class maximumRoll: dices) * 2 ]
+			aShip fuel: (self class maximumRoll: dices) * 2 ].
+
+	(shipPositionAfterSquareEffect hasCompleted: laps) ifTrue: [ self finish ]
 ]
 
 { #category : 'action' }

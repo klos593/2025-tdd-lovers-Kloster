@@ -13,9 +13,9 @@ BlackHoleTest >> testWhenAShipLandsOnABlackHoleAndDoesNotHaveEnoughFuelThenItGoe
 	sideToRoll := 2.
 	oneLap := 1.
 
-	expectedPosition := Position at: 0 in: 1.
+	expectedPosition := Position at: 7 in: 1.
 
-	aWormHole := WormHole between: 2 and: 6.
+	aWormHole := WormHole between: 2 and: 7.
 	aBlueShip := Ship called: 'BlueShip'.
 	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
@@ -42,6 +42,8 @@ BlackHoleTest >> testWhenAShipLandsOnABlackHoleAndDoesNotHaveEnoughFuelThenItGoe
 		         and: someShips
 		         and: someDices.
 
+	aGame nextTurnPlay.
+	aGame nextTurnPlay.
 	aGame nextTurnPlay.
 
 	self assert: (aBlueShip currentPosition equals: expectedPosition)

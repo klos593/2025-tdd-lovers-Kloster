@@ -9,8 +9,9 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-BlackHoleSquare >> applyOn: aShip and: aPosition [ 
-	^ aPosition goBackfourPlaces
+BlackHoleSquare >> applyOn: aShip and: aPosition in: aGame [
+
+	^ aPosition goBackfourPlacesIn: aGame boardLength
 ]
 
 { #category : 'as yet unclassified' }

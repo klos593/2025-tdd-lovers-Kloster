@@ -9,7 +9,7 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-PlainSquare >> applyOn: aShip and: aPosition [
+PlainSquare >> applyOn: aShip and: aPosition in: aGame [
 
 	^ aPosition
 ]

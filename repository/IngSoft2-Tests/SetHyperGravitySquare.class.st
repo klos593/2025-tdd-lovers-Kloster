@@ -18,7 +18,7 @@ SetHyperGravitySquare class >> with: aValue [
 ]
 
 { #category : 'as yet unclassified' }
-SetHyperGravitySquare >> applyOn: aShip and: aPosition [
+SetHyperGravitySquare >> applyOn: aShip and: aPosition in: aGame [
 
 	aShip applyGravityPenalty: rollToContinue.
 	^ aPosition
