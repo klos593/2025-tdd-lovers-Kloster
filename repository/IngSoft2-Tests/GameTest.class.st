@@ -399,6 +399,45 @@ GameTest >> testWhenThereAreNotAnyDicesThenTheGameIsInvalid [
 ]
 
 { #category : 'tests' }
+GameTest >> testWhenThereIsAHiperGravitySquareWithMagnitudeGreaterThanTheMaximumRollThenInvalid [
+
+	| fiveSquares aWormHole aBlueShip aBoard someShips someDices aDice twoSides zeroLaps aBlackShip aDistribution hyperGravitySquareProbability |
+	fiveSquares := 5.
+	twoSides := 2.
+	zeroLaps := 1.
+
+	aWormHole := WormHole between: 1 and: 2.
+	aBlueShip := Ship called: 'BlueShip'.
+	aBlackShip := Ship called: 'BlackShip'.
+	aDice := Dice with: twoSides.
+
+	hyperGravitySquareProbability := 1.
+
+	aDistribution := { ([ HyperGravitySquare between: 5 and: 7]
+	                  -> hyperGravitySquareProbability) }.
+	aBoard := Board
+		          with: fiveSquares
+		          and: aWormHole
+		          distributedBy: aDistribution.
+
+	someShips := OrderedCollection new.
+	someDices := OrderedCollection new.
+	someShips add: aBlueShip.
+	someShips add: aBlackShip.
+	someDices add: aDice.
+
+	self
+		should: [
+			Game
+				with: aBoard
+				for: zeroLaps
+				and: someShips
+				and: someDices ]
+		raise: Error
+		withMessageText: 'The magnitude of the Hyper Gravity Square is grater than the maximum roll.'
+]
+
+{ #category : 'tests' }
 GameTest >> testWhenThereIsLessThanOneLapThenTheGameIsInvalid [
 
 	| fiveSquares aWormHole aBlueShip aBoard someShips someDices aDice twoSides zeroLaps aBlackShip aDistributionBuilder aDefaultDistribution |

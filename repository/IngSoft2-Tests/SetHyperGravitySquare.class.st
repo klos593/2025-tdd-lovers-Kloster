@@ -20,17 +20,11 @@ SetHyperGravitySquare class >> with: aValue [
 	^ self new initializeWith: value
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'effect' }
 SetHyperGravitySquare >> applyOn: aShip and: aPosition in: aGame [
 
 	aShip applyGravityPenalty: rollToContinue.
 	^ aPosition
-]
-
-{ #category : 'as yet unclassified' }
-SetHyperGravitySquare >> assigned: someDices [
-
-	^ true
 ]
 
 { #category : 'initialization' }
@@ -43,4 +37,10 @@ SetHyperGravitySquare >> initializeWith: aValue [
 SetHyperGravitySquare >> isGreaterThan: aRolledNumber [
 
 	^ rollToContinue > aRolledNumber
+]
+
+{ #category : 'validating' }
+SetHyperGravitySquare >> validateMagnitudeWith: aMagnitude [
+
+	^ true
 ]

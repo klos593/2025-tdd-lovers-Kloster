@@ -8,12 +8,14 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'effect' }
 BlackHoleSquare >> applyOn: aShip and: aPosition in: aGame [
 
 	^ aPosition goBackfourPlacesIn: aGame boardLength
 ]
 
-{ #category : 'as yet unclassified' }
-BlackHoleSquare >> assigned: someDices [ 
+{ #category : 'validation' }
+BlackHoleSquare >> validateMagnitudeWith: aMagnitude [
+
+	^ true
 ]

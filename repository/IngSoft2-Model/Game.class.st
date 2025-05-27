@@ -16,7 +16,7 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'creation' }
 Game class >> assignEffectMagnitudIn: aBoard with: someDices [
 
 	aBoard distribution do: [ :aSquare | aSquare assigned: someDices ]
@@ -57,6 +57,12 @@ Game class >> maximumRoll: someDices [
 	^ rolledNumber
 ]
 
+{ #category : 'validation' }
+Game class >> validateSquaresFrom: aBoard and: someDices [
+
+	aBoard validateSquaresWith: (self maximumRoll: someDices)
+]
+
 { #category : 'creation' }
 Game class >> with: aBoard for: someLaps and: someShips and: someDices [
 
@@ -64,7 +70,7 @@ Game class >> with: aBoard for: someLaps and: someShips and: someDices [
 	self hasShips: someShips.
 	self hasLaps: someLaps.
 	self fuel: someShips with: (self maximumRoll: someDices) * 2. 
-	self assignEffectMagnitudIn: aBoard with: someDices .
+	self validateSquaresFrom: aBoard and: someDices.
 	^ self new initializeWith: aBoard for: someLaps and: someShips and: someDices
 ]
 
@@ -77,7 +83,7 @@ Game >> applyEffect: aShip and: aPosition [
 	^ effect applyOn: aShip and: aPosition in: self
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'validation' }
 Game >> boardLength [
 
 	^ board length

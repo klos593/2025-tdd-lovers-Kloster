@@ -11,23 +11,37 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'comparing' }
+HyperGravitySquare class >> between: aMinimumMagnitude and: aMaximumMagnitude [
+
+	^ self new
+		  initializeBetween: aMinimumMagnitude
+		  and: aMaximumMagnitude
+]
+
+{ #category : 'effect' }
 HyperGravitySquare >> applyOn: aShip and: aPosition in: aGame [
 
 	aShip applyGravityPenalty: rollToContinue.
 	^ aPosition
 ]
 
-{ #category : 'as yet unclassified' }
-HyperGravitySquare >> assigned: someDices [
+{ #category : 'initialization' }
+HyperGravitySquare >> initializeBetween: aMinimumMagnitude and: aMaximumMagnitude [
 
-	rollToContinue := 1 to:
-	                  (someDices sum: [ :aDice | aDice rollMaximum ])
-		                  atRandom
+	rollToContinue := (aMinimumMagnitude to: aMaximumMagnitude) atRandom
 ]
 
 { #category : 'testing' }
 HyperGravitySquare >> isGreaterThan: aRolledNumber [
 
 	^ rollToContinue > aRolledNumber
+]
+
+{ #category : 'validation' }
+HyperGravitySquare >> validateMagnitudeWith: aMagnitude [
+
+	rollToContinue > aMagnitude ifTrue: [
+		Error signal:
+			'The magnitude of the Hyper Gravity Square is grater than the maximum roll.' ]
 ]

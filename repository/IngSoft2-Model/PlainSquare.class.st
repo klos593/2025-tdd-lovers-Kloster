@@ -8,14 +8,14 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'effect' }
 PlainSquare >> applyOn: aShip and: aPosition in: aGame [
 
 	^ aPosition
 ]
 
-{ #category : 'as yet unclassified' }
-PlainSquare >> assigned: aCollection [
+{ #category : 'validation' }
+PlainSquare >> validateMagnitudeWith: aMagnitude [
 
 	^ true
 ]
