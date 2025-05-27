@@ -18,7 +18,7 @@ GameTest >> should: anErrorBlock raise: anErrorClass withMessageText: anErrorMes
 { #category : 'tests' }
 GameTest >> testWhenAPlayerTryToRollTheDicesWhenTheGameHasFinishedThenItFails [
 
-	| fiveSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices oneLap plainSquarePossibility blackHoleSquarePossibility hyperGravitySquarePossibility moonWalkSquarePossibility hyperJumpSquarePossibility atomicBombSquarePossibility aDistribution |
+	| fiveSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices oneLap  aDistributionBuilder aDefaultDistribution |
 	fiveSquares := 5.
 	sideToRoll := 5.
 	oneLap := 1.
@@ -27,25 +27,9 @@ GameTest >> testWhenAPlayerTryToRollTheDicesWhenTheGameHasFinishedThenItFails [
 	aBlueShip := Ship called: 'BlueShip'.
 	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
-	plainSquarePossibility := 1.
-	blackHoleSquarePossibility := 0.
-	hyperGravitySquarePossibility := 0.
-	moonWalkSquarePossibility := 0.
-	hyperJumpSquarePossibility := 0.
-	atomicBombSquarePossibility := 0.
-	aDistribution := {
-		                 ([ PlainSquare new ] -> plainSquarePossibility).
-		                 ([ BlackHoleSquare new ]
-		                  -> blackHoleSquarePossibility).
-		                 ([ HyperGravitySquare new ]
-		                  -> hyperGravitySquarePossibility).
-		                 ([ MoonWalkSquare new ]
-		                  -> moonWalkSquarePossibility).
-		                 ([ HyperJumpSquare new ]
-		                  -> hyperJumpSquarePossibility).
-		                 ([ AtomicBombSquare new ]
-		                  -> atomicBombSquarePossibility) }.
-	aBoard := Board with: fiveSquares and: aWormHole distributedBy: aDistribution.
+	aDistributionBuilder := DistributionBuilder new.
+	aDefaultDistribution := aDistributionBuilder build.
+	aBoard := Board with: fiveSquares and: aWormHole distributedBy: aDefaultDistribution.
 
 	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.

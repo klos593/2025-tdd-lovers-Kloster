@@ -11,15 +11,6 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'instance creation' }
-HyperGravitySquare class >> with: someDices [
-
-	| maximumRoll |
-	maximumRoll := someDices.
-
-	^ self new initializeWith: maximumRoll
-]
-
 { #category : 'as yet unclassified' }
 HyperGravitySquare >> applyOn: aShip and: aPosition [
 
@@ -27,10 +18,12 @@ HyperGravitySquare >> applyOn: aShip and: aPosition [
 	^ aPosition
 ]
 
-{ #category : 'initialization' }
-HyperGravitySquare >> initializeWith: aMaximumRoll [
+{ #category : 'as yet unclassified' }
+HyperGravitySquare >> assigned: someDices [
 
-	rollToContinue := aMaximumRoll
+	rollToContinue := 1 to:
+	                  (someDices sum: [ :aDice | aDice rollMaximum ])
+		                  atRandom
 ]
 
 { #category : 'testing' }
