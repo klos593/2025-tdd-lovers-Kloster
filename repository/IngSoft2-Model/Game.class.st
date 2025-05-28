@@ -154,6 +154,27 @@ Game >> move: aShip with: rolledNumber [
 ]
 
 { #category : 'action' }
+Game >> moveShipsBackwards: aMagnitude [
+
+	| shipInitialPosition shipNewPosition squaresTraveled |
+	ships do: [ :aShip |
+		shipInitialPosition := aShip currentPosition.
+		shipNewPosition := aShip currentPosition
+			                   add: aMagnitude negated
+			                   with: board length.
+		squaresTraveled := shipInitialPosition
+			                   squaresAwayFrom: shipNewPosition
+			                   with: board length.
+		aShip moveTo: shipNewPosition .
+		[ aShip consumeFuel: squaresTraveled ]
+			on: Error
+			do: [
+				aShip moveTo: shipInitialPosition.
+				aShip losesTwoTurns.
+				aShip fuel: (self class maximumRoll: dices) * 2 ] ]
+]
+
+{ #category : 'action' }
 Game >> nextTurnPass [
 
 	| shipToMove |
