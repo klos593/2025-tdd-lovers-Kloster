@@ -40,5 +40,5 @@ SquareEffectTest >> testWhenAllTheSquaresDoNotHaveAnEffectThenTheGameIsPlayedReg
 
 	aGame nextTurnPlay.
 
-	self assert: (aBlueShip currentPosition equals: expectedPosition)
+	self assert: (aBlueShip currentPositionEquals: expectedPosition)
 ]

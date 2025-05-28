@@ -9,10 +9,10 @@ Class {
 MoonWalkTest >> testWhenAMoonWalkEffectWhichMagnitudeIsGreaterThanAShipSquareInTheFirstLapThenTheShipGoesBackToTheFirstSquare [
 
 
-	| expectedPosition aBlueShip fiveSquares sideToRoll oneLap aWormHole aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame moonWalkSquareProbability |
+	| expectedPosition aBlueShip twentySquares sideToRoll oneLap aWormHole aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame moonWalkSquareProbability |
 	
 	expectedPosition := Position at: 0 in: 1.
-	fiveSquares := 20.
+	twentySquares := 20.
 	sideToRoll := 5.
 	oneLap := 1.
 
@@ -26,7 +26,7 @@ MoonWalkTest >> testWhenAMoonWalkEffectWhichMagnitudeIsGreaterThanAShipSquareInT
 	aDistribution := { ([ SetMoonWalkSquare with: 7]
 	                  -> moonWalkSquareProbability ) }.
 	aBoard := Board
-		          with: fiveSquares
+		          with: twentySquares
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
@@ -48,17 +48,17 @@ MoonWalkTest >> testWhenAMoonWalkEffectWhichMagnitudeIsGreaterThanAShipSquareInT
 	aGame nextTurnPass.
 	aGame nextTurnPlay.
 
-	self assert: (aBlackShip currentPosition equals: expectedPosition)
+	self assert: (aBlackShip currentPositionEquals: expectedPosition)
 ]
 
 { #category : 'tests' }
 MoonWalkTest >> testWhenAShipLandsOnAMoonWalkSquareAndTheOtherShipsDoNotHaveEnoughFuelToGoBkacwardThenTheyDoNotMoveAndLoseTwoTurns [
 
 
-	| expectedPosition aBlueShip fiveSquares sideToRoll oneLap aWormHole aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame moonWalkSquareProbability |
+	| expectedPosition aBlueShip twentySquares sideToRoll oneLap aWormHole aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame moonWalkSquareProbability |
 	
 	expectedPosition := Position at: 8 in: 1.
-	fiveSquares := 20.
+	twentySquares := 20.
 	sideToRoll := 2.
 	oneLap := 1.
 
@@ -72,7 +72,7 @@ MoonWalkTest >> testWhenAShipLandsOnAMoonWalkSquareAndTheOtherShipsDoNotHaveEnou
 	aDistribution := { ([ SetMoonWalkSquare with: 3]
 	                  -> moonWalkSquareProbability ) }.
 	aBoard := Board
-		          with: fiveSquares
+		          with: twentySquares
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
@@ -95,17 +95,17 @@ MoonWalkTest >> testWhenAShipLandsOnAMoonWalkSquareAndTheOtherShipsDoNotHaveEnou
 	aGame nextTurnPass.
 	aGame nextTurnPlay.
 
-	self assert: (aBlackShip currentPosition equals: expectedPosition)
+	self assert: (aBlackShip currentPositionEquals: expectedPosition)
 ]
 
 { #category : 'tests' }
 MoonWalkTest >> testWhenAShipLandsOnAMoonWalkSquareThenAllTheOtherShipsMoveAccordingWithTheSquareMagnitude [
 
 
-	| expectedPosition aBlueShip fiveSquares sideToRoll oneLap aWormHole aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame moonWalkSquareProbability |
+	| expectedPosition aBlueShip twentySquares sideToRoll oneLap aWormHole aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame moonWalkSquareProbability |
 	
 	expectedPosition := Position at: 6 in: 1.
-	fiveSquares := 20.
+	twentySquares := 20.
 	sideToRoll := 2.
 	oneLap := 1.
 
@@ -119,7 +119,7 @@ MoonWalkTest >> testWhenAShipLandsOnAMoonWalkSquareThenAllTheOtherShipsMoveAccor
 	aDistribution := { ([ SetMoonWalkSquare with: 2]
 	                  -> moonWalkSquareProbability ) }.
 	aBoard := Board
-		          with: fiveSquares
+		          with: twentySquares
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
@@ -139,17 +139,17 @@ MoonWalkTest >> testWhenAShipLandsOnAMoonWalkSquareThenAllTheOtherShipsMoveAccor
 	aGame nextTurnPlay.
 	aGame nextTurnPlay.
 
-	self assert: (aBlackShip currentPosition equals: expectedPosition)
+	self assert: (aBlackShip currentPositionEquals: expectedPosition)
 ]
 
 { #category : 'tests' }
 MoonWalkTest >> testWhenAShipLandsOnAMoonWalkSquareThenItDoesNotMove [
 
 
-	| expectedPosition aBlueShip fiveSquares sideToRoll oneLap aWormHole aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame moonWalkSquareProbability |
+	| expectedPosition aBlueShip twentySquares sideToRoll oneLap aWormHole aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame moonWalkSquareProbability |
 	
 	expectedPosition := Position at: 1 in: 1.
-	fiveSquares := 20.
+	twentySquares := 20.
 	sideToRoll := 1.
 	oneLap := 1.
 
@@ -163,7 +163,7 @@ MoonWalkTest >> testWhenAShipLandsOnAMoonWalkSquareThenItDoesNotMove [
 	aDistribution := { ([ MoonWalkSquare between: 1 and: 2]
 	                  -> moonWalkSquareProbability ) }.
 	aBoard := Board
-		          with: fiveSquares
+		          with: twentySquares
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
@@ -181,5 +181,5 @@ MoonWalkTest >> testWhenAShipLandsOnAMoonWalkSquareThenItDoesNotMove [
 
 	aGame nextTurnPlay.
 
-	self assert: (aBlueShip currentPosition equals: expectedPosition)
+	self assert: (aBlueShip currentPositionEquals: expectedPosition)
 ]

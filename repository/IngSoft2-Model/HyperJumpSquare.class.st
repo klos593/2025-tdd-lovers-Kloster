@@ -26,9 +26,7 @@ HyperJumpSquare >> applyOn: aShip and: aPosition in: aGame [
 	
 	squaresToMove := self normalize: actualParsec.
 
-	positionAfterJump := aPosition
-		                     add: squaresToMove 
-		                     with: aGame boardLength.
+	positionAfterJump := aGame jump: squaresToMove from: aPosition .
 
 	parsecs add: actualParsec.
 

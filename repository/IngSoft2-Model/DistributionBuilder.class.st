@@ -102,10 +102,10 @@ DistributionBuilder >> plainSquareProbabilityIs: aProbability [
 		plainSquareProbability := aProbability 
 ]
 
-{ #category : 'getter' }
-DistributionBuilder >> showProbabilities [
-
-	| probabilities totalProbability |
+{ #category : 'accessing' }
+DistributionBuilder >> totalSumEquals: aSum [ 
+	
+	| totalProbability probabilities probabilitiesSum |
 	totalProbability := plainSquareProbability + blackHoleProbability
 	                    + hyperGravityProbability + hyperJumpProbability + atomicBombProbability + moonWalkProbability.
 	
@@ -116,6 +116,8 @@ DistributionBuilder >> showProbabilities [
 	probabilities add: (hyperGravityProbability/totalProbability).
 	probabilities add: (moonWalkProbability/totalProbability).
 	probabilities add: (atomicBombProbability/totalProbability).
-
-	^ probabilities
+	
+	probabilitiesSum := probabilities sum: [ :aProbability | aProbability ].
+	
+	^ probabilitiesSum rounded = aSum
 ]

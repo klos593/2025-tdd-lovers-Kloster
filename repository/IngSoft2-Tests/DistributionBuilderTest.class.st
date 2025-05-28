@@ -8,7 +8,7 @@ Class {
 { #category : 'tests' }
 DistributionBuilderTest >> testWhenAProbabilityDistributionIsCreatedThenTheSumOfItsProbabilitiesEqualsOne [
 
-	| aDistributionBuilder distributionProbabilitySum expectedSum |
+	| aDistributionBuilder expectedSum |
 	aDistributionBuilder := DistributionBuilder new.
 	aDistributionBuilder plainSquareProbabilityIs: 15.
 	aDistributionBuilder blackHoleProbabilityIs: 0.2.
@@ -18,11 +18,9 @@ DistributionBuilderTest >> testWhenAProbabilityDistributionIsCreatedThenTheSumOf
 	aDistributionBuilder atomicBombProbabilityIs: 1.
 	aDistributionBuilder build.
 
-	distributionProbabilitySum := aDistributionBuilder showProbabilities
-		                              sum: [ :aProbability | aProbability ].
 	expectedSum := 1.
 
-	self assert: distributionProbabilitySum rounded equals: expectedSum
+	self assert: (aDistributionBuilder totalSumEquals: expectedSum)
 ]
 
 { #category : 'tests' }
@@ -53,6 +51,5 @@ DistributionBuilderTest >> testWhenAnAverageProbabilityDistributionIsCreatedThen
 		                         -> atomicBombSquarePossibility) }.
 
 	self
-		assert: anAverageDistribution asString
-		equals: expectedDistribution asString
+		assert: anAverageDistribution asString equals: expectedDistribution asString
 ]

@@ -76,7 +76,7 @@ BoardTest >> testWhenABoardIsCreatedWithACertainDistributionThenTheSquaresWhereT
 		          with: fiveSquares
 		          and: aWormHole
 		          distributedBy: aDistribution.
-	self assert: aBoard showDistribution equals: expectedDistribution
+	self assert: (aBoard distributionEquals: expectedDistribution)
 ]
 
 { #category : 'tests' }

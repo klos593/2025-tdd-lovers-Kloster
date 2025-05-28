@@ -47,7 +47,7 @@ ShipFuelTest >> testWhenAShipDecideToPassThenItsFuellsToppedUp [
 	aGame nextTurnPass.
 	aGame nextTurnPass.
 
-	self assert: aBlueShip fuelLeft equals: expectedFuelLeft
+	self assert: (aBlueShip fuelEquals: expectedFuelLeft)
 ]
 
 { #category : 'tests' }
@@ -96,7 +96,7 @@ ShipFuelTest >> testWhenAShipIsNoLongerPenalisedThenItsFuelIsToppedUp [
 	aGame nextTurnPlay.
 	aGame nextTurnPlay.
 
-	self assert: aBlueShip fuelLeft equals: expectedFuelLeft
+	self assert: (aBlueShip fuelEquals: expectedFuelLeft)
 ]
 
 { #category : 'tests' }
@@ -143,7 +143,7 @@ ShipFuelTest >> testWhenAShipMovesAfterPassItsTurnMovesAccordingly [
 	aGame nextTurnPlay.
 	aGame nextTurnPlay.
 
-	self assert: (aBlueShip currentPosition equals: expectedPosition)
+	self assert: (aBlueShip currentPositionEquals: expectedPosition)
 ]
 
 { #category : 'tests' }
@@ -183,7 +183,7 @@ ShipFuelTest >> testWhenAShipMovesOneSquareThenItsFuelDecreasesAccordingly [
 
 	aGame nextTurnPlay.
 
-	self assert: aBlueShip fuelLeft equals: expectedFuelLeft
+	self assert: (aBlueShip fuelEquals: expectedFuelLeft)
 ]
 
 { #category : 'tests' }
@@ -223,7 +223,7 @@ ShipFuelTest >> testWhenAShipMovesThroughAWormHoleThenItsFuelDecreasesAccordingl
 
 	aGame nextTurnPlay.
 
-	self assert: aBlueShip fuelLeft equals: expectedFuelLeft
+	self assert: (aBlueShip fuelEquals: expectedFuelLeft)
 ]
 
 { #category : 'tests' }
@@ -267,7 +267,7 @@ ShipFuelTest >> testWhenAShipTriesToMoveMoreSquaresThanItsRemainingFuelThenItDoe
 	aGame nextTurnPlay.
 	aGame nextTurnPlay.
 
-	self assert: (aBlueShip currentPosition equals: expectedPosition)
+	self assert: (aBlueShip currentPositionEquals: expectedPosition)
 ]
 
 { #category : 'tests' }
@@ -314,7 +314,6 @@ ShipFuelTest >> testWhenAShipTriesToMoveMoreSquaresThanItsRemainingFuelThenLoses
 	aGame nextTurnPlay.
 	aGame nextTurnPlay.
 	aGame nextTurnPlay.
-	aGame nextTurnPlay.
 
-	self assert: (aBlueShip currentPosition equals: expectedPosition)
+	self assert: (aBlueShip currentPositionEquals: expectedPosition)
 ]
