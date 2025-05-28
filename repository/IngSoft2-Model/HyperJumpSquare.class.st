@@ -35,7 +35,7 @@ HyperJumpSquare >> applyOn: aShip and: aPosition in: aGame [
 { #category : 'initialization' }
 HyperJumpSquare >> initializeWith: aCollectionOfParsecs [
 
-	parsecs := aCollectionOfParsecs
+	parsecs := aCollectionOfParsecs sort: [:aParsec :nextParsec | aParsec > nextParsec ]
 ]
 
 { #category : 'validation' }

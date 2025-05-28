@@ -332,6 +332,47 @@ GameTest >> testWhenTheGameWithMultipleLapsEndsThenTheWinnerIsShownOnTheLeaderBo
 ]
 
 { #category : 'tests' }
+GameTest >> testWhenThereAShipTakesAHiperJumpSquareThenTheShipMovesCorrectly [
+
+	| fiveSquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution hyperJumpSquareProbability aCollectionofParsecs |
+	fiveSquares := 20.
+	sideToRoll := 2.
+	oneLap := 1.
+
+	aWormHole := WormHole between: 17 and: 18.
+	aBlueShip := Ship called: 'BlueShip'.
+	aBlackShip := Ship called: 'BlackShip'.
+	aLoadedDice := LoadedDice toRoll: sideToRoll.
+
+	hyperJumpSquareProbability := 1.
+	
+	aCollectionofParsecs := #( 5 5 5 6) asOrderedCollection.
+
+	aDistribution := { ([ HyperJumpSquare with: aCollectionofParsecs ]
+	                  -> hyperJumpSquareProbability) }.
+	aBoard := Board
+		          with: fiveSquares
+		          and: aWormHole
+		          distributedBy: aDistribution.
+
+	someShips := OrderedCollection new.
+	someDices := OrderedCollection new.
+	someShips add: aBlueShip.
+	someShips add: aBlackShip.
+	someDices add: aLoadedDice.
+
+	self
+		should: [
+			Game
+				with: aBoard
+				for: oneLap
+				and: someShips
+				and: someDices ]
+		raise: Error
+		withMessageText: 'The magnitude of the Hyper Jump Square Parsecs is not valid.'
+]
+
+{ #category : 'tests' }
 GameTest >> testWhenThereAreLessThanTwoShipsThenTheGameIsInvalid [
 
 	| fiveSquares aWormHole aBlueShip aLoadedDice sideToRoll aBoard someShips someDices oneLap aDistributionBuilder aDefaultDistribution |
@@ -477,47 +518,6 @@ GameTest >> testWhenThereIsAHiperGravitySquareWithMagnitudeGreaterThanTheMaximum
 				and: someDices ]
 		raise: Error
 		withMessageText: 'The magnitude of the Hyper Gravity Square is grater than the maximum roll.'
-]
-
-{ #category : 'tests' }
-GameTest >> testWhenThereIsAHiperJumpSquareWithMagnitudeThatIsInvalid [
-
-	| fiveSquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution hyperJumpSquareProbability aCollectionofParsecs |
-	fiveSquares := 20.
-	sideToRoll := 2.
-	oneLap := 1.
-
-	aWormHole := WormHole between: 17 and: 18.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
-	aLoadedDice := LoadedDice toRoll: sideToRoll.
-
-	hyperJumpSquareProbability := 1.
-	
-	aCollectionofParsecs := #( 5 5 5 6) asOrderedCollection.
-
-	aDistribution := { ([ HyperJumpSquare with: aCollectionofParsecs ]
-	                  -> hyperJumpSquareProbability) }.
-	aBoard := Board
-		          with: fiveSquares
-		          and: aWormHole
-		          distributedBy: aDistribution.
-
-	someShips := OrderedCollection new.
-	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
-	someDices add: aLoadedDice.
-
-	self
-		should: [
-			Game
-				with: aBoard
-				for: oneLap
-				and: someShips
-				and: someDices ]
-		raise: Error
-		withMessageText: 'The magnitude of the Hyper Jump Square Parsecs is not valid.'
 ]
 
 { #category : 'tests' }
