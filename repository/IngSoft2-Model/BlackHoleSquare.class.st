@@ -11,11 +11,11 @@ Class {
 { #category : 'effect' }
 BlackHoleSquare >> applyOn: aShip and: aPosition in: aGame [
 
-	^ aPosition goBackfourPlacesIn: aGame boardLength
+	^ aGame goBackFourSquares: aShip from: aPosition
 ]
 
 { #category : 'validation' }
-BlackHoleSquare >> validateMagnitudeWith: aMagnitude and: aBoardLenght [
+BlackHoleSquare >> validateMagnitudeWith: aMaximumRoll and: aBoardLenght [
 
 	^ true
 ]

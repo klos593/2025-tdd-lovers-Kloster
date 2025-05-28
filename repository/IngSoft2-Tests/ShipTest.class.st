@@ -8,11 +8,11 @@ Class {
 { #category : 'tests' }
 ShipTest >> testWhenAShipMakesOneMoveOfTwoSquaresThenItsPositionIsTwo [
 
-	| aBoard aShip twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder aDefaultDistribution expectedSquare |
+	| aBoard aShip twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder aDefaultDistribution expectedPosition |
 	twentySquares := 20.
 	sideToRoll := 2.
 	
-	expectedSquare := 2.
+	expectedPosition := Position at: 2 in: 1.
 	
 	aWormHole := WormHole between: 3 and: 10.
 	aShip := Ship called: 'BlueShip'.	
@@ -28,17 +28,17 @@ ShipTest >> testWhenAShipMakesOneMoveOfTwoSquaresThenItsPositionIsTwo [
 	
 	aShip move: aSetDice roll.
 	
-	self assert: aShip currentSquare equals: expectedSquare
+	self assert: (aShip currentPositionEquals: expectedPosition)
 ]
 
 { #category : 'tests' }
 ShipTest >> testWhenAShipMakesTwoMovesOfOneSquareThenItsPositionIsTwo [
 
-	| aBoard aShip twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder aDefaultDistribution expectedSquare |
+	| aBoard aShip twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder aDefaultDistribution expectedPosition |
 	twentySquares := 20.
 	sideToRoll := 1.
 
-	expectedSquare := 2.
+	expectedPosition := Position at: 2 in: 1.
 
 	aWormHole := WormHole between: 3 and: 10.
 	aShip := Ship called: 'BlueShip'.
@@ -55,17 +55,17 @@ ShipTest >> testWhenAShipMakesTwoMovesOfOneSquareThenItsPositionIsTwo [
 	aShip move: aSetDice roll.
 	aShip move: aSetDice roll.
 
-	self assert: aShip currentSquare equals: expectedSquare
+	self assert: (aShip currentPositionEquals: expectedPosition).
 ]
 
 { #category : 'tests' }
 ShipTest >> testWhenAShipMovesOneSquareThenItsPositionIsOne [
 
-	| aBoard aShip twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder aDefaultDistribution expectedSquare |
+	| aBoard aShip twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder aDefaultDistribution expectedPosition |
 	twentySquares := 20.
 	sideToRoll := 1.
 	
-	expectedSquare := 1.
+	expectedPosition := Position at: 1 in: 1.
 	
 	aWormHole := WormHole between: 3 and: 10.
 	aShip := Ship called: 'BlueShip'.	
@@ -80,5 +80,6 @@ ShipTest >> testWhenAShipMovesOneSquareThenItsPositionIsOne [
 		          distributedBy: aDefaultDistribution.
 	
 	aShip move: aSetDice roll.
-	self assert: aShip currentSquare equals: expectedSquare
+	
+	self assert: (aShip currentPositionEquals: expectedPosition)
 ]

@@ -22,6 +22,7 @@ MoonWalkSquare class >> between: aMinimumMagnitude and: aMaximumMagnitude [
 { #category : 'effect' }
 MoonWalkSquare >> applyOn: aShip and: aPosition in: aGame [ 
 	
+	aGame moveShipsBackwards: magnitude.
 	^ aPosition 
 ]
 
@@ -32,7 +33,7 @@ MoonWalkSquare >> initializeBetween: aMinimumMagnitude and: aMaximumMagnitude [
 ]
 
 { #category : 'validation' }
-MoonWalkSquare >> validateMagnitudeWith: aMagnitude and: aBoardLength [
+MoonWalkSquare >> validateMagnitudeWith: aMaximumRoll and: aBoardLength [
 
 	magnitude < 1 ifTrue: [
 		Error signal:

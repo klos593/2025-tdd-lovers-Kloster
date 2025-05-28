@@ -22,7 +22,7 @@ WormHoleTest >> testWhenAShipLandsOnTheBeginningOfAWormHoleThenItEndsUpAtTheEndO
 	twentySquares := 20.
 	sideToRoll := 2.
 	
-	expectedPosition := 10.
+	expectedPosition := Position at: 10 in: 1.
 	
 	aWormHole := WormHole between: 2 and: 10.
 	aShip := Ship called: 'BlueShip'.
@@ -40,7 +40,7 @@ WormHoleTest >> testWhenAShipLandsOnTheBeginningOfAWormHoleThenItEndsUpAtTheEndO
 	aShip move: aSetDice roll.
 	aShip moveTo: (aBoard moveIfWormHoleAt: aShip currentPosition).
 	
-	self assert: aShip currentSquare equals: expectedPosition
+	self assert: (aShip currentPositionEquals: expectedPosition)
 ]
 
 { #category : 'tests' }
@@ -50,7 +50,7 @@ WormHoleTest >> testWhenAShipLandsOnTheEndOfAWormHoleThenItEndsUpAtTheBeginningO
 	twentySquares := 20.
 	sideToRoll := 5.
 	
-	expectedPosition := 2.
+	expectedPosition := Position at: 2 in: 1.
 	
 	aWormHole := WormHole between: 2 and: 5.
 	aShip := Ship called: 'BlueShip'.
@@ -68,7 +68,7 @@ WormHoleTest >> testWhenAShipLandsOnTheEndOfAWormHoleThenItEndsUpAtTheBeginningO
 	aShip move: aSetDice roll.
 	aShip moveTo: (aBoard moveIfWormHoleAt: aShip currentPosition).
 	
-	self assert: aShip currentSquare equals: expectedPosition
+	self assert: (aShip currentPositionEquals: expectedPosition)
 ]
 
 { #category : 'tests' }

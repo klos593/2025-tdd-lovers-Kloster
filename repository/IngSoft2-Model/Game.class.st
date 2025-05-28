@@ -52,7 +52,7 @@ Game class >> maximumRoll: someDices [
 ]
 
 { #category : 'validation' }
-Game class >> validateSquaresFrom: aBoard and: someDices [
+Game class >> validateSquaresFrom: aBoard with: someDices [
 
 	aBoard validateSquaresWith: (self maximumRoll: someDices)
 ]
@@ -64,12 +64,12 @@ Game class >> with: aBoard for: someLaps and: someShips and: someDices [
 	self hasShips: someShips.
 	self hasLaps: someLaps.
 	self fuel: someShips with: (self maximumRoll: someDices) * 2. 
-	self validateSquaresFrom: aBoard and: someDices.
+	self validateSquaresFrom: aBoard with: someDices.
 	^ self new initializeWith: aBoard for: someLaps and: someShips and: someDices
 ]
 
 { #category : 'action' }
-Game >> applyEffect: aShip and: aPosition [
+Game >> applyEffectOn: aShip with: aPosition [
 
 	| effect |
 	effect := board effectIn: aPosition currentSquare + 1.
@@ -77,10 +77,10 @@ Game >> applyEffect: aShip and: aPosition [
 	^ effect applyOn: aShip and: aPosition in: self
 ]
 
-{ #category : 'validation' }
-Game >> boardLength [
+{ #category : 'action' }
+Game >> calculateDistanceBetween: aPosition and: anotherPosition [
 
-	^ board length
+	^ board calculateDistanceBetween: aPosition and: anotherPosition
 ]
 
 { #category : 'validation' }
@@ -93,6 +93,12 @@ Game >> canStillPlay [
 Game >> finish [
 
 	finished := true
+]
+
+{ #category : 'action' }
+Game >> goBackFourSquares: aShip from: aPosition [ 
+	
+	^ board goBackFourSquares: aShip from: aPosition 
 ]
 
 { #category : 'testing' }
@@ -113,6 +119,12 @@ Game >> initializeWith: aBoard for: someLaps and: someShips and: someDices [
 ]
 
 { #category : 'action' }
+Game >> jump: squaresToJump from: aPosition [ 
+	
+	^ board jump: squaresToJump from: aPosition 
+]
+
+{ #category : 'action' }
 Game >> move: aShip with: rolledNumber [
 
 	| shipInitialPosition  squaresTraveled shipPositionBeforeWormHole shipPositionAfterWormHole shipPositionAfterSquareEffect squaresTraveledWithDice squaresTraveledWithSquareEffect |
@@ -122,22 +134,17 @@ Game >> move: aShip with: rolledNumber [
 		                              update: shipInitialPosition
 		                              with: rolledNumber.
 
-	squaresTraveledWithDice := shipInitialPosition
-		                           squaresAwayFrom:
-		                           shipPositionBeforeWormHole
-		                           with: board length.
+	squaresTraveledWithDice := board calculateDistanceBetween: shipInitialPosition and: shipPositionBeforeWormHole.
 
 	shipPositionAfterWormHole := board moveIfWormHoleAt:
 		                             shipPositionBeforeWormHole.
 
 	shipPositionAfterSquareEffect := self
-		                         applyEffect: aShip
-		                         and: shipPositionAfterWormHole.
+		                         applyEffectOn: aShip
+		                         with: shipPositionAfterWormHole.
 
-	squaresTraveledWithSquareEffect := shipPositionAfterWormHole
-		                                   squaresAwayFrom:
-		                                   shipPositionAfterSquareEffect
-		                                   with: board length.
+	squaresTraveledWithSquareEffect := board calculateDistanceBetween: shipPositionAfterWormHole and: shipPositionAfterSquareEffect.
+		                                  
 
 	squaresTraveled := squaresTraveledWithDice
 	                   + squaresTraveledWithSquareEffect.
@@ -159,13 +166,15 @@ Game >> moveShipsBackwards: aMagnitude [
 	| shipInitialPosition shipNewPosition squaresTraveled |
 	ships do: [ :aShip |
 		shipInitialPosition := aShip currentPosition.
-		shipNewPosition := aShip currentPosition
-			                   add: aMagnitude negated
-			                   with: board length.
-		squaresTraveled := shipInitialPosition
-			                   squaresAwayFrom: shipNewPosition
-			                   with: board length.
-		aShip moveTo: shipNewPosition .
+		shipNewPosition := board
+			                   update: shipInitialPosition
+			                   with: aMagnitude negated.
+
+		squaresTraveled := board
+			                   calculateDistanceBetween: shipInitialPosition
+			                   and: shipNewPosition.
+
+		aShip moveTo: shipNewPosition.
 		[ aShip consumeFuel: squaresTraveled ]
 			on: Error
 			do: [
@@ -175,7 +184,7 @@ Game >> moveShipsBackwards: aMagnitude [
 ]
 
 { #category : 'action' }
-Game >> moveShipsToSquareCero [
+Game >> moveShipsToSquareZero [
 	
 	ships do: [ :aShip | aShip moveTo: (aShip currentPosition adjustSquare: 0) ]
 ]
@@ -208,11 +217,12 @@ Game >> printBoard [
 	| positions results winnerShip sortedPositions |
 	winnerShip := 'Winner: ' , winner name , String cr.
 	sortedPositions := ships sorted: [ :aShip |
-		                   aShip currentPosition
-			                   squaresAwayFrom: (Position at: 0 in: 1)
-			                   with: board length ] descending.
-	positions := String cr join: (sortedPositions collect: [ :aShip | aShip details ]).
-		            
+		                   board
+			                   calculateDistanceBetween: (Position at: 0 in: 1)
+			                   and: aShip currentPosition ] descending.
+	positions := String cr join:
+		             (sortedPositions collect: [ :aShip | aShip details ]).
+
 	results := winnerShip , positions.
 	^ results
 ]

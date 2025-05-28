@@ -21,6 +21,12 @@ Ship class >> called: aName [
 	^ self new initializeCalled: aName
 ]
 
+{ #category : 'accessing' }
+Ship >> addFuel: aFuelQuantity [
+
+	fuel := fuel + aFuelQuantity
+]
+
 { #category : 'penalty' }
 Ship >> applyGravityPenalty: aGravitySquare [
 
@@ -50,10 +56,10 @@ Ship >> currentPosition [
 	^ position
 ]
 
-{ #category : 'accessing' }
-Ship >> currentSquare [
-
-	^ position currentSquare
+{ #category : 'compare' }
+Ship >> currentPositionEquals: aPosition [ 
+	
+	^ position equals: aPosition 
 ]
 
 { #category : 'accessing' }
@@ -68,10 +74,10 @@ Ship >> fuel: aFuelQuantity [
 	fuel := aFuelQuantity
 ]
 
-{ #category : 'accessing' }
-Ship >> fuelLeft [
-
-	^ fuel
+{ #category : 'compare' }
+Ship >> fuelEquals: aFuelQuantity [ 
+	
+	^ fuel = aFuelQuantity 
 ]
 
 { #category : 'testing' }

@@ -28,9 +28,9 @@ SetHyperGravitySquare >> applyOn: aShip and: aPosition in: aGame [
 ]
 
 { #category : 'initialization' }
-SetHyperGravitySquare >> initializeWith: aValue [
+SetHyperGravitySquare >> initializeWith: aMagnitude [
 
-	rollToContinue := aValue
+	rollToContinue := aMagnitude
 ]
 
 { #category : 'validating' }

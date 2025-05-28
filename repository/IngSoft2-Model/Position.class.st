@@ -76,10 +76,10 @@ Position >> equals: aPosition [
 	^(aPosition squareEquals: square) and: (aPosition lapsEquals: lap)
 ]
 
-{ #category : 'converting' }
-Position >> goBackfourPlacesIn: aBoardLength [
-
-	^ self add: -4 with: aBoardLength 
+{ #category : 'adding' }
+Position >> goBackFourSquaresIn: aBoardLength [
+ 
+	^ self add: -4 with: aBoardLength
 ]
 
 { #category : 'testing' }

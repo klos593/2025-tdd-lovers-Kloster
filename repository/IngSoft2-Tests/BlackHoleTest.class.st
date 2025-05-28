@@ -46,7 +46,7 @@ BlackHoleTest >> testWhenAShipLandsOnABlackHoleAndDoesNotHaveEnoughFuelThenItGoe
 	aGame nextTurnPlay.
 	aGame nextTurnPlay.
 
-	self assert: (aBlueShip currentPosition equals: expectedPosition)
+	self assert: (aBlueShip currentPositionEquals: expectedPosition)
 ]
 
 { #category : 'tests' }
@@ -88,7 +88,7 @@ BlackHoleTest >> testWhenAShipLandsOnABlackHoleAndHasEnoughFuelThenItGoesBackFou
 
 	aGame nextTurnPlay.
 
-	self assert: (aBlueShip currentPosition equals: expectedPosition)
+	self assert: (aBlueShip currentPositionEquals: expectedPosition)
 ]
 
 { #category : 'tests' }
@@ -134,7 +134,7 @@ BlackHoleTest >> testWhenAShipLandsOnABlackHoleOnTheFirstThreeSquaresOfALapThenI
 	aGame nextTurnPlay.
 	aGame nextTurnPlay.
 
-	self assert: (aBlueShip currentPosition equals: expectedPosition)
+	self assert: (aBlueShip currentPositionEquals: expectedPosition)
 ]
 
 { #category : 'tests' }
@@ -176,5 +176,5 @@ BlackHoleTest >> testWhenAShipLandsOnABlackHoleOnTheFirstThreeSquaresOfTheFirstL
 
 	aGame nextTurnPlay.
 
-	self assert: (aBlueShip currentPosition equals: expectedPosition)
+	self assert: (aBlueShip currentPositionEquals: expectedPosition)
 ]

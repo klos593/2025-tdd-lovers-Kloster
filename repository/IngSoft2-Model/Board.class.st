@@ -59,10 +59,29 @@ Board class >> with: aLength and: aWormHole distributedBy: aDistribution [
 	^ self new initializeWith: aLength and: aWormHole distributedBy: generatedSquares
 ]
 
+{ #category : 'action' }
+Board >> calculateDistanceBetween: aPosition and: anotherPostion [
+
+	^ aPosition squaresAwayFrom: anotherPostion with: length
+]
+
+{ #category : 'compare' }
+Board >> distributionEquals: aDistribution [ 
+	| squares |
+	squares := String cr join: (distribution collect: [ :aSquare| aSquare asString ]).
+	^ squares = aDistribution 
+]
+
 { #category : 'accessing' }
 Board >> effectIn: aSquare [
 
 	^ distribution at: aSquare
+]
+
+{ #category : 'action' }
+Board >> goBackFourSquares: aShip from: aPosition [ 
+	
+	^ aPosition goBackFourSquaresIn: length 
 ]
 
 { #category : 'initialization' }
@@ -73,25 +92,16 @@ Board >> initializeWith: aLength and: aWormHole distributedBy: aDistribution [
 	distribution := aDistribution
 ]
 
-{ #category : 'accessing' }
-Board >> length [
-
-	^ length
+{ #category : 'action' }
+Board >> jump: squaresToJump from: aPosition [ 
+	
+	^ aPosition add: squaresToJump with: length 
 ]
 
 { #category : 'accessing' }
 Board >> moveIfWormHoleAt: aPosition [
 
 	^ wormHole moveIfEndPointAt: aPosition
-]
-
-{ #category : 'accessing' }
-Board >> showDistribution [
-	
-	| squares |
-	squares := String cr join: (distribution collect: [ :aSquare| aSquare asString ]).
-
-	^ squares
 ]
 
 { #category : 'updating' }

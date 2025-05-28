@@ -18,8 +18,8 @@ GameTest >> should: anErrorBlock raise: anErrorClass withMessageText: anErrorMes
 { #category : 'tests' }
 GameTest >> testWhenAMoonWalkSquareMagnitudeIsSmallerThanOneThenInvalid [
 
-	| fiveSquares sideToRoll oneLap aWormHole aBlueShip aBlackShip aLoadedDice moonWalkSquareProbability aDistribution aBoard someShips someDices |
-	fiveSquares := 20.
+	| twentySquares sideToRoll oneLap aWormHole aBlueShip aBlackShip aLoadedDice aDistribution aBoard someShips someDices aDistributionBuilder |
+	twentySquares := 20.
 	sideToRoll := 1.
 	oneLap := 1.
 
@@ -28,12 +28,13 @@ GameTest >> testWhenAMoonWalkSquareMagnitudeIsSmallerThanOneThenInvalid [
 	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
-	moonWalkSquareProbability := 1.
-
-	aDistribution := { ([ SetMoonWalkSquare with: -1 ]
-	                  -> moonWalkSquareProbability) }.
+	aDistributionBuilder := DistributionBuilder new.
+	aDistributionBuilder moonWalkProbabilityIs: 1.
+	aDistributionBuilder plainSquareProbabilityIs: 0.
+	aDistributionBuilder moonWalkSquareBetween: -1 and: -1.
+	aDistribution := aDistributionBuilder build.
 	aBoard := Board
-		          with: fiveSquares
+		          with: twentySquares
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
@@ -93,6 +94,52 @@ GameTest >> testWhenAPlayerTryToRollTheDicesWhenTheGameHasFinishedThenItFails [
 ]
 
 { #category : 'tests' }
+GameTest >> testWhenAShipGoesThroughTheLastSquareButLandsOnABlackHoleSquareThenTheEffectIsAppliedAndTheGameDoesNotEnd [
+
+	| expectedPosition twentySquares sideToRoll twoLaps aWormHole aBlueShip aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame aDistributionBuilder |
+	twentySquares := 20.
+	sideToRoll := 4.
+	twoLaps := 2.
+
+	expectedPosition := Position at: 18 in: 1.
+
+	aWormHole := WormHole between: 4 and: 18.
+	aBlueShip := Ship called: 'BlueShip'.
+	aBlackShip := Ship called: 'BlackShip'.
+	aLoadedDice := LoadedDice toRoll: sideToRoll.
+
+	aDistributionBuilder := DistributionBuilder new.
+	aDistributionBuilder plainSquareProbabilityIs: 0.
+	aDistributionBuilder blackHoleProbabilityIs: 1.
+	aDistribution := aDistributionBuilder build.
+	aBoard := Board
+		          with: twentySquares
+		          and: aWormHole
+		          distributedBy: aDistribution.
+
+	someShips := OrderedCollection new.
+	someDices := OrderedCollection new.
+	someShips add: aBlueShip.
+	someShips add: aBlackShip.
+	someDices add: aLoadedDice.
+
+	aGame := Game
+		         with: aBoard
+		         for: twoLaps
+		         and: someShips
+		         and: someDices.
+
+	aGame nextTurnPlay.
+	aGame nextTurnPlay.
+	aGame nextTurnPass.
+	aGame nextTurnPass.
+	aGame nextTurnPlay.
+
+	self deny: aGame hasFinished.
+	self assert: (aBlueShip currentPositionEquals: expectedPosition)
+]
+
+{ #category : 'tests' }
 GameTest >> testWhenAShipMakesOneLapOnTheBoardThenThePositionChangesAccordingly [
 
 	| fiveSquares aWormHole aBlueShip aBoard someShips someDices aSetDice twoLaps aBlackShip sideToRoll aGame expectedPosition aDistributionBuilder aDefaultDistribution |
@@ -128,7 +175,7 @@ GameTest >> testWhenAShipMakesOneLapOnTheBoardThenThePositionChangesAccordingly 
 
 	aGame nextTurnPlay.
 
-	self assert: (aBlueShip currentPosition equals: expectedPosition)
+	self assert: (aBlueShip currentPositionEquals: expectedPosition)
 ]
 
 { #category : 'tests' }
@@ -210,6 +257,50 @@ GameTest >> testWhenAShipReachesTheFinalSquareThenTheGameEnds [
 ]
 
 { #category : 'tests' }
+GameTest >> testWhenAShipTakesAHyperJumpSquareThenTheShipMovesCorrectly [
+
+	| twentySquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution someParsecs aRatio aDistributionBuilder |
+	twentySquares := 20.
+	sideToRoll := 2.
+	oneLap := 1.
+	aRatio := 2.
+
+	aWormHole := WormHole between: 17 and: 18.
+	aBlueShip := Ship called: 'BlueShip'.
+	aBlackShip := Ship called: 'BlackShip'.
+	aLoadedDice := LoadedDice toRoll: sideToRoll.
+
+	someParsecs := #( 5 5 5 6 ) asOrderedCollection.
+
+	aDistributionBuilder := DistributionBuilder new.
+	aDistributionBuilder plainSquareProbabilityIs: 0.
+	aDistributionBuilder hyperJumpProbabilityIs: 1.
+	aDistributionBuilder hyperJumpWith: someParsecs and: aRatio.
+	aDistribution := aDistributionBuilder build.
+	aBoard := Board
+		          with: twentySquares
+		          and: aWormHole
+		          distributedBy: aDistribution.
+
+	someShips := OrderedCollection new.
+	someDices := OrderedCollection new.
+	someShips add: aBlueShip.
+	someShips add: aBlackShip.
+	someDices add: aLoadedDice.
+
+	self
+		should: [
+			Game
+				with: aBoard
+				for: oneLap
+				and: someShips
+				and: someDices ]
+		raise: Error
+		withMessageText:
+		'The magnitude of the Hyper Jump Square Parsecs is not valid.'
+]
+
+{ #category : 'tests' }
 GameTest >> testWhenTheGameEndsThenTheWinnerIsShownOnTheLeaderBoard [
 
 	| fiveSquares aWormHole aGame expectedDetails sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices oneLap aDistributionBuilder aDefaultDistribution |
@@ -284,8 +375,8 @@ GameTest >> testWhenTheGameIsCreatedWithOneDiceThenAllTheShipsFuelEqualsToTheMax
 		and: someShips
 		and: someDices.
 
-	self assert: aBlueShip fuelLeft equals: maximumRolledNumber * 2.
-	self assert: aBlackShip fuelLeft equals: maximumRolledNumber * 2
+	self assert: (aBlueShip fuelEquals: maximumRolledNumber * 2).
+	self assert: (aBlackShip fuelEquals: maximumRolledNumber * 2)
 ]
 
 { #category : 'tests' }
@@ -324,8 +415,8 @@ GameTest >> testWhenTheGameIsCreatedWithTwoDicesThenAllTheShipsFuelEqualsToTheMa
 		and: someShips
 		and: someDices.
 
-	self assert: aBlueShip fuelLeft equals: maximumRolledNumber * 2.
-	self assert: aBlackShip fuelLeft equals: maximumRolledNumber * 2
+	self assert: (aBlueShip fuelEquals: maximumRolledNumber * 2).
+	self assert: (aBlackShip fuelEquals: maximumRolledNumber * 2)
 ]
 
 { #category : 'tests' }
@@ -368,47 +459,6 @@ GameTest >> testWhenTheGameWithMultipleLapsEndsThenTheWinnerIsShownOnTheLeaderBo
 	aGame nextTurnPlay.
 
 	self assert: aGame printBoard equals: expectedDetails
-]
-
-{ #category : 'tests' }
-GameTest >> testWhenThereAShipTakesAHiperJumpSquareThenTheShipMovesCorrectly [
-
-	| fiveSquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution hyperJumpSquareProbability aCollectionofParsecs |
-	fiveSquares := 20.
-	sideToRoll := 2.
-	oneLap := 1.
-
-	aWormHole := WormHole between: 17 and: 18.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
-	aLoadedDice := LoadedDice toRoll: sideToRoll.
-
-	hyperJumpSquareProbability := 1.
-	
-	aCollectionofParsecs := #( 5 5 5 6) asOrderedCollection.
-
-	aDistribution := { ([ HyperJumpSquare with: aCollectionofParsecs ]
-	                  -> hyperJumpSquareProbability) }.
-	aBoard := Board
-		          with: fiveSquares
-		          and: aWormHole
-		          distributedBy: aDistribution.
-
-	someShips := OrderedCollection new.
-	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
-	someDices add: aLoadedDice.
-
-	self
-		should: [
-			Game
-				with: aBoard
-				for: oneLap
-				and: someShips
-				and: someDices ]
-		raise: Error
-		withMessageText: 'The magnitude of the Hyper Jump Square Parsecs is not valid.'
 ]
 
 { #category : 'tests' }
@@ -479,12 +529,13 @@ GameTest >> testWhenThereAreNotAnyDicesThenTheGameIsInvalid [
 ]
 
 { #category : 'tests' }
-GameTest >> testWhenThereIsAHiperGravitySquareWithACorrectMagnitudeThenIsValid [
+GameTest >> testWhenThereIsAHyperGravitySquareWithACorrectMagnitudeThenIsValid [
 
-	| fiveSquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution hyperGravitySquareProbability expectedPosition aGame |
-	fiveSquares := 10.
+	| tenSquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution aDistributionBuilder expectedPosition aGame |
+	tenSquares := 10.
 	sideToRoll := 2.
 	oneLap := 1.
+
 	expectedPosition := Position at: 4 in: 1.
 
 	aWormHole := WormHole between: 7 and: 8.
@@ -492,12 +543,13 @@ GameTest >> testWhenThereIsAHiperGravitySquareWithACorrectMagnitudeThenIsValid [
 	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
-	hyperGravitySquareProbability := 1.
-
-	aDistribution := { ([ HyperGravitySquare between: 1 and: 2 ]
-	                  -> hyperGravitySquareProbability) }.
+	aDistributionBuilder := DistributionBuilder new.
+	aDistributionBuilder plainSquareProbabilityIs: 0.
+	aDistributionBuilder hyperGravityProbabilityIs: 1.
+	aDistributionBuilder hyperGravitySquareBetween: 1 and: 2.
+	aDistribution := aDistributionBuilder build.
 	aBoard := Board
-		          with: fiveSquares
+		          with: tenSquares
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
@@ -517,13 +569,13 @@ GameTest >> testWhenThereIsAHiperGravitySquareWithACorrectMagnitudeThenIsValid [
 	aGame nextTurnPlay.
 	aGame nextTurnPlay.
 
-	self assert: (aBlueShip currentPosition equals: expectedPosition)
+	self assert: (aBlueShip currentPositionEquals: expectedPosition)
 ]
 
 { #category : 'tests' }
-GameTest >> testWhenThereIsAHiperGravitySquareWithMagnitudeGreaterThanTheMaximumRollThenInvalid [
+GameTest >> testWhenThereIsAHyperGravitySquareWithMagnitudeGreaterThanTheMaximumRollThenInvalid [
 
-	| fiveSquares aWormHole aBlueShip aBoard someShips someDices aDice twoSides oneLap aBlackShip aDistribution hyperGravitySquareProbability |
+	| fiveSquares aWormHole aBlueShip aBoard someShips someDices aDice twoSides oneLap aBlackShip aDistribution aDistributionBuilder |
 	fiveSquares := 5.
 	twoSides := 2.
 	oneLap := 1.
@@ -533,10 +585,11 @@ GameTest >> testWhenThereIsAHiperGravitySquareWithMagnitudeGreaterThanTheMaximum
 	aBlackShip := Ship called: 'BlackShip'.
 	aDice := Dice with: twoSides.
 
-	hyperGravitySquareProbability := 1.
-
-	aDistribution := { ([ HyperGravitySquare between: 5 and: 7]
-	                  -> hyperGravitySquareProbability) }.
+	aDistributionBuilder := DistributionBuilder new.
+	aDistributionBuilder plainSquareProbabilityIs: 0.
+	aDistributionBuilder hyperGravityProbabilityIs: 1.
+	aDistributionBuilder hyperGravitySquareBetween: 5 and: 7.
+	aDistribution := aDistributionBuilder build.
 	aBoard := Board
 		          with: fiveSquares
 		          and: aWormHole
@@ -556,7 +609,8 @@ GameTest >> testWhenThereIsAHiperGravitySquareWithMagnitudeGreaterThanTheMaximum
 				and: someShips
 				and: someDices ]
 		raise: Error
-		withMessageText: 'The magnitude of the Hyper Gravity Square is grater than the maximum roll.'
+		withMessageText:
+		'The magnitude of the Hyper Gravity Square is grater than the maximum roll.'
 ]
 
 { #category : 'tests' }

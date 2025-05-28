@@ -10,7 +10,10 @@ Class {
 		'hyperJumpProbability',
 		'hyperGravityProbability',
 		'moonWalkProbability',
-		'atomicBombProbability'
+		'atomicBombProbability',
+		'hyperJumpSquare',
+		'moonWalkSquare',
+		'hyperGravitySquare'
 	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
@@ -40,14 +43,14 @@ DistributionBuilder >> build [
 		                  -> (plainSquareProbability / totalProbability)).
 		                 ([ BlackHoleSquare new ]
 		                  -> (blackHoleProbability / totalProbability)).
-		                 ([ HyperGravitySquare new ]
+		                 (hyperGravitySquare
 		                  -> (hyperGravityProbability / totalProbability)).
-		                 ([ MoonWalkSquare new ] -> (moonWalkProbability
-		                  / totalProbability)).
-		                 ([ HyperJumpSquare new ] -> (hyperJumpProbability
-		                  / totalProbability)).
-		                 ([ AtomicBombSquare new ] -> (atomicBombProbability
-		                  / totalProbability)) }.
+		                 (moonWalkSquare
+		                  -> (moonWalkProbability / totalProbability)).
+		                 (hyperJumpSquare
+		                  -> (hyperJumpProbability / totalProbability)).
+		                 ([ AtomicBombSquare new ]
+		                  -> (atomicBombProbability / totalProbability)) }.
 
 	^ aDistribution
 ]
@@ -71,10 +74,25 @@ DistributionBuilder >> hyperGravityProbabilityIs: aProbability [
 	hyperGravityProbability := aProbability
 ]
 
+{ #category : 'as yet unclassified' }
+DistributionBuilder >> hyperGravitySquareBetween: aMinimumMagnitude and: aMaximumMagnitude [
+
+	hyperGravitySquare := [
+	                      HyperGravitySquare
+		                      between: aMinimumMagnitude
+		                      and: aMaximumMagnitude ]
+]
+
 { #category : 'setter' }
 DistributionBuilder >> hyperJumpProbabilityIs: aProbability [ 
 	
 	hyperJumpProbability := aProbability
+]
+
+{ #category : 'setter' }
+DistributionBuilder >> hyperJumpWith: someParsecs and: aRatio [
+
+	hyperJumpSquare := [ HyperJumpSquare with: someParsecs and: aRatio ]
 ]
 
 { #category : 'initialization' }
@@ -86,7 +104,9 @@ DistributionBuilder >> initialize [
 	hyperGravityProbability := 0.
 	moonWalkProbability := 0.
 	atomicBombProbability := 0. 
-
+	hyperJumpSquare := [ HyperJumpSquare new ].
+	moonWalkSquare := [ MoonWalkSquare new ].
+	hyperGravitySquare := [ HyperGravitySquare new ]
 	
 ]
 
@@ -97,15 +117,24 @@ DistributionBuilder >> moonWalkProbabilityIs: aProbability [
 ]
 
 { #category : 'setter' }
+DistributionBuilder >> moonWalkSquareBetween: aMinimumMagnitude and: aMaximumMagnitude [
+
+	moonWalkSquare := [
+	                  MoonWalkSquare
+		                  between: aMinimumMagnitude
+		                  and: aMaximumMagnitude ]
+]
+
+{ #category : 'setter' }
 DistributionBuilder >> plainSquareProbabilityIs: aProbability [ 
 	
 		plainSquareProbability := aProbability 
 ]
 
-{ #category : 'getter' }
-DistributionBuilder >> showProbabilities [
-
-	| probabilities totalProbability |
+{ #category : 'accessing' }
+DistributionBuilder >> totalSumEquals: aSum [ 
+	
+	| totalProbability probabilities probabilitiesSum |
 	totalProbability := plainSquareProbability + blackHoleProbability
 	                    + hyperGravityProbability + hyperJumpProbability + atomicBombProbability + moonWalkProbability.
 	
@@ -116,6 +145,8 @@ DistributionBuilder >> showProbabilities [
 	probabilities add: (hyperGravityProbability/totalProbability).
 	probabilities add: (moonWalkProbability/totalProbability).
 	probabilities add: (atomicBombProbability/totalProbability).
-
-	^ probabilities
+	
+	probabilitiesSum := probabilities sum: [ :aProbability | aProbability ].
+	
+	^ probabilitiesSum rounded = aSum
 ]
