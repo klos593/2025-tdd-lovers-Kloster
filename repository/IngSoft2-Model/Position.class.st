@@ -104,7 +104,7 @@ Position >> lapsEquals: aLap [
 { #category : 'comparing' }
 Position >> squareEquals: aSquare [
 
-	^ square = aSquare
+	^ aSquare = square
 ]
 
 { #category : 'comparing' }

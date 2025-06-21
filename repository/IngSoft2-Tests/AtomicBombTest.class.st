@@ -8,7 +8,7 @@ Class {
 { #category : 'tests' }
 AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenAllTheOtherShipsFuelDoNotChange [
 
-	| tenSquares sideToRoll twoLaps aWormHole aBlueShip aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame expectedFuel aDistributionBuilder aFuelQuantity |
+	| tenSquares sideToRoll twoLaps aWormHole aBlueShip aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame expectedFuel aDistributionBuilder aFuelQuantity anAtomicBombSquare aProbability anAtomicBombProbabilisticEvent |
 	tenSquares := 10.
 	sideToRoll := 2.
 	twoLaps := 2.
@@ -21,9 +21,11 @@ AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenAllTheOtherShipsFuel
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDistributionBuilder atomicBombProbabilityIs: 1.
-	aDistributionBuilder plainSquareProbabilityIs: 0.
-	aDistribution := aDistributionBuilder build.
+	anAtomicBombSquare := AtomicBombSquare new.
+	aProbability := 1.
+	anAtomicBombProbabilisticEvent := ProbabilisticEvent for: anAtomicBombSquare with: aProbability.
+	aDistributionBuilder add: anAtomicBombProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: tenSquares.
 	aBoard := Board
 		          with: tenSquares
 		          and: aWormHole
@@ -52,7 +54,7 @@ AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenAllTheOtherShipsFuel
 { #category : 'tests' }
 AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenItGoesBackToTheFirstSquareOfTheBoard [
 
-	| expectedPosition twentySquares sideToRoll oneLap aWormHole aBlueShip aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame aDistributionBuilder aFuelQuantity |
+	| expectedPosition twentySquares sideToRoll oneLap aWormHole aBlueShip aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame aDistributionBuilder aFuelQuantity anAtomicBombProbabilisticEvent anAtomicBombSquare aProbability |
 	twentySquares := 20.
 	sideToRoll := 2.
 	oneLap := 1.
@@ -65,9 +67,14 @@ AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenItGoesBackToTheFirst
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDistributionBuilder atomicBombProbabilityIs: 1.
-	aDistributionBuilder plainSquareProbabilityIs: 0.
-	aDistribution := aDistributionBuilder build.
+	anAtomicBombSquare := AtomicBombSquare new.
+	aProbability := 1.
+
+	anAtomicBombProbabilisticEvent := ProbabilisticEvent
+		                                  for: anAtomicBombSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: anAtomicBombProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: twentySquares.
 	aBoard := Board
 		          with: twentySquares
 		          and: aWormHole

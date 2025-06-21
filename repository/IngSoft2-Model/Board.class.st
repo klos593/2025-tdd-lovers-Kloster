@@ -20,6 +20,13 @@ Board class >> lengthIsValid: aLength [
 		Error signal: 'Board must have at least two squares' ]
 ]
 
+{ #category : 'as yet unclassified' }
+Board class >> replace: aDistribution withEndPointsFrom: aWormHole [
+
+	^ aDistribution withIndexCollect: [ :aSquare :index |
+		  aWormHole replace: aSquare in: index ]
+]
+
 { #category : 'validation' }
 Board class >> validate: aWormHole fallsInto: aLength [
 
@@ -34,14 +41,16 @@ Board class >> validate: aLength isSmallerThanTheEndingOf: aWormHole [
 
 { #category : 'creation' }
 Board class >> with: aLength and: aWormHole distributedBy: aDistribution [
- 
-	| generatedSquares |
+
+	| newDistribution |
 	self lengthIsValid: aLength.
 	self validate: aWormHole fallsInto: aLength.
 	self validate: aLength isSmallerThanTheEndingOf: aWormHole.
-	"generatedSquares := self generateSquaresfrom: aDistribution with: aLength and: aWormHole."
-	generatedSquares := SquareFactory with: aLength and: aWormHole and: aDistribution.
-	^ self new initializeWith: aLength and: aWormHole distributedBy: generatedSquares
+	newDistribution := self replace: aDistribution withEndPointsFrom: aWormHole.
+	^ self new
+		  initializeWith: aLength
+		  and: aWormHole
+		  distributedBy: newDistribution
 ]
 
 { #category : 'action' }

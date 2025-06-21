@@ -18,28 +18,34 @@ WormHoleTest >> should: anErrorBlock raise: anErrorClass withMessageText: anErro
 { #category : 'tests' }
 WormHoleTest >> testWhenAShipLandsOnTheBeginningOfAWormHoleThenItEndsUpAtTheEndOfIt [
 
-	| aBoard aShip twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder aDefaultDistribution expectedPosition |
+	| aBoard aShip twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder expectedPosition aPlainSquare aProbability aPlainSquareProbabilisticEvent aDistribution |
 	twentySquares := 20.
 	sideToRoll := 2.
-	
+
 	expectedPosition := Position at: 10 in: 1.
-	
+
 	aWormHole := WormHole between: 2 and: 10.
 	aShip := Ship called: 'BlueShip'.
 	aSetDice := LoadedDice toRoll: sideToRoll.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDefaultDistribution := aDistributionBuilder build.
-	
+	aPlainSquare := PlainSquare new.
+	aProbability := 2.
+	aPlainSquareProbabilisticEvent := ProbabilisticEvent
+		                                  for: aPlainSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: twentySquares.
+
 	aBoard := Board
 		          with: twentySquares
 		          and: aWormHole
-		          distributedBy: aDefaultDistribution.
+		          distributedBy: aDistribution.
 
-	
+
 	aShip move: aSetDice roll.
 	aShip moveTo: (aBoard moveIfWormHoleAt: aShip currentPosition).
-	
+
 	self assert: (aShip currentPositionEquals: expectedPosition)
 ]
 
