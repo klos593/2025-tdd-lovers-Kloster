@@ -13,27 +13,18 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'creation' }
-Board class >> generateSquaresfrom: aDistribution with: aLength and: aWormHole [
-
-	| generatedSquares |
-	generatedSquares := (0 to: aLength - 1) collect: [ :aSquare |
-		                    (aWormHole hasEndAt: aSquare)
-			                    ifTrue: [ PlainSquare new ]
-			                    ifFalse: [
-				                    (aDistribution
-					                     atRandom: Random new
-					                     weighting: [ :aSquareProbability |
-					                     aSquareProbability value ]) key value ] ].
-
-	^ generatedSquares asOrderedCollection 
-]
-
 { #category : 'validation' }
 Board class >> lengthIsValid: aLength [
 
 	aLength < 2 ifTrue: [
 		Error signal: 'Board must have at least two squares' ]
+]
+
+{ #category : 'creation' }
+Board class >> replace: aDistribution withEndPointsFrom: aWormHole [
+
+	^ aDistribution withIndexCollect: [ :aSquare :index |
+		  aWormHole replace: aSquare in: index ]
 ]
 
 { #category : 'validation' }
@@ -50,13 +41,24 @@ Board class >> validate: aLength isSmallerThanTheEndingOf: aWormHole [
 
 { #category : 'creation' }
 Board class >> with: aLength and: aWormHole distributedBy: aDistribution [
- 
-	| generatedSquares |
+
+	| newDistribution |
 	self lengthIsValid: aLength.
 	self validate: aWormHole fallsInto: aLength.
 	self validate: aLength isSmallerThanTheEndingOf: aWormHole.
-	generatedSquares := self generateSquaresfrom: aDistribution with: aLength and: aWormHole.
-	^ self new initializeWith: aLength and: aWormHole distributedBy: generatedSquares
+	newDistribution := self replace: aDistribution withEndPointsFrom: aWormHole.
+	^ self new
+		  initializeWith: aLength
+		  and: aWormHole
+		  distributedBy: newDistribution
+]
+
+{ #category : 'action' }
+Board >> applyEfectOn: aShip with: aPosition in: aGame [ 
+	
+	| effect |
+	effect := self effectIn: aPosition currentSquare + 1.
+	^ effect applyOn: aShip and: aPosition in: aGame .
 ]
 
 { #category : 'action' }

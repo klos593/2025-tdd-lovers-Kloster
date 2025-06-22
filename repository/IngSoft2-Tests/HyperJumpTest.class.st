@@ -18,12 +18,12 @@ HyperJumpTest >> should: anErrorBlock raise: anErrorClass withMessageText: anErr
 { #category : 'tests' }
 HyperJumpTest >> testWhenASecondShipTakesAHyperJumpSquareThatWasTakenBeforeThenItTakesTheSecondParsecValueAndMovesAccordingly [
 
-	| twentySquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution someParsecs aGame expectedPosition aRatio aDistributionBuilder |
+	| twentySquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution someParsecs aGame expectedPosition aRatio aDistributionBuilder aFuelQuantity aHyperJumpSquare aProbability aPlainSquareProbabilisticEvent |
 	twentySquares := 20.
 	sideToRoll := 7.
 	oneLap := 1.
 	aRatio := 1.
-	
+
 	expectedPosition := Position at: 12 in: 1.
 
 	aWormHole := WormHole between: 17 and: 18.
@@ -34,10 +34,13 @@ HyperJumpTest >> testWhenASecondShipTakesAHyperJumpSquareThatWasTakenBeforeThenI
 	someParsecs := #( 5 4 6 5 ) asOrderedCollection.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDistributionBuilder plainSquareProbabilityIs: 0.
-	aDistributionBuilder hyperJumpProbabilityIs: 1.
-	aDistributionBuilder hyperJumpWith: someParsecs and: aRatio.
-	aDistribution := aDistributionBuilder build.
+	aHyperJumpSquare := HyperJumpSquare with: someParsecs and: aRatio.
+	aProbability := 1.
+	aPlainSquareProbabilisticEvent := ProbabilisticEvent
+		                                  for: aHyperJumpSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: twentySquares.
 	aBoard := Board
 		          with: twentySquares
 		          and: aWormHole
@@ -49,11 +52,14 @@ HyperJumpTest >> testWhenASecondShipTakesAHyperJumpSquareThatWasTakenBeforeThenI
 	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
 
+	aFuelQuantity := (someDices sum: [ :aDice | aDice rollMaximum ]) * 2.
+
 	aGame := Game
 		         with: aBoard
 		         for: oneLap
 		         and: someShips
-		         and: someDices.
+		         and: someDices
+		         and: aFuelQuantity.
 
 	aGame nextTurnPlay.
 	aGame nextTurnPlay.
@@ -62,9 +68,9 @@ HyperJumpTest >> testWhenASecondShipTakesAHyperJumpSquareThatWasTakenBeforeThenI
 ]
 
 { #category : 'tests' }
-HyperJumpTest >> testWhenAShipTakesAHiperJumpSquareAndAfterTheJumpItGoesThroughTheFinalSquareThenTheGameEnds [
+HyperJumpTest >> testWhenAShipTakesAHyperJumpSquareAndAfterTheJumpItGoesThroughTheFinalSquareThenTheGameEnds [
 
-	| tenSquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution someParsecs aGame aRatio aDistributionBuilder |
+	| tenSquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution someParsecs aGame aRatio aDistributionBuilder aFuelQuantity aHyperJumpSquare aProbability aPlainSquareProbabilisticEvent |
 	tenSquares := 10.
 	sideToRoll := 7.
 	oneLap := 1.
@@ -78,10 +84,13 @@ HyperJumpTest >> testWhenAShipTakesAHiperJumpSquareAndAfterTheJumpItGoesThroughT
 	someParsecs := #( 5 3 2 ) asOrderedCollection.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDistributionBuilder plainSquareProbabilityIs: 0.
-	aDistributionBuilder hyperJumpProbabilityIs: 1.
-	aDistributionBuilder hyperJumpWith: someParsecs and: aRatio.
-	aDistribution := aDistributionBuilder build.
+	aHyperJumpSquare := HyperJumpSquare with: someParsecs and: aRatio.
+	aProbability := 1.
+	aPlainSquareProbabilisticEvent := ProbabilisticEvent
+		                                  for: aHyperJumpSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: tenSquares.
 	aBoard := Board
 		          with: tenSquares
 		          and: aWormHole
@@ -93,11 +102,14 @@ HyperJumpTest >> testWhenAShipTakesAHiperJumpSquareAndAfterTheJumpItGoesThroughT
 	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
 
+	aFuelQuantity := (someDices sum: [ :aDice | aDice rollMaximum ]) * 2.
+
 	aGame := Game
 		         with: aBoard
 		         for: oneLap
 		         and: someShips
-		         and: someDices.
+		         and: someDices
+		         and: aFuelQuantity.
 
 	aGame nextTurnPlay.
 
@@ -105,14 +117,14 @@ HyperJumpTest >> testWhenAShipTakesAHiperJumpSquareAndAfterTheJumpItGoesThroughT
 ]
 
 { #category : 'tests' }
-HyperJumpTest >> testWhenAShipTakesAHiperJumpSquareAndIncrementALapThenItsPositionChangesAccordingly [
+HyperJumpTest >> testWhenAShipTakesAHyperJumpSquareAndIncrementALapThenItsPositionChangesAccordingly [
 
-	| tenSquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll threeLaps aBlackShip aDistribution someParsecs aGame expectedPosition aRatio aDistributionBuilder |
+	| tenSquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll threeLaps aBlackShip aDistribution someParsecs aGame expectedPosition aRatio aDistributionBuilder aFuelQuantity aHyperJumpSquare aProbability aPlainSquareProbabilisticEvent |
 	tenSquares := 10.
 	sideToRoll := 7.
 	threeLaps := 3.
 	aRatio := 1.
-	
+
 	expectedPosition := Position at: 2 in: 2.
 
 	aWormHole := WormHole between: 3 and: 4.
@@ -123,10 +135,13 @@ HyperJumpTest >> testWhenAShipTakesAHiperJumpSquareAndIncrementALapThenItsPositi
 	someParsecs := #( 5 3 2 ) asOrderedCollection.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDistributionBuilder hyperJumpProbabilityIs: 1.
-	aDistributionBuilder plainSquareProbabilityIs: 0.
-	aDistributionBuilder hyperJumpWith: someParsecs and: aRatio.
-	aDistribution := aDistributionBuilder build.
+	aHyperJumpSquare := HyperJumpSquare with: someParsecs and: aRatio.
+	aProbability := 1.
+	aPlainSquareProbabilisticEvent := ProbabilisticEvent
+		                                  for: aHyperJumpSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: tenSquares.
 	aBoard := Board
 		          with: tenSquares
 		          and: aWormHole
@@ -138,11 +153,14 @@ HyperJumpTest >> testWhenAShipTakesAHiperJumpSquareAndIncrementALapThenItsPositi
 	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
 
+	aFuelQuantity := (someDices sum: [ :aDice | aDice rollMaximum ]) * 2.
+
 	aGame := Game
 		         with: aBoard
 		         for: threeLaps
 		         and: someShips
-		         and: someDices.
+		         and: someDices
+		         and: aFuelQuantity.
 
 	aGame nextTurnPlay.
 	aGame nextTurnPlay.
@@ -151,15 +169,15 @@ HyperJumpTest >> testWhenAShipTakesAHiperJumpSquareAndIncrementALapThenItsPositi
 ]
 
 { #category : 'tests' }
-HyperJumpTest >> testWhenAShipTakesAHiperJumpSquareThenItsFuellsConsumedCorrectly [
+HyperJumpTest >> testWhenAShipTakesAHyperJumpSquareThenItsFuelIsConsumedCorrectly [
 
-	| twentySquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution someParsecs aGame expectedPosition aRatio aDistributionBuilder |
+	| twentySquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution someParsecs aGame expectedFuel aRatio aDistributionBuilder aFuelQuantity aHyperJumpSquare aProbability aPlainSquareProbabilisticEvent |
 	twentySquares := 20.
 	sideToRoll := 7.
 	oneLap := 1.
 	aRatio := 1.
-	
-	expectedPosition := Position at: 13 in: 1.
+
+	expectedFuel := 1.
 
 	aWormHole := WormHole between: 17 and: 18.
 	aBlueShip := Ship called: 'BlueShip'.
@@ -169,10 +187,13 @@ HyperJumpTest >> testWhenAShipTakesAHiperJumpSquareThenItsFuellsConsumedCorrectl
 	someParsecs := #( 5 4 6 5 ) asOrderedCollection.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDistributionBuilder plainSquareProbabilityIs: 0.
-	aDistributionBuilder hyperJumpProbabilityIs: 1.
-	aDistributionBuilder hyperJumpWith: someParsecs and: aRatio.
-	aDistribution := aDistributionBuilder build.
+	aHyperJumpSquare := HyperJumpSquare with: someParsecs and: aRatio.
+	aProbability := 1.
+	aPlainSquareProbabilisticEvent := ProbabilisticEvent
+		                                  for: aHyperJumpSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: twentySquares.
 	aBoard := Board
 		          with: twentySquares
 		          and: aWormHole
@@ -184,67 +205,25 @@ HyperJumpTest >> testWhenAShipTakesAHiperJumpSquareThenItsFuellsConsumedCorrectl
 	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
 
-	aGame := Game
-		         with: aBoard
-		         for: oneLap
-		         and: someShips
-		         and: someDices.
-
-	aGame nextTurnPlay.
-	aGame nextTurnPlay.
-
-	self assert: (aBlueShip fuelEquals: 1)
-]
-
-{ #category : 'tests' }
-HyperJumpTest >> testWhenAShipTakesAHyperJumpSquareThenTheShipMovesCorrectly [
-
-	| twentySquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution someParsecs aGame expectedPosition aRatio aDistributionBuilder |
-	twentySquares := 20.
-	sideToRoll := 7.
-	oneLap := 1.
-	aRatio := 1.
-
-	expectedPosition := Position at: 13 in: 1.
-
-	aWormHole := WormHole between: 17 and: 18.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
-	aLoadedDice := LoadedDice toRoll: sideToRoll.
-
-	someParsecs := #( 5 4 6 5 ) asOrderedCollection.
-
-	aDistributionBuilder := DistributionBuilder new.
-	aDistributionBuilder plainSquareProbabilityIs: 0.
-	aDistributionBuilder hyperJumpProbabilityIs: 1.
-	aDistributionBuilder hyperJumpWith: someParsecs and: aRatio.
-	aDistribution := aDistributionBuilder build.
-	aBoard := Board
-		          with: twentySquares
-		          and: aWormHole
-		          distributedBy: aDistribution.
-
-	someShips := OrderedCollection new.
-	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
-	someDices add: aLoadedDice.
+	aFuelQuantity := (someDices sum: [ :aDice | aDice rollMaximum ]) * 2.
 
 	aGame := Game
 		         with: aBoard
 		         for: oneLap
 		         and: someShips
-		         and: someDices.
+		         and: someDices
+		         and: aFuelQuantity.
 
 	aGame nextTurnPlay.
+	aGame nextTurnPlay.
 
-	self assert: (aBlueShip currentPositionEquals: expectedPosition)
+	self assert: (aBlueShip fuelEquals: expectedFuel)
 ]
 
 { #category : 'tests' }
-HyperJumpTest >> testWhenAllTheParsecsHadBeenTakenThenTheNextShipTakesTheFirstParsecAgain [
+HyperJumpTest >> testWhenAllTheParsecsHaveBeenTakenThenTheNextShipTakesTheFirstParsecAgain [
 
-	| twentySquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution someParsecs aGame expectedPosition aWhiteShip aRedShip aPinkShip aRatio aDistributionBuilder |
+	| twentySquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution someParsecs aGame expectedPosition aWhiteShip aRedShip aPinkShip aRatio aDistributionBuilder aFuelQuantity aHyperJumpSquare aProbability aPlainSquareProbabilisticEvent |
 	twentySquares := 20.
 	sideToRoll := 7.
 	oneLap := 1.
@@ -263,10 +242,13 @@ HyperJumpTest >> testWhenAllTheParsecsHadBeenTakenThenTheNextShipTakesTheFirstPa
 	someParsecs := #( 6 5 5 4 ) asOrderedCollection.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDistributionBuilder plainSquareProbabilityIs: 0.
-	aDistributionBuilder hyperJumpProbabilityIs: 1.
-	aDistributionBuilder hyperJumpWith: someParsecs and: aRatio.
-	aDistribution := aDistributionBuilder build.
+	aHyperJumpSquare := HyperJumpSquare with: someParsecs and: aRatio.
+	aProbability := 1.
+	aPlainSquareProbabilisticEvent := ProbabilisticEvent
+		                                  for: aHyperJumpSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: twentySquares.
 	aBoard := Board
 		          with: twentySquares
 		          and: aWormHole
@@ -281,11 +263,14 @@ HyperJumpTest >> testWhenAllTheParsecsHadBeenTakenThenTheNextShipTakesTheFirstPa
 	someShips add: aPinkShip.
 	someDices add: aLoadedDice.
 
+	aFuelQuantity := (someDices sum: [ :aDice | aDice rollMaximum ]) * 2.
+
 	aGame := Game
 		         with: aBoard
 		         for: oneLap
 		         and: someShips
-		         and: someDices.
+		         and: someDices
+		         and: aFuelQuantity.
 
 	aGame nextTurnPlay.
 	aGame nextTurnPlay.
@@ -297,9 +282,60 @@ HyperJumpTest >> testWhenAllTheParsecsHadBeenTakenThenTheNextShipTakesTheFirstPa
 ]
 
 { #category : 'tests' }
+HyperJumpTest >> testWhenTheHyperJumpParsecsDoNotEqualTheLengthOfTheBoardThenInvalid [
+
+	| twentySquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution someParsecs aGame expectedPosition aRatio aDistributionBuilder aFuelQuantity aHyperJumpSquare aProbability aPlainSquareProbabilisticEvent |
+	twentySquares := 20.
+	sideToRoll := 7.
+	oneLap := 1.
+	aRatio := 1.
+
+	expectedPosition := Position at: 13 in: 1.
+
+	aWormHole := WormHole between: 17 and: 18.
+	aBlueShip := Ship called: 'BlueShip'.
+	aBlackShip := Ship called: 'BlackShip'.
+	aLoadedDice := LoadedDice toRoll: sideToRoll.
+
+	someParsecs := #( 5 4 6 5 ) asOrderedCollection.
+
+	aDistributionBuilder := DistributionBuilder new.
+	aHyperJumpSquare := HyperJumpSquare with: someParsecs and: aRatio.
+	aProbability := 1.
+	aPlainSquareProbabilisticEvent := ProbabilisticEvent
+		                                  for: aHyperJumpSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: twentySquares.
+	aBoard := Board
+		          with: twentySquares
+		          and: aWormHole
+		          distributedBy: aDistribution.
+
+	someShips := OrderedCollection new.
+	someDices := OrderedCollection new.
+	someShips add: aBlueShip.
+	someShips add: aBlackShip.
+	someDices add: aLoadedDice.
+
+	aFuelQuantity := (someDices sum: [ :aDice | aDice rollMaximum ]) * 2.
+
+	aGame := Game
+		         with: aBoard
+		         for: oneLap
+		         and: someShips
+		         and: someDices
+		         and: aFuelQuantity.
+
+	aGame nextTurnPlay.
+
+	self assert: (aBlueShip currentPositionEquals: expectedPosition)
+]
+
+{ #category : 'tests' }
 HyperJumpTest >> testWhenTheRatioIsTwoAndAShipTakesAHyperJumpThenItsMovesCorrectly [
 
-	| twentySquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll threeLaps aBlackShip aDistribution someParsecs aGame expectedPosition aRatio aDistributionBuilder |
+	| twentySquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll threeLaps aBlackShip aDistribution someParsecs aGame expectedPosition aRatio aDistributionBuilder aFuelQuantity aHyperJumpSquare aProbability aPlainSquareProbabilisticEvent |
 	twentySquares := 20.
 	sideToRoll := 7.
 	threeLaps := 3.
@@ -315,10 +351,13 @@ HyperJumpTest >> testWhenTheRatioIsTwoAndAShipTakesAHyperJumpThenItsMovesCorrect
 	someParsecs := #( 2 2 3 3 ) asOrderedCollection.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDistributionBuilder plainSquareProbabilityIs: 0.
-	aDistributionBuilder hyperJumpProbabilityIs: 1.
-	aDistributionBuilder hyperJumpWith: someParsecs and: aRatio.
-	aDistribution := aDistributionBuilder build.
+	aHyperJumpSquare := HyperJumpSquare with: someParsecs and: aRatio.
+	aProbability := 1.
+	aPlainSquareProbabilisticEvent := ProbabilisticEvent
+		                                  for: aHyperJumpSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: twentySquares.
 	aBoard := Board
 		          with: twentySquares
 		          and: aWormHole
@@ -330,11 +369,14 @@ HyperJumpTest >> testWhenTheRatioIsTwoAndAShipTakesAHyperJumpThenItsMovesCorrect
 	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
 
+	aFuelQuantity := (someDices sum: [ :aDice | aDice rollMaximum ]) * 2.
+
 	aGame := Game
 		         with: aBoard
-		         for: threeLaps
+		         for: threeLaps 
 		         and: someShips
-		         and: someDices.
+		         and: someDices
+		         and: aFuelQuantity.
 
 	aGame nextTurnPlay.
 	aGame nextTurnPlay.

@@ -54,30 +54,44 @@ WormHole >> endsBefore: aLength [
 { #category : 'validation' }
 WormHole >> fallsInto: aLength [
 
-	aLength < beginning ifTrue: [
+	beginning > aLength ifTrue: [
 		Error signal:
 			'A Worm Hole cannot fall outside of its Boards length' ]
 ]
 
 { #category : 'accessing' }
-WormHole >> hasEndAt: aSquare [
+WormHole >> hasBeginningAt: aSquare [
 
-	^ aSquare = beginning or: aSquare = end
+	^ beginning in: aSquare 
+]
+
+{ #category : 'accessing' }
+WormHole >> hasEndingAt: aSquare [
+
+	^ end in: aSquare 
 ]
 
 { #category : 'initialization' }
 WormHole >> initializeBetween: aBeginning and: anEnd [
 
-	beginning := aBeginning.
-	end := anEnd
+	beginning := WormHoleEndpoint at: aBeginning.
+	end := WormHoleEndpoint at: anEnd 
 ]
 
 { #category : 'comparing' }
 WormHole >> moveIfEndPointAt: aPosition [
 
 
-	(aPosition squareEquals: beginning) ifTrue: [^ aPosition adjustSquare: end ].
-	(aPosition squareEquals: end) ifTrue: [ ^ aPosition adjustSquare: beginning ].
+	(aPosition squareEquals: beginning) ifTrue: [^ aPosition adjustSquare: end position ].
+	(aPosition squareEquals: end) ifTrue: [ ^ aPosition adjustSquare: beginning position ].
 
 	^ aPosition
+]
+
+{ #category : 'accessing' }
+WormHole >> replace: aSquare in: anIndex [
+
+	(self hasEndingAt: anIndex) ifTrue: [ ^ end ].
+	(self hasBeginningAt: anIndex) ifTrue: [ ^ beginning ].
+	^ aSquare
 ]

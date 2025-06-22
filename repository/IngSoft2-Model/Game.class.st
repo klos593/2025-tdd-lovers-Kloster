@@ -43,12 +43,10 @@ Game class >> hasShips: someShips [
 		Error signal: 'The Game needs at least two ship to start.' ]
 ]
 
-{ #category : 'creation' }
+{ #category : 'accessing' }
 Game class >> maximumRoll: someDices [
 
-	| rolledNumber |
-	rolledNumber := someDices sum: [ :aDice | aDice rollMaximum ].
-	^ rolledNumber
+	^ someDices sum: [ :aDice | aDice rollMaximum ]
 ]
 
 { #category : 'validation' }
@@ -58,23 +56,24 @@ Game class >> validateSquaresFrom: aBoard with: someDices [
 ]
 
 { #category : 'creation' }
-Game class >> with: aBoard for: someLaps and: someShips and: someDices [
+Game class >> with: aBoard for: someLaps and: someShips and: someDices and: aFuelQuantity [
 
 	self hasDices: someDices.
 	self hasShips: someShips.
 	self hasLaps: someLaps.
-	self fuel: someShips with: (self maximumRoll: someDices) * 2. 
+	self fuel: someShips with: aFuelQuantity.
 	self validateSquaresFrom: aBoard with: someDices.
-	^ self new initializeWith: aBoard for: someLaps and: someShips and: someDices
+	^ self new
+		  initializeWith: aBoard
+		  for: someLaps
+		  and: someShips
+		  and: someDices
 ]
 
 { #category : 'action' }
 Game >> applyEffectOn: aShip with: aPosition [
 
-	| effect |
-	effect := board effectIn: aPosition currentSquare + 1.
-
-	^ effect applyOn: aShip and: aPosition in: self
+	^ board applyEfectOn: aShip with: aPosition in: self.
 ]
 
 { #category : 'action' }
@@ -127,37 +126,43 @@ Game >> jump: squaresToJump from: aPosition [
 { #category : 'action' }
 Game >> move: aShip with: rolledNumber [
 
-	| shipInitialPosition  squaresTraveled shipPositionBeforeWormHole shipPositionAfterWormHole shipPositionAfterSquareEffect squaresTraveledWithDice squaresTraveledWithSquareEffect |
+	| shipInitialPosition squaresTraveled shipPositionBeforeWormHole shipPositionAfterWormHole shipPositionAfterSquareEffect squaresTraveledWithDice squaresTraveledWithSquareEffect |
+	aShip canPlay: rolledNumber.
+
 	shipInitialPosition := aShip currentPosition.
 
 	shipPositionBeforeWormHole := board
 		                              update: shipInitialPosition
 		                              with: rolledNumber.
 
-	squaresTraveledWithDice := board calculateDistanceBetween: shipInitialPosition and: shipPositionBeforeWormHole.
+	squaresTraveledWithDice := board
+		                           calculateDistanceBetween:
+		                           shipInitialPosition
+		                           and: shipPositionBeforeWormHole.
 
 	shipPositionAfterWormHole := board moveIfWormHoleAt:
 		                             shipPositionBeforeWormHole.
 
+	aShip moveTo: shipPositionAfterWormHole.
+	aShip consumeFuel: squaresTraveledWithDice.
+
 	shipPositionAfterSquareEffect := self
-		                         applyEffectOn: aShip
-		                         with: shipPositionAfterWormHole.
+		                                 applyEffectOn: aShip
+		                                 with: shipPositionAfterWormHole.
 
-	squaresTraveledWithSquareEffect := board calculateDistanceBetween: shipPositionAfterWormHole and: shipPositionAfterSquareEffect.
-		                                  
+	squaresTraveledWithSquareEffect := board
+		                                   calculateDistanceBetween:
+		                                   shipPositionAfterWormHole
+		                                   and:
+		                                   shipPositionAfterSquareEffect.
 
-	squaresTraveled := squaresTraveledWithDice
-	                   + squaresTraveledWithSquareEffect.
+
+	squaresTraveled := squaresTraveledWithSquareEffect.
 
 	aShip moveTo: shipPositionAfterSquareEffect.
-	[ aShip consumeFuel: squaresTraveled ]
-		on: Error
-		do: [
-			aShip moveTo: shipInitialPosition.
-			aShip losesTwoTurns.
-			aShip fuel: (self class maximumRoll: dices) * 2 ].
+	aShip consumeFuel: squaresTraveled.
 
-	(shipPositionAfterSquareEffect hasCompleted: laps) ifTrue: [ self finish ]
+	shipPositionAfterSquareEffect hasCompleted: laps in: self
 ]
 
 { #category : 'action' }
@@ -202,11 +207,17 @@ Game >> nextTurnPass [
 { #category : 'action' }
 Game >> nextTurnPlay [
 
-	| shipToMove rolledNumber |
+	| shipToMove rolledNumber shipInitialPosition |
 	self canStillPlay.
 	shipToMove := ships removeFirst.
 	rolledNumber := self rollDices.
-	(shipToMove canPlay: rolledNumber) ifTrue: [ self move: shipToMove with: rolledNumber ].
+	shipInitialPosition := shipToMove currentPosition.
+	[ self move: shipToMove with: rolledNumber ]
+		on: Error
+		do: [
+			shipToMove moveTo: shipInitialPosition.
+			shipToMove losesTwoTurns.
+			shipToMove fuel: (self class maximumRoll: dices) * 2 ].
 	ships add: shipToMove.
 	finished ifTrue: [ winner := shipToMove ]
 ]
