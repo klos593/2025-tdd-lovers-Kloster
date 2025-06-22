@@ -38,9 +38,10 @@ Ship >> canPlay: rolledNumber [
 
 	turnsLeftToWait > 0 ifTrue: [
 		self reducePenalty.
-		^ false ].
-	(gravityPenalty > rolledNumber) ifTrue: [ ^ false ].
-	^ true
+		Error signal: 'The ship has a penalty of movement' ].
+	gravityPenalty > rolledNumber ifTrue: [
+		Error signal:
+			'The number rolled is not enought to pass the gravity penalty' ]
 ]
 
 { #category : 'update' }
@@ -101,12 +102,6 @@ Ship >> initializeCalled: aName [
 Ship >> losesTwoTurns [
 
 	turnsLeftToWait := 2
-]
-
-{ #category : 'update' }
-Ship >> move: aRolledNumber [
-
-	position := position addSquare: aRolledNumber
 ]
 
 { #category : 'update' }

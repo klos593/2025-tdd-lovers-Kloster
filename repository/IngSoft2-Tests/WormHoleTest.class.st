@@ -18,57 +18,99 @@ WormHoleTest >> should: anErrorBlock raise: anErrorClass withMessageText: anErro
 { #category : 'tests' }
 WormHoleTest >> testWhenAShipLandsOnTheBeginningOfAWormHoleThenItEndsUpAtTheEndOfIt [
 
-	| aBoard aShip twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder aDefaultDistribution expectedPosition |
+	| aBoard aBlueShip aBlackShip twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder expectedPosition aPlainSquare aProbability aPlainSquareProbabilisticEvent aDistribution oneLap someShips someDices aFuelQuantity aGame |
 	twentySquares := 20.
 	sideToRoll := 2.
-	
+	oneLap := 1.
+
 	expectedPosition := Position at: 10 in: 1.
-	
+
 	aWormHole := WormHole between: 2 and: 10.
-	aShip := Ship called: 'BlueShip'.
+	aBlueShip := Ship called: 'BlueShip'.
+	aBlackShip := Ship called: 'BlackShip'.
 	aSetDice := LoadedDice toRoll: sideToRoll.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDefaultDistribution := aDistributionBuilder build.
-	
+	aPlainSquare := PlainSquare new.
+	aProbability := 1.
+	aPlainSquareProbabilisticEvent := ProbabilisticEvent
+		                                  for: aPlainSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: twentySquares.
+
 	aBoard := Board
 		          with: twentySquares
 		          and: aWormHole
-		          distributedBy: aDefaultDistribution.
+		          distributedBy: aDistribution.
 
-	
-	aShip move: aSetDice roll.
-	aShip moveTo: (aBoard moveIfWormHoleAt: aShip currentPosition).
-	
-	self assert: (aShip currentPositionEquals: expectedPosition)
+	someShips := OrderedCollection new.
+	someDices := OrderedCollection new.
+	someShips add: aBlueShip.
+	someShips add: aBlackShip.
+	someDices add: aSetDice.
+
+	aFuelQuantity := (someDices sum: [ :aDice | aDice rollMaximum ]) * 2.
+
+	aGame := Game
+		         with: aBoard
+		         for: oneLap
+		         and: someShips
+		         and: someDices
+		         and: aFuelQuantity.
+
+	aGame nextTurnPlay.
+
+	self assert: (aBlueShip currentPositionEquals: expectedPosition)
 ]
 
 { #category : 'tests' }
 WormHoleTest >> testWhenAShipLandsOnTheEndOfAWormHoleThenItEndsUpAtTheBeginningOfIt [
 
-	| aBoard aShip twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder aDefaultDistribution expectedPosition |
+	| aBoard twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder aDistribution expectedPosition aPlainSquare aProbability aPlainSquareProbabilisticEvent oneLap aBlueShip aBlackShip someShips someDices aFuelQuantity aGame |
 	twentySquares := 20.
 	sideToRoll := 5.
-	
+	oneLap := 1.
+
 	expectedPosition := Position at: 2 in: 1.
-	
+
 	aWormHole := WormHole between: 2 and: 5.
-	aShip := Ship called: 'BlueShip'.
+	aBlueShip := Ship called: 'BlueShip'.
+	aBlackShip := Ship called: 'BlackShip'.
 	aSetDice := LoadedDice toRoll: sideToRoll.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDefaultDistribution := aDistributionBuilder build.
-	
+	aPlainSquare := PlainSquare new.
+	aProbability := 1.
+	aPlainSquareProbabilisticEvent := ProbabilisticEvent
+		                                  for: aPlainSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: twentySquares.
+
 	aBoard := Board
 		          with: twentySquares
 		          and: aWormHole
-		          distributedBy: aDefaultDistribution.
+		          distributedBy: aDistribution.
 
-	
-	aShip move: aSetDice roll.
-	aShip moveTo: (aBoard moveIfWormHoleAt: aShip currentPosition).
-	
-	self assert: (aShip currentPositionEquals: expectedPosition)
+	someShips := OrderedCollection new.
+	someDices := OrderedCollection new.
+	someShips add: aBlueShip.
+	someShips add: aBlackShip.
+	someDices add: aSetDice.
+
+	aFuelQuantity := (someDices sum: [ :aDice | aDice rollMaximum ]) * 2.
+
+	aGame := Game
+		         with: aBoard
+		         for: oneLap
+		         and: someShips
+		         and: someDices
+		         and: aFuelQuantity.
+
+	aGame nextTurnPlay.
+
+	self assert: (aBlueShip currentPositionEquals: expectedPosition)
 ]
 
 { #category : 'tests' }

@@ -38,15 +38,6 @@ Position >> add: aRolledNumber with: aBoardLength [
 ]
 
 { #category : 'adding' }
-Position >> addSquare: someSquares [
-
-	| newSquare |
-	newSquare := square + someSquares.
-	
-	^ self class at: newSquare in: lap
-]
-
-{ #category : 'adding' }
 Position >> adjustSquare: aSquare [
 
 	^ self class at: aSquare in: lap
@@ -83,9 +74,9 @@ Position >> goBackFourSquaresIn: aBoardLength [
 ]
 
 { #category : 'testing' }
-Position >> hasCompleted: someLaps [
+Position >> hasCompleted: someLaps in: aGame [
 
-	^ someLaps < lap
+	someLaps < lap ifTrue: [ aGame finish ]
 ]
 
 { #category : 'initialization' }
@@ -104,7 +95,7 @@ Position >> lapsEquals: aLap [
 { #category : 'comparing' }
 Position >> squareEquals: aSquare [
 
-	^ square = aSquare
+	^ aSquare = square
 ]
 
 { #category : 'comparing' }
