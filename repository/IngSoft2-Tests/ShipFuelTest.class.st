@@ -8,7 +8,7 @@ Class {
 { #category : 'tests' }
 ShipFuelTest >> testWhenAShipDecideToPassThenItsFuellsToppedUp [
 
-	| tenSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices oneLap expectedFuelLeft aDistributionBuilder aDefaultDistribution aFuelQuantity |
+	| tenSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices oneLap expectedFuelLeft aDistributionBuilder aFuelQuantity aPlainSquare aProbability aPlainSquareProbabilisticEvent aDistribution |
 	tenSquares := 10.
 	sideToRoll := 1.
 	oneLap := 1.
@@ -21,12 +21,18 @@ ShipFuelTest >> testWhenAShipDecideToPassThenItsFuellsToppedUp [
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDefaultDistribution := aDistributionBuilder build.
+	aPlainSquare := PlainSquare new.
+	aProbability := 1.
+	aPlainSquareProbabilisticEvent := ProbabilisticEvent
+		                                  for: aPlainSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: tenSquares.
 
 	aBoard := Board
 		          with: tenSquares
 		          and: aWormHole
-		          distributedBy: aDefaultDistribution.
+		          distributedBy: aDistribution .
 
 	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
@@ -56,7 +62,7 @@ ShipFuelTest >> testWhenAShipDecideToPassThenItsFuellsToppedUp [
 { #category : 'tests' }
 ShipFuelTest >> testWhenAShipIsNoLongerPenalisedThenItsFuelIsToppedUp [
 
-	| tenSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices oneLap expectedFuelLeft aDistributionBuilder aDefaultDistribution aFuelQuantity |
+	| tenSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices oneLap expectedFuelLeft aDistributionBuilder aFuelQuantity aPlainSquare aProbability aPlainSquareProbabilisticEvent aDistribution |
 	tenSquares := 10.
 	sideToRoll := 1.
 	oneLap := 1.
@@ -69,12 +75,18 @@ ShipFuelTest >> testWhenAShipIsNoLongerPenalisedThenItsFuelIsToppedUp [
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDefaultDistribution := aDistributionBuilder build.
+	aPlainSquare := PlainSquare new.
+	aProbability := 1.
+	aPlainSquareProbabilisticEvent := ProbabilisticEvent
+		                                  for: aPlainSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: tenSquares.
 
 	aBoard := Board
 		          with: tenSquares
 		          and: aWormHole
-		          distributedBy: aDefaultDistribution.
+		          distributedBy: aDistribution.
 
 	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
@@ -108,7 +120,7 @@ ShipFuelTest >> testWhenAShipIsNoLongerPenalisedThenItsFuelIsToppedUp [
 { #category : 'tests' }
 ShipFuelTest >> testWhenAShipMovesAfterPassItsTurnMovesAccordingly [
 
-	| tenSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices oneLap expectedPosition aDistributionBuilder aDefaultDistribution aFuelQuantity |
+	| tenSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices oneLap expectedPosition aDistributionBuilder aFuelQuantity aPlainSquare aProbability aPlainSquareProbabilisticEvent aDistribution |
 	tenSquares := 10.
 	sideToRoll := 1.
 	oneLap := 1.
@@ -121,12 +133,18 @@ ShipFuelTest >> testWhenAShipMovesAfterPassItsTurnMovesAccordingly [
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDefaultDistribution := aDistributionBuilder build.
+	aPlainSquare := PlainSquare new.
+	aProbability := 1.
+	aPlainSquareProbabilisticEvent := ProbabilisticEvent
+		                                  for: aPlainSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: tenSquares.
 
 	aBoard := Board
 		          with: tenSquares
 		          and: aWormHole
-		          distributedBy: aDefaultDistribution.
+		          distributedBy: aDistribution.
 
 	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
@@ -158,7 +176,7 @@ ShipFuelTest >> testWhenAShipMovesAfterPassItsTurnMovesAccordingly [
 { #category : 'tests' }
 ShipFuelTest >> testWhenAShipMovesOneSquareThenItsFuelDecreasesAccordingly [
 
-	| fiveSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices oneLap expectedFuelLeft aDistributionBuilder aDefaultDistribution aFuelQuantity |
+	| fiveSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices oneLap expectedFuelLeft aDistributionBuilder aFuelQuantity aPlainSquare aProbability aPlainSquareProbabilisticEvent aDistribution |
 	fiveSquares := 5.
 	sideToRoll := 1.
 	oneLap := 1.
@@ -171,12 +189,18 @@ ShipFuelTest >> testWhenAShipMovesOneSquareThenItsFuelDecreasesAccordingly [
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDefaultDistribution := aDistributionBuilder build.
+	aPlainSquare := PlainSquare new.
+	aProbability := 1.
+	aPlainSquareProbabilisticEvent := ProbabilisticEvent
+		                                  for: aPlainSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: fiveSquares.
 
 	aBoard := Board
 		          with: fiveSquares
 		          and: aWormHole
-		          distributedBy: aDefaultDistribution.
+		          distributedBy: aDistribution.
 
 	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
@@ -201,7 +225,7 @@ ShipFuelTest >> testWhenAShipMovesOneSquareThenItsFuelDecreasesAccordingly [
 { #category : 'tests' }
 ShipFuelTest >> testWhenAShipMovesThroughAWormHoleThenItsFuelDecreasesAccordingly [
 
-	| fiveSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices oneLap expectedFuelLeft aDistributionBuilder aDefaultDistribution aFuelQuantity |
+	| fiveSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices oneLap expectedFuelLeft aDistributionBuilder aFuelQuantity aPlainSquare aProbability aPlainSquareProbabilisticEvent aDistribution |
 	fiveSquares := 5.
 	sideToRoll := 1.
 	oneLap := 1.
@@ -214,12 +238,18 @@ ShipFuelTest >> testWhenAShipMovesThroughAWormHoleThenItsFuelDecreasesAccordingl
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDefaultDistribution := aDistributionBuilder build.
+	aPlainSquare := PlainSquare new.
+	aProbability := 1.
+	aPlainSquareProbabilisticEvent := ProbabilisticEvent
+		                                  for: aPlainSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: fiveSquares .
 
 	aBoard := Board
 		          with: fiveSquares
 		          and: aWormHole
-		          distributedBy: aDefaultDistribution.
+		          distributedBy: aDistribution.
 
 	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
@@ -244,7 +274,7 @@ ShipFuelTest >> testWhenAShipMovesThroughAWormHoleThenItsFuelDecreasesAccordingl
 { #category : 'tests' }
 ShipFuelTest >> testWhenAShipTriesToMoveMoreSquaresThanItsRemainingFuelThenItDoesNotMove [
 
-	| fiveSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices oneLap expectedPosition aDistributionBuilder aDefaultDistribution aFuelQuantity |
+	| fiveSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices oneLap expectedPosition aDistributionBuilder aFuelQuantity aPlainSquare aProbability aPlainSquareProbabilisticEvent aDistribution |
 	fiveSquares := 5.
 	sideToRoll := 1.
 	oneLap := 1.
@@ -257,12 +287,18 @@ ShipFuelTest >> testWhenAShipTriesToMoveMoreSquaresThanItsRemainingFuelThenItDoe
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDefaultDistribution := aDistributionBuilder build.
+	aPlainSquare := PlainSquare new.
+	aProbability := 1.
+	aPlainSquareProbabilisticEvent := ProbabilisticEvent
+		                                  for: aPlainSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: fiveSquares .
 
 	aBoard := Board
 		          with: fiveSquares
 		          and: aWormHole
-		          distributedBy: aDefaultDistribution.
+		          distributedBy: aDistribution.
 
 	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
@@ -291,7 +327,7 @@ ShipFuelTest >> testWhenAShipTriesToMoveMoreSquaresThanItsRemainingFuelThenItDoe
 { #category : 'tests' }
 ShipFuelTest >> testWhenAShipTriesToMoveMoreSquaresThanItsRemainingFuelThenLosesTwoTurns [
 
-	| tenSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices oneLap expectedPosition aDistributionBuilder aDefaultDistribution aFuelQuantity |
+	| tenSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices oneLap expectedPosition aDistributionBuilder aFuelQuantity aPlainSquare aProbability aPlainSquareProbabilisticEvent aDistribution |
 	tenSquares := 10.
 	sideToRoll := 1.
 	oneLap := 1.
@@ -304,12 +340,18 @@ ShipFuelTest >> testWhenAShipTriesToMoveMoreSquaresThanItsRemainingFuelThenLoses
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
 	aDistributionBuilder := DistributionBuilder new.
-	aDefaultDistribution := aDistributionBuilder build.
+	aPlainSquare := PlainSquare new.
+	aProbability := 1.
+	aPlainSquareProbabilisticEvent := ProbabilisticEvent
+		                                  for: aPlainSquare
+		                                  with: aProbability.
+	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
+	aDistribution := aDistributionBuilder buildFor: tenSquares.
 
 	aBoard := Board
 		          with: tenSquares
 		          and: aWormHole
-		          distributedBy: aDefaultDistribution.
+		          distributedBy: aDistribution.
 
 	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.

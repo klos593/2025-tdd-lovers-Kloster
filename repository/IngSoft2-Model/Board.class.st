@@ -20,7 +20,7 @@ Board class >> lengthIsValid: aLength [
 		Error signal: 'Board must have at least two squares' ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'creation' }
 Board class >> replace: aDistribution withEndPointsFrom: aWormHole [
 
 	^ aDistribution withIndexCollect: [ :aSquare :index |

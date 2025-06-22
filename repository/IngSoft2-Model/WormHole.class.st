@@ -88,7 +88,7 @@ WormHole >> moveIfEndPointAt: aPosition [
 	^ aPosition
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 WormHole >> replace: aSquare in: anIndex [
 
 	(self hasEndingAt: anIndex) ifTrue: [ ^ end ].
