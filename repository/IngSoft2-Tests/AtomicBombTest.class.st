@@ -8,7 +8,7 @@ Class {
 { #category : 'tests' }
 AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenAllTheOtherShipsFuelDoesNotChange [
 
-	| tenSquares sideToRoll twoLaps aWormHole aBlueShip aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame expectedFuel aDistributionBuilder aFuelQuantity anAtomicBombSquare aProbability anAtomicBombProbabilisticEvent |
+	| tenSquares sideToRoll twoLaps aWormHole aBlueShip aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame expectedFuel aDistributionBuilder aFuelQuantity anAtomicBombSquare aProbability anAtomicBombProbabilisticEvent plusOneReward plusOneRewardProbabilisticEvent aRewardBuilder |
 	tenSquares := 10.
 	sideToRoll := 2.
 	twoLaps := 2.
@@ -23,9 +23,21 @@ AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenAllTheOtherShipsFuel
 	aDistributionBuilder := DistributionBuilder new.
 	anAtomicBombSquare := AtomicBombSquare new.
 	aProbability := 1.
-	anAtomicBombProbabilisticEvent := ProbabilisticEvent for: anAtomicBombSquare with: aProbability.
+	anAtomicBombProbabilisticEvent := ProbabilisticEvent
+		                                  for: anAtomicBombSquare
+		                                  with: aProbability.
 	aDistributionBuilder add: anAtomicBombProbabilisticEvent.
 	aDistribution := aDistributionBuilder buildFor: tenSquares.
+
+	aRewardBuilder := DistributionBuilder new.
+	plusOneReward := Reward of: 0.
+
+	plusOneRewardProbabilisticEvent := ProbabilisticEvent
+		                                   for: plusOneReward
+		                                   with: 1.
+
+	aRewardBuilder add: plusOneRewardProbabilisticEvent.
+
 	aBoard := Board
 		          with: tenSquares
 		          and: aWormHole
@@ -44,7 +56,8 @@ AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenAllTheOtherShipsFuel
 		         for: twoLaps
 		         and: someShips
 		         and: someDices
-		         and: aFuelQuantity.
+		         and: aFuelQuantity
+		         and: aRewardBuilder.
 
 	aGame nextTurnPlay.
 
@@ -54,7 +67,7 @@ AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenAllTheOtherShipsFuel
 { #category : 'tests' }
 AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenItGoesBackToTheFirstSquareOfTheBoard [
 
-	| expectedPosition twentySquares sideToRoll oneLap aWormHole aBlueShip aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame aDistributionBuilder aFuelQuantity anAtomicBombProbabilisticEvent anAtomicBombSquare aProbability |
+	| expectedPosition twentySquares sideToRoll oneLap aWormHole aBlueShip aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame aDistributionBuilder aFuelQuantity anAtomicBombProbabilisticEvent anAtomicBombSquare aProbability aRewardBuilder plusOneReward plusOneRewardProbabilisticEvent |
 	twentySquares := 20.
 	sideToRoll := 2.
 	oneLap := 1.
@@ -75,6 +88,16 @@ AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenItGoesBackToTheFirst
 		                                  with: aProbability.
 	aDistributionBuilder add: anAtomicBombProbabilisticEvent.
 	aDistribution := aDistributionBuilder buildFor: twentySquares.
+
+	aRewardBuilder := DistributionBuilder new.
+	plusOneReward := Reward of: 0.
+
+	plusOneRewardProbabilisticEvent := ProbabilisticEvent
+		                                   for: plusOneReward
+		                                   with: 1.
+
+	aRewardBuilder add: plusOneRewardProbabilisticEvent.
+
 	aBoard := Board
 		          with: twentySquares
 		          and: aWormHole
@@ -93,7 +116,8 @@ AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenItGoesBackToTheFirst
 		         for: oneLap
 		         and: someShips
 		         and: someDices
-		         and: aFuelQuantity.
+		         and: aFuelQuantity
+		         and: aRewardBuilder.
 
 	aGame nextTurnPlay.
 
@@ -103,7 +127,7 @@ AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenItGoesBackToTheFirst
 { #category : 'tests' }
 AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenItGoesBackToTheFirstSquareOfTheCurrentLap [
 
-	| expectedPosition tenSquares sideToRoll twoLaps aWormHole aBlueShip aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame aDistributionBuilder aFuelQuantity anAtomicBombSquare aProbability anAtomicBombProbabilisticEvent |
+	| expectedPosition tenSquares sideToRoll twoLaps aWormHole aBlueShip aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame aDistributionBuilder aFuelQuantity anAtomicBombSquare aProbability anAtomicBombProbabilisticEvent aRewardBuilder plusOneReward plusOneRewardProbabilisticEvent |
 	tenSquares := 10.
 	sideToRoll := 2.
 	twoLaps := 2.
@@ -124,8 +148,18 @@ AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenItGoesBackToTheFirst
 		                                  with: aProbability.
 	aDistributionBuilder add: anAtomicBombProbabilisticEvent.
 	aDistribution := aDistributionBuilder buildFor: tenSquares.
+
+	aRewardBuilder := DistributionBuilder new.
+	plusOneReward := Reward of: 0.
+
+	plusOneRewardProbabilisticEvent := ProbabilisticEvent
+		                                   for: plusOneReward
+		                                   with: 1.
+
+	aRewardBuilder add: plusOneRewardProbabilisticEvent.
+
 	aBoard := Board
-		          with: tenSquares
+		          with: tenSquares 
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
@@ -139,10 +173,11 @@ AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenItGoesBackToTheFirst
 
 	aGame := Game
 		         with: aBoard
-		         for: twoLaps
+		         for: twoLaps 
 		         and: someShips
 		         and: someDices
-		         and: aFuelQuantity.
+		         and: aFuelQuantity
+		         and: aRewardBuilder.
 
 	aGame nextTurnPlay.
 	aGame nextTurnPlay.
@@ -154,7 +189,7 @@ AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenItGoesBackToTheFirst
 { #category : 'tests' }
 AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenItsFuelDoesNotChange [
 
-	| tenSquares sideToRoll twoLaps aWormHole aBlueShip aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame expectedFuel aDistributionBuilder aFuelQuantity anAtomicBombSquare aProbability anAtomicBombProbabilisticEvent |
+	| tenSquares sideToRoll twoLaps aWormHole aBlueShip aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame expectedFuel aDistributionBuilder aFuelQuantity anAtomicBombSquare aProbability anAtomicBombProbabilisticEvent aRewardBuilder plusOneReward plusOneRewardProbabilisticEvent |
 	tenSquares := 10.
 	sideToRoll := 2.
 	twoLaps := 2.
@@ -175,6 +210,16 @@ AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenItsFuelDoesNotChange
 		                                  with: aProbability.
 	aDistributionBuilder add: anAtomicBombProbabilisticEvent.
 	aDistribution := aDistributionBuilder buildFor: tenSquares.
+
+	aRewardBuilder := DistributionBuilder new.
+	plusOneReward := Reward of: 0.
+
+	plusOneRewardProbabilisticEvent := ProbabilisticEvent
+		                                   for: plusOneReward
+		                                   with: 1.
+
+	aRewardBuilder add: plusOneRewardProbabilisticEvent.
+
 	aBoard := Board
 		          with: tenSquares
 		          and: aWormHole
@@ -193,7 +238,8 @@ AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenItsFuelDoesNotChange
 		         for: twoLaps
 		         and: someShips
 		         and: someDices
-		         and: aFuelQuantity.
+		         and: aFuelQuantity
+		         and: aRewardBuilder.
 
 	aGame nextTurnPlay.
 
@@ -203,7 +249,7 @@ AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenItsFuelDoesNotChange
 { #category : 'tests' }
 AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenTheOtherShipsGoBackToTheFirstSquareOfTheirCurrentLap [
 
-	| expectedPosition tenSquares sideToRoll twoLaps aWormHole aBlueShip aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame aDistributionBuilder aFuelQuantity anAtomicBombSquare aProbability anAtomicBombProbabilisticEvent |
+	| expectedPosition tenSquares sideToRoll twoLaps aWormHole aBlueShip aBlackShip aLoadedDice aDistribution aBoard someShips someDices aGame aDistributionBuilder aFuelQuantity anAtomicBombSquare aProbability anAtomicBombProbabilisticEvent aRewardBuilder plusOneReward plusOneRewardProbabilisticEvent |
 	tenSquares := 10.
 	sideToRoll := 2.
 	twoLaps := 2.
@@ -224,8 +270,18 @@ AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenTheOtherShipsGoBackT
 		                                  with: aProbability.
 	aDistributionBuilder add: anAtomicBombProbabilisticEvent.
 	aDistribution := aDistributionBuilder buildFor: tenSquares.
+
+	aRewardBuilder := DistributionBuilder new.
+	plusOneReward := Reward of: 0.
+
+	plusOneRewardProbabilisticEvent := ProbabilisticEvent
+		                                   for: plusOneReward
+		                                   with: 1.
+
+	aRewardBuilder add: plusOneRewardProbabilisticEvent.
+
 	aBoard := Board
-		          with: tenSquares
+		          with: tenSquares 
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
@@ -239,10 +295,11 @@ AtomicBombTest >> testWhenAShipLandsOnAnAtomicBombSquareThenTheOtherShipsGoBackT
 
 	aGame := Game
 		         with: aBoard
-		         for: twoLaps
+		         for: twoLaps 
 		         and: someShips
 		         and: someDices
-		         and: aFuelQuantity.
+		         and: aFuelQuantity
+		         and: aRewardBuilder.
 
 	aGame nextTurnPlay.
 	aGame nextTurnPlay.

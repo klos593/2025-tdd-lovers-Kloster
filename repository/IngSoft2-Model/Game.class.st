@@ -10,7 +10,8 @@ Class {
 		'dices',
 		'finished',
 		'winner',
-		'laps'
+		'laps',
+		'rewards'
 	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
@@ -70,10 +71,36 @@ Game class >> with: aBoard for: someLaps and: someShips and: someDices and: aFue
 		  and: someDices
 ]
 
+{ #category : 'creation' }
+Game class >> with: aBoard for: someLaps and: someShips and: someDices and: aFuelQuantity and: aRewardBuilder [
+
+	self hasDices: someDices.
+	self hasShips: someShips.
+	self hasLaps: someLaps.
+	self fuel: someShips with: aFuelQuantity.
+	self validateSquaresFrom: aBoard with: someDices.
+	^ self new
+		  initializeWith: aBoard
+		  for: someLaps
+		  and: someShips
+		  and: someDices
+		  and: aRewardBuilder
+]
+
 { #category : 'action' }
 Game >> applyEffectOn: aShip with: aPosition [
 
 	^ board applyEfectOn: aShip with: aPosition in: self.
+]
+
+{ #category : 'as yet unclassified' }
+Game >> applyRewardTo: aShip for: aRolledNumber [
+
+	| aReward |
+	aReward := rewards buildFor: 1.
+
+	aRolledNumber = self maximumRoll ifTrue: [
+		(aReward at: 1) applyTo: aShip ]
 ]
 
 { #category : 'action' }
@@ -107,20 +134,27 @@ Game >> hasFinished [
 ]
 
 { #category : 'initialization' }
-Game >> initializeWith: aBoard for: someLaps and: someShips and: someDices [
+Game >> initializeWith: aBoard for: someLaps and: someShips and: someDices and: aRewardBuilder [
 
 	board := aBoard.
 	ships := someShips.
 	dices := someDices.
 	laps := someLaps.
 	finished := false.
-	winner := NullShip new.
+	rewards := aRewardBuilder.
+	winner := NullShip new
 ]
 
 { #category : 'action' }
 Game >> jump: squaresToJump from: aPosition [ 
 	
 	^ board jump: squaresToJump from: aPosition 
+]
+
+{ #category : 'accessing' }
+Game >> maximumRoll [
+
+	^ dices sum: [ :aDice | aDice rollMaximum ]
 ]
 
 { #category : 'action' }
@@ -212,6 +246,7 @@ Game >> nextTurnPlay [
 	shipToMove := ships removeFirst.
 	rolledNumber := self rollDices.
 	shipInitialPosition := shipToMove currentPosition.
+	self applyRewardTo: shipToMove for: rolledNumber.
 	[ self move: shipToMove with: rolledNumber ]
 		on: Error
 		do: [

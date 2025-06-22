@@ -8,7 +8,7 @@ Class {
 { #category : 'tests' }
 ShipTest >> testWhenAShipMakesOneMoveOfTwoSquaresThenItsPositionIsTwo [
 
-	| aBoard aBlueShip twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder aDistribution expectedPosition someShips someDices aFuelQuantity oneLap aGame aPlainSquare aProbability aPlainSquareProbabilisticEvent aBlackShip |
+	| aBoard aBlueShip twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder aDistribution expectedPosition someShips someDices aFuelQuantity oneLap aGame aPlainSquare aProbability aPlainSquareProbabilisticEvent aBlackShip aRewardBuilder plusOneReward plusOneRewardProbabilisticEvent |
 	twentySquares := 20.
 	sideToRoll := 2.
 	oneLap := 1.
@@ -29,6 +29,16 @@ ShipTest >> testWhenAShipMakesOneMoveOfTwoSquaresThenItsPositionIsTwo [
 	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
 	aDistribution := aDistributionBuilder buildFor: twentySquares.
 
+
+	aRewardBuilder := DistributionBuilder new.
+	plusOneReward := Reward of: 0.
+
+	plusOneRewardProbabilisticEvent := ProbabilisticEvent
+		                                   for: plusOneReward
+		                                   with: 1.
+
+	aRewardBuilder add: plusOneRewardProbabilisticEvent.
+
 	aBoard := Board
 		          with: twentySquares
 		          and: aWormHole
@@ -39,7 +49,7 @@ ShipTest >> testWhenAShipMakesOneMoveOfTwoSquaresThenItsPositionIsTwo [
 	someShips add: aBlueShip.
 	someShips add: aBlackShip.
 	someDices add: aSetDice.
-	
+
 	aFuelQuantity := (someDices sum: [ :aDice | aDice rollMaximum ]) * 2.
 
 	aGame := Game
@@ -47,7 +57,8 @@ ShipTest >> testWhenAShipMakesOneMoveOfTwoSquaresThenItsPositionIsTwo [
 		         for: oneLap
 		         and: someShips
 		         and: someDices
-		         and: aFuelQuantity.
+		         and: aFuelQuantity
+		         and: aRewardBuilder.
 
 	aGame nextTurnPlay.
 
@@ -57,7 +68,7 @@ ShipTest >> testWhenAShipMakesOneMoveOfTwoSquaresThenItsPositionIsTwo [
 { #category : 'tests' }
 ShipTest >> testWhenAShipMakesTwoMovesOfOneSquareThenItsPositionIsTwo [
 
-	| aBoard twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder expectedPosition oneLap aBlueShip aBlackShip aPlainSquare aProbability aPlainSquareProbabilisticEvent aDistribution someShips someDices aFuelQuantity aGame |
+	| aBoard twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder expectedPosition oneLap aBlueShip aBlackShip aPlainSquare aProbability aPlainSquareProbabilisticEvent aDistribution someShips someDices aFuelQuantity aGame aRewardBuilder plusOneReward plusOneRewardProbabilisticEvent |
 	twentySquares := 20.
 	sideToRoll := 1.
 	oneLap := 1.
@@ -78,6 +89,16 @@ ShipTest >> testWhenAShipMakesTwoMovesOfOneSquareThenItsPositionIsTwo [
 	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
 	aDistribution := aDistributionBuilder buildFor: twentySquares.
 
+
+	aRewardBuilder := DistributionBuilder new.
+	plusOneReward := Reward of: 0.
+
+	plusOneRewardProbabilisticEvent := ProbabilisticEvent
+		                                   for: plusOneReward
+		                                   with: 1.
+
+	aRewardBuilder add: plusOneRewardProbabilisticEvent.
+
 	aBoard := Board
 		          with: twentySquares
 		          and: aWormHole
@@ -88,7 +109,7 @@ ShipTest >> testWhenAShipMakesTwoMovesOfOneSquareThenItsPositionIsTwo [
 	someShips add: aBlueShip.
 	someShips add: aBlackShip.
 	someDices add: aSetDice.
-	
+
 	aFuelQuantity := (someDices sum: [ :aDice | aDice rollMaximum ]) * 2.
 
 	aGame := Game
@@ -96,7 +117,8 @@ ShipTest >> testWhenAShipMakesTwoMovesOfOneSquareThenItsPositionIsTwo [
 		         for: oneLap
 		         and: someShips
 		         and: someDices
-		         and: aFuelQuantity.
+		         and: aFuelQuantity
+		         and: aRewardBuilder.
 
 	aGame nextTurnPlay.
 	aGame nextTurnPlay.
@@ -108,7 +130,7 @@ ShipTest >> testWhenAShipMakesTwoMovesOfOneSquareThenItsPositionIsTwo [
 { #category : 'tests' }
 ShipTest >> testWhenAShipMovesOneSquareThenItsPositionIsOne [
 
-	| aBoard twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder expectedPosition aBlueShip aBlackShip aPlainSquare aProbability aPlainSquareProbabilisticEvent aDistribution someShips someDices aFuelQuantity aGame oneLap |
+	| aBoard twentySquares aSetDice aWormHole sideToRoll aDistributionBuilder expectedPosition aBlueShip aBlackShip aPlainSquare aProbability aPlainSquareProbabilisticEvent aDistribution someShips someDices aFuelQuantity aGame oneLap aRewardBuilder plusOneReward plusOneRewardProbabilisticEvent |
 	twentySquares := 20.
 	sideToRoll := 1.
 	oneLap := 1.
@@ -129,6 +151,16 @@ ShipTest >> testWhenAShipMovesOneSquareThenItsPositionIsOne [
 	aDistributionBuilder add: aPlainSquareProbabilisticEvent.
 	aDistribution := aDistributionBuilder buildFor: twentySquares.
 
+
+	aRewardBuilder := DistributionBuilder new.
+	plusOneReward := Reward of: 0.
+
+	plusOneRewardProbabilisticEvent := ProbabilisticEvent
+		                                   for: plusOneReward
+		                                   with: 1.
+
+	aRewardBuilder add: plusOneRewardProbabilisticEvent.
+
 	aBoard := Board
 		          with: twentySquares
 		          and: aWormHole
@@ -139,7 +171,7 @@ ShipTest >> testWhenAShipMovesOneSquareThenItsPositionIsOne [
 	someShips add: aBlueShip.
 	someShips add: aBlackShip.
 	someDices add: aSetDice.
-	
+
 	aFuelQuantity := (someDices sum: [ :aDice | aDice rollMaximum ]) * 2.
 
 	aGame := Game
@@ -147,7 +179,8 @@ ShipTest >> testWhenAShipMovesOneSquareThenItsPositionIsOne [
 		         for: oneLap
 		         and: someShips
 		         and: someDices
-		         and: aFuelQuantity.
+		         and: aFuelQuantity
+		         and: aRewardBuilder.
 
 	aGame nextTurnPlay.
 
