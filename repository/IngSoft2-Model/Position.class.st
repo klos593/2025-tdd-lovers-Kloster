@@ -38,15 +38,6 @@ Position >> add: aRolledNumber with: aBoardLength [
 ]
 
 { #category : 'adding' }
-Position >> addSquare: someSquares [
-
-	| newSquare |
-	newSquare := square + someSquares.
-	
-	^ self class at: newSquare in: lap
-]
-
-{ #category : 'adding' }
 Position >> adjustSquare: aSquare [
 
 	^ self class at: aSquare in: lap

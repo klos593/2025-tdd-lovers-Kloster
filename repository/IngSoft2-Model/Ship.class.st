@@ -105,12 +105,6 @@ Ship >> losesTwoTurns [
 ]
 
 { #category : 'update' }
-Ship >> move: aRolledNumber [
-
-	position := position addSquare: aRolledNumber
-]
-
-{ #category : 'update' }
 Ship >> moveTo: aPosition [
 
 	position := aPosition
