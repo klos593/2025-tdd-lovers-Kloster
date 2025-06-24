@@ -400,7 +400,7 @@ GameTest >> testWhenAShipMovesOneSquareThenTheBoardIsPrintedCorrectly [
 { #category : 'tests' }
 GameTest >> testWhenAShipPlaysACardThenItIsNoLongerInItsHand [
 
-	| fiveSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices aDistributionManager aDistribution aPlainSquare aProbabilityOfOne aPlainSquareProbabilisticEvent aRewardManager zeroReward zeroRewardRewardProbabilisticEvent aGameBuilder aCardManager anAllyCard anAllyCardProbabilisticEvent expectedCards anAccelerationCard anAccelerationCardProbabilisticEvent |
+	| fiveSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices aDistributionManager aDistribution aPlainSquare aProbabilityOfOne aPlainSquareProbabilisticEvent aRewardManager zeroReward zeroRewardRewardProbabilisticEvent aGameBuilder anAllyCard anAllyCardProbabilisticEvent expectedCards anAccelerationCard anAccelerationCardProbabilisticEvent aSetCardManager |
 	fiveSquares := 5.
 	sideToRoll := #(10) asOrderedCollection.
 
@@ -430,18 +430,18 @@ GameTest >> testWhenAShipPlaysACardThenItIsNoLongerInItsHand [
 		                                      with: aProbabilityOfOne.
 	aRewardManager add: zeroRewardRewardProbabilisticEvent.
 
-	aCardManager := ProbablisiticEventsManager new.
+	aSetCardManager := SetProbablisiticEventsManager new.
 	anAllyCard := AllyCard new.
 	anAllyCardProbabilisticEvent := ProbabilisticEvent
 		                                for: anAllyCard
 		                                with: aProbabilityOfOne.
-	aCardManager add: anAllyCardProbabilisticEvent.
+	aSetCardManager add: anAllyCardProbabilisticEvent.
 
 	anAccelerationCard := AccelerationCard new.
 	anAccelerationCardProbabilisticEvent := ProbabilisticEvent
 		                                        for: anAccelerationCard
 		                                        with: aProbabilityOfOne.
-	aCardManager add: anAccelerationCardProbabilisticEvent.
+	aSetCardManager add: anAccelerationCardProbabilisticEvent.
 
 	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
@@ -455,7 +455,7 @@ GameTest >> testWhenAShipPlaysACardThenItIsNoLongerInItsHand [
 	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
 	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
+	aGameBuilder setAvailableCards: aSetCardManager.
 	aGame := aGameBuilder build.
 
 	expectedCards := OrderedCollection new.

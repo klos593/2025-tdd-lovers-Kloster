@@ -13,7 +13,8 @@ Class {
 		'laps',
 		'rewards',
 		'cards',
-		'lastEffect'
+		'lastEffect',
+		'lastPlayedCard'
 	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
@@ -84,7 +85,7 @@ Game class >> with: aBoard for: someLaps and: someShips and: someDices and: aFue
 			and: aCardsManager
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'action' }
 Game >> applyEffectMovementFor: aShip from: shipPositionAfterWormHole to: shipPositionAfterSquareEffect [
 
 	| squaresTraveledWithSquareEffect |
@@ -93,8 +94,6 @@ Game >> applyEffectMovementFor: aShip from: shipPositionAfterWormHole to: shipPo
 		                                   shipPositionAfterWormHole
 		                                   and:
 		                                   shipPositionAfterSquareEffect.
-
-
 
 	aShip moveTo: shipPositionAfterSquareEffect.
 	aShip consumeFuel: squaresTraveledWithSquareEffect
@@ -106,7 +105,7 @@ Game >> applyEffectOn: aShip with: aPosition [
 	^ board applyEfectOn: aShip with: aPosition in: self.
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'action' }
 Game >> applyLastEffectTo: aShip [
 
 	| shipInitialPosition shipPositionAfterEffect |
@@ -186,7 +185,8 @@ Game >> initializeWith: aBoard for: someLaps and: someShips and: someDices and: 
 	rewards := aRewardManager.
 	cards := aCardMaganer.
 	lastEffect := PlainSquare new.
-	winner := NullShip new
+	winner := NullShip new.
+	lastPlayedCard := NullCard new.
 ]
 
 { #category : 'action' }
@@ -199,6 +199,12 @@ Game >> jump: squaresToJump from: aPosition [
 Game >> lastEffect: anEffect [
 
 	lastEffect := anEffect
+]
+
+{ #category : 'accessing' }
+Game >> lastPlayedCard: aCard [
+
+	lastPlayedCard := aCard
 ]
 
 { #category : 'accessing' }
@@ -314,6 +320,12 @@ Game >> play: aCard by: aPlayingShip for: anAfectedShip [
 	aPlayingShip validateCard: aCard.
 
 	aCard bePlayedBy: aPlayingShip for: anAfectedShip in: self
+]
+
+{ #category : 'action' }
+Game >> playLastCardBy: aPlayingShip for: aTargetShip [
+
+	lastPlayedCard bePlayedBy: aPlayingShip for: aTargetShip in: self
 ]
 
 { #category : 'printing' }

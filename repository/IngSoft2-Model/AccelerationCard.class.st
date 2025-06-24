@@ -13,5 +13,6 @@ AccelerationCard >> bePlayedBy: aPlayingShip for: aTargetShip in: aGame [
 
 	aGame validateNextPlayer: aPlayingShip.
 	aGame applyRollPenalty: 1.
+	aGame lastPlayedCard: self.
 	
 ]

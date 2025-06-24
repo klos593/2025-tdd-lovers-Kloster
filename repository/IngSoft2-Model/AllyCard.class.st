@@ -14,5 +14,6 @@ AllyCard >> bePlayedBy: aPlayingShip for: anAllyShip in: aGame [
 	aGame validateNextPlayer: aPlayingShip.
 	aPlayingShip remove: self.
 	aPlayingShip formAllianceWith: anAllyShip.
-	anAllyShip formAllianceWith: aPlayingShip
+	anAllyShip formAllianceWith: aPlayingShip.
+	aGame lastPlayedCard: self.
 ]

@@ -13,6 +13,7 @@ Class {
 CardSquare >> applyOn: aShip and: aPosition in: aGame [
 
 	aShip addCards: (aGame generateCard).
+	^ aPosition.
 ]
 
 { #category : 'as yet unclassified' }

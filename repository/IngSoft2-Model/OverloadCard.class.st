@@ -1,3 +1,6 @@
+"
+This class represents an overload Card
+"
 Class {
 	#name : 'OverloadCard',
 	#superclass : 'Object',
@@ -9,5 +12,6 @@ Class {
 OverloadCard >> bePlayedBy: aPlayingShip for: aTargetShip in: aGame [
 
 	aGame validateNextPlayer: aPlayingShip.
-	aTargetShip applyRollPenalty: -2
+	aTargetShip applyRollPenalty: -2.
+	aGame lastPlayedCard: self.
 ]

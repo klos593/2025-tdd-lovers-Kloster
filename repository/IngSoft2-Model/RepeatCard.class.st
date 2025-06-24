@@ -1,3 +1,6 @@
+"
+This class represents a Repeat Card
+"
 Class {
 	#name : 'RepeatCard',
 	#superclass : 'Object',
