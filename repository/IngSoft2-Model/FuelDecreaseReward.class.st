@@ -3,10 +3,7 @@ This class represent a fuel decrese reward
 "
 Class {
 	#name : 'FuelDecreaseReward',
-	#superclass : 'Object',
-	#instVars : [
-		'magnitude'
-	],
+	#superclass : 'Reward',
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
 }

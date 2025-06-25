@@ -11,8 +11,18 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
+{ #category : 'creation' }
+Reward class >> of: aMagnitude [ 
+	^ self subclassResponsibility
+]
+
 { #category : 'operations' }
 Reward >> applyTo: aShip [
 
 	self subclassResponsibility.
+]
+
+{ #category : 'initializacion' }
+Reward >> initializeOf: aMagnitude [ 
+	^ self subclassResponsibility
 ]

@@ -3,10 +3,7 @@ This class represent a MAximum fuell reward
 "
 Class {
 	#name : 'MaximumFuelReward',
-	#superclass : 'Object',
-	#instVars : [
-		'magnitude'
-	],
+	#superclass : 'Reward',
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
 }
