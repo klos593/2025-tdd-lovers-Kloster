@@ -150,7 +150,7 @@ Game >> goBackFourSquares: aShip from: aPosition [
 	^ board goBackFourSquares: aShip from: aPosition 
 ]
 
-{ #category : 'testing' }
+{ #category : 'validation' }
 Game >> hasFinished [
 
 	^ finished
@@ -197,7 +197,7 @@ Game >> maximumRoll [
 	^ dices sum: [ :aDice | aDice rollMaximum ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'action' }
 Game >> move: aShip backwardsBy: aMagnitude [
 
 	^ aShip moveBackwards: aMagnitude in: board.

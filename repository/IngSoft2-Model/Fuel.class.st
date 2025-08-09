@@ -19,20 +19,44 @@ Fuel class >> with: anAmount upTo: aMaximumAmount in: aState [
 	^ self new initializeWith: anAmount upTo: aMaximumAmount in: aState.
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'comparing' }
 Fuel >> amountEquals: aFuelAmount [ 
 	
 	^ amount = aFuelAmount.
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
+Fuel >> amountNeeded [
+
+	^ amount abs
+]
+
+{ #category : 'accessing' }
+Fuel >> amountOfFuelNeeded [
+
+	^ fuelState amountOfFuelNeededBy: self
+]
+
+{ #category : 'penalty' }
 Fuel >> applyPenaltyTo: aShip thatStartedFrom: aPosition [
 
 	fuelState applyPenaltyTo: aShip thatStartedFrom: aPosition.
 ]
 
-{ #category : 'as yet unclassified' }
-Fuel >> consume: aFuelAmount by: aShip [
+{ #category : 'consuming' }
+Fuel >> borrowBy: aShip [
+
+	fuelState borrowBy: aShip
+]
+
+{ #category : 'comparing' }
+Fuel >> canLendFuelFor: aFuelAmount [
+
+	^ amount >= aFuelAmount
+]
+
+{ #category : 'consuming' }
+Fuel >> consume: aFuelAmount [
 
 	| updatedAmount updatedFuelState |
 	updatedAmount := amount - aFuelAmount.
@@ -62,6 +86,12 @@ Fuel >> maximumEquals: aMaximumAmount [
 	^ maximumAmount = aMaximumAmount.
 ]
 
+{ #category : 'accessing' }
+Fuel >> maximumFuel [
+
+	^ maximumAmount
+]
+
 { #category : 'adding' }
 Fuel >> modifyBy: aFuelAmount [
 
@@ -74,7 +104,7 @@ Fuel >> modifyMaximumAmountBy: aFuelAmount [
 	^ self class with: amount upTo: aFuelAmount + maximumAmount in: fuelState.
 ]
 
-{ #category : 'window management' }
+{ #category : 'restoring' }
 Fuel >> restore [
 
 	^ self class with: maximumAmount upTo: maximumAmount in: HasFuelState new.

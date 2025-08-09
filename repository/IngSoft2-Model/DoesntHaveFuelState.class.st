@@ -9,8 +9,20 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'borrowing' }
+DoesntHaveFuelState >> amountOfFuelNeededBy: someFuel [
+
+	^ someFuel amountNeeded
+]
+
+{ #category : 'penalty' }
 DoesntHaveFuelState >> applyPenaltyTo: aShip thatStartedFrom: aPosition [
 
 	aShip penalizeAndReturnTo: aPosition.
+]
+
+{ #category : 'borrowing' }
+DoesntHaveFuelState >> borrowBy: aShip [
+
+	aShip borrowFuelFromAllies
 ]

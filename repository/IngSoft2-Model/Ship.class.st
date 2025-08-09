@@ -54,10 +54,23 @@ Ship >> applyRollModifier: aModifier [
 	rollModifier := rollModifier + aModifier
 ]
 
+{ #category : 'move' }
+Ship >> borrowFuelFromAllies [
+
+	| fuelNeededToTravel lendingAlly updatedFuelState |
+	fuelNeededToTravel := fuel amountOfFuelNeeded.
+	lendingAlly := allies
+		               detect: [ :anAlly |
+		               anAlly canLendFuelFor: fuelNeededToTravel ]
+		               ifNone: [ lendingAlly := NullShip new ].
+	updatedFuelState := lendingAlly consumeFuelByAlly: fuelNeededToTravel.
+	fuel := Fuel with: 0 upTo: fuel maximumFuel in: updatedFuelState
+]
+
 { #category : 'testing' }
 Ship >> canLendFuelFor: fuelNeededToTravel [
 
-	^ fuel >= fuelNeededToTravel
+	^ fuel canLendFuelFor: fuelNeededToTravel
 ]
 
 { #category : 'testing' }
@@ -79,26 +92,18 @@ Ship >> cards [
 ]
 
 { #category : 'update' }
-Ship >> consumeFuel: squaresToTravel from: initialPosition [ 
-	
-	fuel := fuel consume: squaresToTravel by: self.
-	fuel applyPenaltyTo: self thatStartedFrom: initialPosition.
-	"[ self hasEnoughFuelToTravel: squaresToTravel ]
-		on: Error
-		do: [
-			fuelNeededToTravel := fuel abs.
-			lendingAlly := allies
-				               detect: [ :anAlly |
-				               anAlly canLendFuelFor: fuelNeededToTravel ]
-				               ifNone: [ lendingAlly := NullShip new ].
-			lendingAlly consumeFuelByAlly: fuelNeededToTravel.
-			fuel := 0 ]"
+Ship >> consumeFuel: squaresToTravel from: initialPosition [
+
+	fuel := fuel consume: squaresToTravel.
+	fuel borrowBy: self.
+	fuel applyPenaltyTo: self thatStartedFrom: initialPosition
 ]
 
 { #category : 'update' }
 Ship >> consumeFuelByAlly: fuelToConsume [
 
-	fuel := fuel - fuelToConsume
+	fuel := fuel consume: fuelToConsume.
+	^ HasFuelState new
 ]
 
 { #category : 'accessing' }
@@ -193,7 +198,7 @@ Ship >> modifyFuelBy: aFuelAmount [
 	fuel := fuel modifyBy: aFuelAmount
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'move' }
 Ship >> moveBackwards: aMagnitude in: aBoard [
 
 	| shipNewPosition |
@@ -226,7 +231,7 @@ Ship >> penalizeAndReturnTo: shipInitialPosition [
 	allies first restoreFuel
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'move' }
 Ship >> performMovementFrom: anInitialPosition to: aFinalPosition on: aBoard [
 	
 	| squaresTraveled |
