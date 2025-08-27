@@ -33,3 +33,9 @@ OverloadCard >> cancelEffectIn: aGame [
 
 	aGame applyRollModifier: 2
 ]
+
+{ #category : 'comparing' }
+OverloadCard >> compare: aShip and: anotherShip [
+
+	^ false
+]

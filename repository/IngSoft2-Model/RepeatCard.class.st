@@ -25,3 +25,9 @@ RepeatCard >> bePlayedBy: aPlayingShip affecting: anAffectedCard and: anAffected
 		in: aGame.
 	aPlayingShip remove: self
 ]
+
+{ #category : 'comparing' }
+RepeatCard >> compare: aShip and: anotherShip [
+
+	^ false
+]
