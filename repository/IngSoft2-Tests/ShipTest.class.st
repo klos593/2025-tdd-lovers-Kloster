@@ -1,16 +1,39 @@
 Class {
 	#name : 'ShipTest',
 	#superclass : 'TestCase',
+	#instVars : [
+		'twentySquares',
+		'sideToRoll',
+		'expectedPosition',
+		'aWormHole',
+		'aBlueShip',
+		'aBlackShip',
+		'aSetDice',
+		'aDistributionManager',
+		'aPlainSquare',
+		'aProbabilityOfOne',
+		'aPlainSquareProbabilisticEvent',
+		'aDistribution',
+		'aBoard',
+		'aRewardManager',
+		'zeroReward',
+		'zeroRewardProbabilisticEvent',
+		'aCardManager',
+		'anAllyCard',
+		'anAllyCardProbabilisticEvent',
+		'someShips',
+		'someDices',
+		'aGameBuilder',
+		'aGame'
+	],
 	#category : 'IngSoft2-Tests',
 	#package : 'IngSoft2-Tests'
 }
 
-{ #category : 'tests' }
-ShipTest >> testWhenAShipMakesOneMoveOfTwoSquaresThenItsPositionIsTwo [
-
-	| aBoard aBlueShip twentySquares aSetDice aWormHole sideToRoll aDistributionManager aDistribution expectedPosition someShips someDices aGame aPlainSquare aProbabilityOfOne aPlainSquareProbabilisticEvent aBlackShip aRewardManager zeroReward zeroRewardProbabilisticEvent aGameBuilder aCardManager anAllyCard anAllyCardProbabilisticEvent |
+{ #category : 'running' }
+ShipTest >> setUp [
 	twentySquares := 20.
-	sideToRoll := #(2) asOrderedCollection.
+	sideToRoll := #( 2 ) asOrderedCollection.
 
 	expectedPosition := Position at: 2 in: 1.
 
@@ -39,10 +62,12 @@ ShipTest >> testWhenAShipMakesOneMoveOfTwoSquaresThenItsPositionIsTwo [
 		                                for: zeroReward
 		                                with: aProbabilityOfOne.
 	aRewardManager add: zeroRewardProbabilisticEvent.
-	
+
 	aCardManager := ProbablisiticEventsManager new.
 	anAllyCard := AllyCard new.
-	anAllyCardProbabilisticEvent := ProbabilisticEvent for: anAllyCard with: aProbabilityOfOne.
+	anAllyCardProbabilisticEvent := ProbabilisticEvent
+		                                for: anAllyCard
+		                                with: aProbabilityOfOne.
 	aCardManager add: anAllyCardProbabilisticEvent.
 
 	someShips := OrderedCollection new.
@@ -58,10 +83,13 @@ ShipTest >> testWhenAShipMakesOneMoveOfTwoSquaresThenItsPositionIsTwo [
 	aGameBuilder setDices: someDices.
 	aGameBuilder setRewards: aRewardManager.
 	aGameBuilder setAvailableCards: aCardManager.
-	aGame := aGameBuilder build.
+	aGame := aGameBuilder build
+]
+
+{ #category : 'tests' }
+ShipTest >> testWhenAShipMakesOneMoveOfTwoSquaresThenItsPositionIsTwo [
 
 	aGame nextTurnPlay.
-
 	self assert: (aBlueShip currentPositionEquals: expectedPosition)
 ]
 
