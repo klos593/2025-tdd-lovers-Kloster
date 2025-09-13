@@ -20,6 +20,7 @@ AccelerationCardTest >> testWhenAShipPlaysAnAccelerationCardThenAllRolledNumbers
 
 	| twentySquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices aDistributionManager aDistribution aProbabilityOfOne aRewardManager zeroReward zeroRewardRewardProbabilisticEvent aGameBuilder aCardManager aPlainSquare aPlainSquareProbabilisticEvent anAccelerationCard anAccelerationCardProbabilisticEvent expectedPosition expectedFuel aNullCard |
 	twentySquares := 20.
+	
 	sideToRoll := #( 1 ) asOrderedCollection.
 	
 	expectedPosition := Position at: 2 in: 1.
