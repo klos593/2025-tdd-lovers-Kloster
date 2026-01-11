@@ -1,34 +1,39 @@
 Class {
 	#name : 'OverloadCardTest',
 	#superclass : 'TestCase',
+	#instVars : [
+		'twentySquares',
+		'aWormHole',
+		'aBlueShip',
+		'aBlackShip',
+		'aDistributionManager',
+		'aPlainSquare',
+		'aProbabilityOfOne',
+		'aPlainSquareProbabilisticEvent',
+		'aRewardManager',
+		'zeroReward',
+		'zeroRewardRewardProbabilisticEvent',
+		'aCardManager',
+		'anOverloadCard',
+		'anOverloadCardProbabilisticEvent',
+		'someShips',
+		'aGameBuilder',
+		'aNullCard'
+	],
 	#category : 'IngSoft2-Tests',
 	#package : 'IngSoft2-Tests'
 }
 
-{ #category : 'asserting' }
-OverloadCardTest >> should: anErrorBlock raise: anErrorClass withMessageText: anErrorMessage [
+{ #category : 'running' }
+OverloadCardTest >> setUp [
 
-	self
-		should: anErrorBlock
-		raise: anErrorClass
-		withExceptionDo: [ :error |
-		self assert: error messageText equals: anErrorMessage ]
-]
+	super setUp.
 
-{ #category : 'tests' }
-OverloadCardTest >> testWhenAShipPlaysAnOverloadCardAndTheRolledNumberIsSmallerThanTwoThenTheShipMovesBackwards [
-
-	| twentySquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices aDistributionManager aDistribution aProbabilityOfOne aRewardManager zeroReward zeroRewardRewardProbabilisticEvent aGameBuilder aCardManager anOverloadCard anOverloadCardProbabilisticEvent aPlainSquare aPlainSquareProbabilisticEvent expectedPosition expectedFuel aNullCard |
 	twentySquares := 20.
-	sideToRoll := #( 1 ) asOrderedCollection.
-
-	expectedPosition := Position at: 0 in: 1.
-	expectedFuel := Fuel with: 0 upTo: 2 in: HasFuelState new.
 
 	aWormHole := WormHole between: 18 and: 19.
 	aBlueShip := Ship called: 'BlueShip'.
 	aBlackShip := Ship called: 'BlackShip'.
-	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
 	aDistributionManager := ProbablisiticEventsManager new.
 	aPlainSquare := PlainSquare new.
@@ -37,12 +42,7 @@ OverloadCardTest >> testWhenAShipPlaysAnOverloadCardAndTheRolledNumberIsSmallerT
 		                                  for: aPlainSquare
 		                                  with: aProbabilityOfOne.
 	aDistributionManager add: aPlainSquareProbabilisticEvent.
-	aDistribution := aDistributionManager generateFor: twentySquares.
 
-	aBoard := Board
-		          with: twentySquares
-		          and: aWormHole
-		          distributedBy: aDistribution.
 
 	aRewardManager := ProbablisiticEventsManager new.
 	zeroReward := FuelDecreaseReward of: 0.
@@ -59,21 +59,53 @@ OverloadCardTest >> testWhenAShipPlaysAnOverloadCardAndTheRolledNumberIsSmallerT
 	aCardManager add: anOverloadCardProbabilisticEvent.
 
 	someShips := OrderedCollection new.
-	someDices := OrderedCollection new.
 	someShips add: aBlueShip.
 	someShips add: aBlackShip.
-	someDices add: aLoadedDice.
 
 	aGameBuilder := GameBuilder new.
 
-	aGameBuilder setBoard: aBoard.
 	aGameBuilder setShips: someShips.
-	aGameBuilder setDices: someDices.
 	aGameBuilder setRewards: aRewardManager.
 	aGameBuilder setAvailableCards: aCardManager.
+
+	aNullCard := NullCard new
+]
+
+{ #category : 'asserting' }
+OverloadCardTest >> should: anErrorBlock raise: anErrorClass withMessageText: anErrorMessage [
+
+	self
+		should: anErrorBlock
+		raise: anErrorClass
+		withExceptionDo: [ :error |
+		self assert: error messageText equals: anErrorMessage ]
+]
+
+{ #category : 'tests' }
+OverloadCardTest >> testWhenAShipPlaysAnOverloadCardAndTheRolledNumberIsSmallerThanTwoThenTheShipMovesBackwards [
+
+	| aGame sideToRoll aLoadedDice aBoard aDistribution expectedPosition expectedFuel someDices |
+	sideToRoll := #( 1 ) asOrderedCollection.
+
+	expectedPosition := Position at: 0 in: 1.
+	expectedFuel := Fuel with: 0 upTo: 2 in: HasFuelState new.
+
+	aLoadedDice := LoadedDice toRoll: sideToRoll.
+
+	aDistribution := aDistributionManager generateFor: twentySquares.
+
+	aBoard := Board
+		          with: twentySquares
+		          and: aWormHole
+		          distributedBy: aDistribution.
+
+	someDices := OrderedCollection new.
+	someDices add: aLoadedDice.
+
+	aGameBuilder setBoard: aBoard.
+	aGameBuilder setDices: someDices.
 	aGame := aGameBuilder build.
 
-	aNullCard := NullCard new.
 
 	aGame nextTurnPlay.
 	aGame
@@ -91,41 +123,20 @@ OverloadCardTest >> testWhenAShipPlaysAnOverloadCardAndTheRolledNumberIsSmallerT
 { #category : 'tests' }
 OverloadCardTest >> testWhenAShipPlaysAnOverloadCardThenItIsNoLongerInItsHand [
 
-	| fiveSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices aDistributionManager aDistribution aPlainSquare aProbabilityOfOne aPlainSquareProbabilisticEvent aRewardManager zeroReward zeroRewardRewardProbabilisticEvent aGameBuilder anOverloadCard anOverloadCardProbabilisticEvent expectedCards anAccelerationCard anAccelerationCardProbabilisticEvent aSetCardManager aNullCard |
-	fiveSquares := 5.
+	| aGame sideToRoll aLoadedDice aBoard someDices  aDistribution expectedCards anAccelerationCard anAccelerationCardProbabilisticEvent aSetCardManager |
 	sideToRoll := #( 10 ) asOrderedCollection.
 
-	aWormHole := WormHole between: 2 and: 3.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
-	aDistributionManager := ProbablisiticEventsManager new.
-	aPlainSquare := PlainSquare new.
-	aProbabilityOfOne := 1.
-	aPlainSquareProbabilisticEvent := ProbabilisticEvent
-		                                  for: aPlainSquare
-		                                  with: aProbabilityOfOne.
-	aDistributionManager add: aPlainSquareProbabilisticEvent.
-	aDistribution := aDistributionManager generateFor: fiveSquares.
+	aDistribution := aDistributionManager generateFor: twentySquares.
 
 	aBoard := Board
-		          with: fiveSquares
+		          with: twentySquares
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
-	aRewardManager := ProbablisiticEventsManager new.
-	zeroReward := FuelDecreaseReward of: 0.
-	zeroRewardRewardProbabilisticEvent := ProbabilisticEvent
-		                                      for: zeroReward
-		                                      with: aProbabilityOfOne.
-	aRewardManager add: zeroRewardRewardProbabilisticEvent.
 
 	aSetCardManager := SetProbablisiticEventsManager new.
-	anOverloadCard := OverloadCard new.
-	anOverloadCardProbabilisticEvent := ProbabilisticEvent
-		                                for: anOverloadCard
-		                                with: aProbabilityOfOne.
 	aSetCardManager add: anOverloadCardProbabilisticEvent.
 
 	anAccelerationCard := AccelerationCard new.
@@ -134,25 +145,17 @@ OverloadCardTest >> testWhenAShipPlaysAnOverloadCardThenItIsNoLongerInItsHand [
 		                                        with: aProbabilityOfOne.
 	aSetCardManager add: anAccelerationCardProbabilisticEvent.
 
-	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
 
-	aGameBuilder := GameBuilder new.
-
 	aGameBuilder setBoard: aBoard.
-	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setRewards: aRewardManager.
 	aGameBuilder setAvailableCards: aSetCardManager.
 	aGame := aGameBuilder build.
 
 	expectedCards := OrderedCollection new.
 	expectedCards add: anAccelerationCard.
 
-	aNullCard := NullCard new.
 	aGame
 		play: anOverloadCard
 		by: aBlueShip
@@ -165,25 +168,14 @@ OverloadCardTest >> testWhenAShipPlaysAnOverloadCardThenItIsNoLongerInItsHand [
 { #category : 'tests' }
 OverloadCardTest >> testWhenAShipPlaysAnOverloadCardThenTheRolledNumberOfTheTargetShipIsReducedByTwo [
 
-	| twentySquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices aDistributionManager aDistribution aProbabilityOfOne aRewardManager zeroReward zeroRewardRewardProbabilisticEvent aGameBuilder aCardManager anOverloadCard anOverloadCardProbabilisticEvent aPlainSquare aPlainSquareProbabilisticEvent expectedPosition expectedFuel aNullCard |
-	twentySquares := 20.
+	|  aGame sideToRoll aLoadedDice aBoard someDices aDistribution expectedPosition expectedFuel |
 	sideToRoll := #( 3 ) asOrderedCollection.
 
 	expectedPosition := Position at: 4 in: 1.
 	expectedFuel := Fuel with: 2 upTo: 6 in: HasFuelState new.
 
-	aWormHole := WormHole between: 18 and: 19.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
-	aDistributionManager := ProbablisiticEventsManager new.
-	aPlainSquare := PlainSquare new.
-	aProbabilityOfOne := 1.
-	aPlainSquareProbabilisticEvent := ProbabilisticEvent
-		                                  for: aPlainSquare
-		                                  with: aProbabilityOfOne.
-	aDistributionManager add: aPlainSquareProbabilisticEvent.
 	aDistribution := aDistributionManager generateFor: twentySquares.
 
 	aBoard := Board
@@ -191,36 +183,12 @@ OverloadCardTest >> testWhenAShipPlaysAnOverloadCardThenTheRolledNumberOfTheTarg
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
-	aRewardManager := ProbablisiticEventsManager new.
-	zeroReward := FuelDecreaseReward of: 0.
-	zeroRewardRewardProbabilisticEvent := ProbabilisticEvent
-		                                      for: zeroReward
-		                                      with: aProbabilityOfOne.
-	aRewardManager add: zeroRewardRewardProbabilisticEvent.
-
-	aCardManager := ProbablisiticEventsManager new.
-	anOverloadCard := OverloadCard new.
-	anOverloadCardProbabilisticEvent := ProbabilisticEvent
-		                                    for: anOverloadCard
-		                                    with: aProbabilityOfOne.
-	aCardManager add: anOverloadCardProbabilisticEvent.
-
-	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
 
-	aGameBuilder := GameBuilder new.
-
 	aGameBuilder setBoard: aBoard.
-	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
 	aGame := aGameBuilder build.
-
-	aNullCard := NullCard new.
 
 	aGame nextTurnPlay.
 	aGame
@@ -239,60 +207,31 @@ OverloadCardTest >> testWhenAShipPlaysAnOverloadCardThenTheRolledNumberOfTheTarg
 { #category : 'tests' }
 OverloadCardTest >> testWhenAShipTriesToPlayAnOverloadCardThatIsNotInItsHandThenInvalid [
 
-	| fiveSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices aDistributionManager aDistribution aPlainSquare aProbabilityOfOne aPlainSquareProbabilisticEvent aRewardManager zeroReward zeroRewardRewardProbabilisticEvent aGameBuilder aCardManager anAllyCard anOverloadCard anAllyCardProbabilisticEvent aNullCard |
-	fiveSquares := 5.
+	| aGame sideToRoll aLoadedDice aBoard someDices aDistribution anAllyCard  anAllyCardProbabilisticEvent  |
+
 	sideToRoll := #( 10 ) asOrderedCollection.
 
-	aWormHole := WormHole between: 2 and: 3.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
-	aDistributionManager := ProbablisiticEventsManager new.
-	aPlainSquare := PlainSquare new.
-	aProbabilityOfOne := 1.
-	aPlainSquareProbabilisticEvent := ProbabilisticEvent
-		                                  for: aPlainSquare
-		                                  with: aProbabilityOfOne.
-	aDistributionManager add: aPlainSquareProbabilisticEvent.
-	aDistribution := aDistributionManager generateFor: fiveSquares.
+	aDistribution := aDistributionManager generateFor: twentySquares .
 
 	aBoard := Board
-		          with: fiveSquares
+		          with: twentySquares 
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
-	aRewardManager := ProbablisiticEventsManager new.
-	zeroReward := FuelDecreaseReward of: 0.
-	zeroRewardRewardProbabilisticEvent := ProbabilisticEvent
-		                                      for: zeroReward
-		                                      with: aProbabilityOfOne.
-	aRewardManager add: zeroRewardRewardProbabilisticEvent.
-
-	aCardManager := ProbablisiticEventsManager new.
 	anAllyCard := AllyCard new.
 	anAllyCardProbabilisticEvent := ProbabilisticEvent
 		                                        for: anAllyCard
 		                                        with: aProbabilityOfOne.
 	aCardManager add: anAllyCardProbabilisticEvent.
 
-	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
 
-	aGameBuilder := GameBuilder new.
-
 	aGameBuilder setBoard: aBoard.
-	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
 	aGame := aGameBuilder build.
-
-	anOverloadCard := OverloadCard new.
-	aNullCard := NullCard new.
 
 	self
 		should: [
@@ -308,58 +247,24 @@ OverloadCardTest >> testWhenAShipTriesToPlayAnOverloadCardThatIsNotInItsHandThen
 { #category : 'tests' }
 OverloadCardTest >> testWhenAShipTriesToPlayAnOverloadCardWhenItIsNotItsTurnThenInvalid [
 
-	| fiveSquares aWormHole aGame sideToRoll aBlueShip aBlackShip aLoadedDice aBoard someShips someDices aDistributionManager aDistribution aProbabilityOfOne aRewardManager zeroReward zeroRewardRewardProbabilisticEvent aGameBuilder aCardManager anOverloadCard anOverloadCardProbabilisticEvent aPlainSquare aPlainSquareProbabilisticEvent aNullCard |
-	fiveSquares := 5.
+	| aGame sideToRoll aLoadedDice aBoard someDices aDistribution |
+	
 	sideToRoll := #( 1 ) asOrderedCollection.
-
-	aWormHole := WormHole between: 2 and: 3.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
-	aDistributionManager := ProbablisiticEventsManager new.
-	aPlainSquare := PlainSquare new.
-	aProbabilityOfOne := 1.
-	aPlainSquareProbabilisticEvent := ProbabilisticEvent
-		                                  for: aPlainSquare
-		                                  with: aProbabilityOfOne.
-	aDistributionManager add: aPlainSquareProbabilisticEvent.
-	aDistribution := aDistributionManager generateFor: fiveSquares.
+	aDistribution := aDistributionManager generateFor: twentySquares .
 
 	aBoard := Board
-		          with: fiveSquares
+		          with: twentySquares 
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
-	aRewardManager := ProbablisiticEventsManager new.
-	zeroReward := FuelDecreaseReward of: 0.
-	zeroRewardRewardProbabilisticEvent := ProbabilisticEvent
-		                                      for: zeroReward
-		                                      with: aProbabilityOfOne.
-	aRewardManager add: zeroRewardRewardProbabilisticEvent.
-
-	aCardManager := ProbablisiticEventsManager new.
-	anOverloadCard := OverloadCard new.
-	anOverloadCardProbabilisticEvent := ProbabilisticEvent
-		                                for: anOverloadCard
-		                                with: aProbabilityOfOne.
-	aCardManager add: anOverloadCardProbabilisticEvent.
-
-	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
 
-	aGameBuilder := GameBuilder new.
-
 	aGameBuilder setBoard: aBoard.
-	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
 	aGame := aGameBuilder build.
-	aNullCard := NullCard new.
 
 	self
 		should: [

@@ -1,9 +1,63 @@
 Class {
 	#name : 'HyperJumpTest',
 	#superclass : 'TestCase',
+	#instVars : [
+		'twentySquares',
+		'aWormHole',
+		'aBlueShip',
+		'aBlackShip',
+		'aRewardManager',
+		'zeroReward',
+		'zeroRewardRewardProbabilisticEvent',
+		'aProbabilityOfOne',
+		'aCardManager',
+		'anAllyCard',
+		'anAllyCardProbabilisticEvent',
+		'someShips',
+		'aGameBuilder'
+	],
 	#category : 'IngSoft2-Tests',
 	#package : 'IngSoft2-Tests'
 }
+
+{ #category : 'running' }
+HyperJumpTest >> setUp [
+
+	super setUp.
+
+	twentySquares := 20.
+
+
+	aWormHole := WormHole between: 17 and: 18.
+	aBlueShip := Ship called: 'BlueShip'.
+	aBlackShip := Ship called: 'BlackShip'.
+
+
+	aProbabilityOfOne := 1.
+	aRewardManager := ProbablisiticEventsManager new.
+	zeroReward := FuelDecreaseReward of: 0.
+	zeroRewardRewardProbabilisticEvent := ProbabilisticEvent
+		                                      for: zeroReward
+		                                      with: aProbabilityOfOne.
+	aRewardManager add: zeroRewardRewardProbabilisticEvent.
+
+	aCardManager := ProbablisiticEventsManager new.
+	anAllyCard := AllyCard new.
+	anAllyCardProbabilisticEvent := ProbabilisticEvent
+		                                for: anAllyCard
+		                                with: aProbabilityOfOne.
+	aCardManager add: anAllyCardProbabilisticEvent.
+
+	someShips := OrderedCollection new.
+	someShips add: aBlueShip.
+	someShips add: aBlackShip.
+
+	aGameBuilder := GameBuilder new.
+
+	aGameBuilder setShips: someShips.
+	aGameBuilder setRewards: aRewardManager.
+	aGameBuilder setAvailableCards: aCardManager
+]
 
 { #category : 'asserting' }
 HyperJumpTest >> should: anErrorBlock raise: anErrorClass withMessageText: anErrorMessage [
@@ -18,16 +72,13 @@ HyperJumpTest >> should: anErrorBlock raise: anErrorClass withMessageText: anErr
 { #category : 'tests' }
 HyperJumpTest >> testWhenASecondShipTakesAHyperJumpSquareThatWasTakenBeforeThenItTakesTheSecondParsecValueAndMovesAccordingly [
 
-	| twentySquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll aBlackShip aDistribution someParsecs aGame expectedPosition aRatio aDistributionManager aHyperJumpSquare aProbabilityOfOne aPlainSquareProbabilisticEvent aRewardManager zeroReward zeroRewardRewardProbabilisticEvent aGameBuilder aCardManager anAllyCard anAllyCardProbabilisticEvent aParsecJumpOfFive aParsecJumpOfFour aParsecJumpOfSix anotherParsecJumpOfFive |
-	twentySquares := 20.
+	| aBoard sideToRoll aDistribution someParsecs aGame expectedPosition aRatio aDistributionManager aHyperJumpSquare aPlainSquareProbabilisticEvent aParsecJumpOfFive aParsecJumpOfFour aParsecJumpOfSix anotherParsecJumpOfFive aLoadedDice someDices |
+
 	sideToRoll := #(7) asOrderedCollection.
 	aRatio := 1.
 
 	expectedPosition := Position at: 12 in: 1.
 
-	aWormHole := WormHole between: 17 and: 18.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 	
 	aParsecJumpOfFive := Parsec with: 5.
@@ -42,7 +93,6 @@ HyperJumpTest >> testWhenASecondShipTakesAHyperJumpSquareThatWasTakenBeforeThenI
 
 	aDistributionManager := ProbablisiticEventsManager new.
 	aHyperJumpSquare := HyperJumpSquare with: someParsecs and: aRatio.
-	aProbabilityOfOne := 1.
 	aPlainSquareProbabilisticEvent := ProbabilisticEvent
 		                                  for: aHyperJumpSquare
 		                                  with: aProbabilityOfOne.
@@ -54,31 +104,11 @@ HyperJumpTest >> testWhenASecondShipTakesAHyperJumpSquareThatWasTakenBeforeThenI
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
-	aRewardManager := ProbablisiticEventsManager new.
-	zeroReward := FuelDecreaseReward of: 0.
-	zeroRewardRewardProbabilisticEvent := ProbabilisticEvent
-		                                      for: zeroReward
-		                                      with: aProbabilityOfOne.
-	aRewardManager add: zeroRewardRewardProbabilisticEvent.
-	
-	aCardManager := ProbablisiticEventsManager new.
-	anAllyCard := AllyCard new.
-	anAllyCardProbabilisticEvent := ProbabilisticEvent for: anAllyCard with: aProbabilityOfOne.
-	aCardManager add: anAllyCardProbabilisticEvent.
-
-	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
 
-	aGameBuilder := GameBuilder new.
-
 	aGameBuilder setBoard: aBoard.
-	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
 	aGame := aGameBuilder build.
 
 	aGame nextTurnPlay.
@@ -90,14 +120,12 @@ HyperJumpTest >> testWhenASecondShipTakesAHyperJumpSquareThatWasTakenBeforeThenI
 { #category : 'tests' }
 HyperJumpTest >> testWhenAShipTakesAHyperJumpSquareAndAfterTheJumpItGoesThroughTheFinalSquareThenTheGameEnds [
 
-	| tenSquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll aBlackShip aDistribution someParsecs aGame aRatio aDistributionManager aHyperJumpSquare aProbabilityOfOne aPlainSquareProbabilisticEvent aRewardManager zeroReward zeroRewardRewardProbabilisticEvent aGameBuilder aCardManager anAllyCard anAllyCardProbabilisticEvent aParsecJumpOfFive aParsecJumpOfThree aParsecJumpOfTwo |
+	| tenSquares aBoard someDices aLoadedDice sideToRoll  aDistribution someParsecs aGame aRatio aDistributionManager aHyperJumpSquare  aPlainSquareProbabilisticEvent  aParsecJumpOfFive aParsecJumpOfThree aParsecJumpOfTwo |
 	tenSquares := 10.
 	sideToRoll := #( 7 ) asOrderedCollection.
 	aRatio := 1.
 
 	aWormHole := WormHole between: 3 and: 4.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
 	aParsecJumpOfFive := Parsec with: 5.
@@ -110,7 +138,6 @@ HyperJumpTest >> testWhenAShipTakesAHyperJumpSquareAndAfterTheJumpItGoesThroughT
 
 	aDistributionManager := ProbablisiticEventsManager new.
 	aHyperJumpSquare := HyperJumpSquare with: someParsecs and: aRatio.
-	aProbabilityOfOne := 1.
 	aPlainSquareProbabilisticEvent := ProbabilisticEvent
 		                                  for: aHyperJumpSquare
 		                                  with: aProbabilityOfOne.
@@ -122,33 +149,12 @@ HyperJumpTest >> testWhenAShipTakesAHyperJumpSquareAndAfterTheJumpItGoesThroughT
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
-	aRewardManager := ProbablisiticEventsManager new.
-	zeroReward := FuelDecreaseReward of: 0.
-	zeroRewardRewardProbabilisticEvent := ProbabilisticEvent
-		                                      for: zeroReward
-		                                      with: aProbabilityOfOne.
-	aRewardManager add: zeroRewardRewardProbabilisticEvent.
 
-	aCardManager := ProbablisiticEventsManager new.
-	anAllyCard := AllyCard new.
-	anAllyCardProbabilisticEvent := ProbabilisticEvent
-		                                for: anAllyCard
-		                                with: aProbabilityOfOne.
-	aCardManager add: anAllyCardProbabilisticEvent.
-
-	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
 
-	aGameBuilder := GameBuilder new.
-
 	aGameBuilder setBoard: aBoard.
-	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
 	aGame := aGameBuilder build.
 
 	aGame nextTurnPlay.
@@ -159,7 +165,7 @@ HyperJumpTest >> testWhenAShipTakesAHyperJumpSquareAndAfterTheJumpItGoesThroughT
 { #category : 'tests' }
 HyperJumpTest >> testWhenAShipTakesAHyperJumpSquareAndIncrementALapThenItsPositionChangesAccordingly [
 
-	| tenSquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll threeLaps aBlackShip aDistribution someParsecs aGame expectedPosition aRatio aDistributionManager aHyperJumpSquare aProbabilityOfOne aPlainSquareProbabilisticEvent aRewardManager zeroReward zeroRewardRewardProbabilisticEvent aGameBuilder aCardManager anAllyCard anAllyCardProbabilisticEvent aParsecJumpOfFive aParsecJumpOfThree aParsecJumpOfTwo |
+	| tenSquares  aBoard  someDices aLoadedDice sideToRoll threeLaps aDistribution someParsecs aGame expectedPosition aRatio aDistributionManager aHyperJumpSquare  aPlainSquareProbabilisticEvent  aParsecJumpOfFive aParsecJumpOfThree aParsecJumpOfTwo |
 	tenSquares := 10.
 	sideToRoll := #( 7 ) asOrderedCollection.
 	threeLaps := 3.
@@ -168,8 +174,6 @@ HyperJumpTest >> testWhenAShipTakesAHyperJumpSquareAndIncrementALapThenItsPositi
 	expectedPosition := Position at: 2 in: 2.
 
 	aWormHole := WormHole between: 3 and: 4.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
 	aParsecJumpOfFive := Parsec with: 5.
@@ -182,7 +186,6 @@ HyperJumpTest >> testWhenAShipTakesAHyperJumpSquareAndIncrementALapThenItsPositi
 
 	aDistributionManager := ProbablisiticEventsManager new.
 	aHyperJumpSquare := HyperJumpSquare with: someParsecs and: aRatio.
-	aProbabilityOfOne := 1.
 	aPlainSquareProbabilisticEvent := ProbabilisticEvent
 		                                  for: aHyperJumpSquare
 		                                  with: aProbabilityOfOne.
@@ -194,34 +197,12 @@ HyperJumpTest >> testWhenAShipTakesAHyperJumpSquareAndIncrementALapThenItsPositi
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
-	aRewardManager := ProbablisiticEventsManager new.
-	zeroReward := FuelDecreaseReward of: 0.
-	zeroRewardRewardProbabilisticEvent := ProbabilisticEvent
-		                                      for: zeroReward
-		                                      with: aProbabilityOfOne.
-	aRewardManager add: zeroRewardRewardProbabilisticEvent.
-
-	aCardManager := ProbablisiticEventsManager new.
-	anAllyCard := AllyCard new.
-	anAllyCardProbabilisticEvent := ProbabilisticEvent
-		                                for: anAllyCard
-		                                with: aProbabilityOfOne.
-	aCardManager add: anAllyCardProbabilisticEvent.
-
-	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
-
-	aGameBuilder := GameBuilder new.
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setLaps: threeLaps.
-	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
 	aGame := aGameBuilder build.
 
 	aGame nextTurnPlay.
@@ -233,16 +214,13 @@ HyperJumpTest >> testWhenAShipTakesAHyperJumpSquareAndIncrementALapThenItsPositi
 { #category : 'tests' }
 HyperJumpTest >> testWhenAShipTakesAHyperJumpSquareThenItsFuelIsConsumedCorrectly [
 
-	| twentySquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll aBlackShip aDistribution someParsecs aGame expectedFuel aRatio aDistributionManager aHyperJumpSquare aProbabilityOfOne aPlainSquareProbabilisticEvent aRewardManager zeroReward zeroRewardRewardProbabilisticEvent aGameBuilder aCardManager anAllyCard anAllyCardProbabilisticEvent aParsecJumpOfFive aParsecJumpOfFour aParsecJumpOfSix anotherParsecJumpOfFive |
-	twentySquares := 20.
+	|  aBoard someDices aLoadedDice sideToRoll aDistribution someParsecs aGame expectedFuel aRatio aDistributionManager aHyperJumpSquare aPlainSquareProbabilisticEvent aParsecJumpOfFive aParsecJumpOfFour aParsecJumpOfSix anotherParsecJumpOfFive |
+
 	sideToRoll := #( 7 ) asOrderedCollection.
 	aRatio := 1.
 
 	expectedFuel := Fuel with: 1 upTo: 14 in: HasFuelState new.
 
-	aWormHole := WormHole between: 17 and: 18.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
 	aParsecJumpOfFive := Parsec with: 5.
@@ -257,7 +235,6 @@ HyperJumpTest >> testWhenAShipTakesAHyperJumpSquareThenItsFuelIsConsumedCorrectl
 
 	aDistributionManager := ProbablisiticEventsManager new.
 	aHyperJumpSquare := HyperJumpSquare with: someParsecs and: aRatio.
-	aProbabilityOfOne := 1.
 	aPlainSquareProbabilisticEvent := ProbabilisticEvent
 		                                  for: aHyperJumpSquare
 		                                  with: aProbabilityOfOne.
@@ -269,33 +246,12 @@ HyperJumpTest >> testWhenAShipTakesAHyperJumpSquareThenItsFuelIsConsumedCorrectl
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
-	aRewardManager := ProbablisiticEventsManager new.
-	zeroReward := FuelDecreaseReward of: 0.
-	zeroRewardRewardProbabilisticEvent := ProbabilisticEvent
-		                                      for: zeroReward
-		                                      with: aProbabilityOfOne.
-	aRewardManager add: zeroRewardRewardProbabilisticEvent.
-
-	aCardManager := ProbablisiticEventsManager new.
-	anAllyCard := AllyCard new.
-	anAllyCardProbabilisticEvent := ProbabilisticEvent
-		                                for: anAllyCard
-		                                with: aProbabilityOfOne.
-	aCardManager add: anAllyCardProbabilisticEvent.
-
-	someShips := OrderedCollection new.
+	
 	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
 
-	aGameBuilder := GameBuilder new.
-
 	aGameBuilder setBoard: aBoard.
-	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
 	aGame := aGameBuilder build.
 
 	aGame nextTurnPlay.
@@ -307,17 +263,14 @@ HyperJumpTest >> testWhenAShipTakesAHyperJumpSquareThenItsFuelIsConsumedCorrectl
 { #category : 'tests' }
 HyperJumpTest >> testWhenAShipTakesAHyperJumpThenItsMovesAccordingly [
 
-	| twentySquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution someParsecs aGame expectedPosition aRatio aDistributionBuilder aHyperJumpSquare aProbabilityOfOne aPlainSquareProbabilisticEvent zeroReward zeroRewardRewardProbabilisticEvent aCardManager anAllyCard anAllyCardProbabilisticEvent aGameBuilder aRewardManager aParsecJumpOfFive aParsecJumpOfFour aParsecJumpOfSix anotherParsecJumpOfFive |
-	twentySquares := 20.
+	|  aBoard  someDices aLoadedDice sideToRoll oneLap aDistribution someParsecs aGame expectedPosition aRatio aDistributionBuilder aHyperJumpSquare  aPlainSquareProbabilisticEvent  aParsecJumpOfFive aParsecJumpOfFour aParsecJumpOfSix anotherParsecJumpOfFive |
+
 	sideToRoll := #( 7 ) asOrderedCollection.
 	oneLap := 1.
 	aRatio := 1.
 
 	expectedPosition := Position at: 13 in: 1.
 
-	aWormHole := WormHole between: 17 and: 18.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
 	aParsecJumpOfFive := Parsec with: 5.
@@ -332,7 +285,6 @@ HyperJumpTest >> testWhenAShipTakesAHyperJumpThenItsMovesAccordingly [
 
 	aDistributionBuilder := ProbablisiticEventsManager new.
 	aHyperJumpSquare := HyperJumpSquare with: someParsecs and: aRatio.
-	aProbabilityOfOne := 1.
 	aPlainSquareProbabilisticEvent := ProbabilisticEvent
 		                                  for: aHyperJumpSquare
 		                                  with: aProbabilityOfOne.
@@ -344,33 +296,11 @@ HyperJumpTest >> testWhenAShipTakesAHyperJumpThenItsMovesAccordingly [
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
-	aRewardManager := ProbablisiticEventsManager new.
-	zeroReward := FuelDecreaseReward of: 0.
-	zeroRewardRewardProbabilisticEvent := ProbabilisticEvent
-		                                      for: zeroReward
-		                                      with: aProbabilityOfOne.
-	aRewardManager add: zeroRewardRewardProbabilisticEvent.
-
-	aCardManager := ProbablisiticEventsManager new.
-	anAllyCard := AllyCard new.
-	anAllyCardProbabilisticEvent := ProbabilisticEvent
-		                                for: anAllyCard
-		                                with: aProbabilityOfOne.
-	aCardManager add: anAllyCardProbabilisticEvent.
-
-	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
 
-	aGameBuilder := GameBuilder new.
-
 	aGameBuilder setBoard: aBoard.
-	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
 	aGame := aGameBuilder build.
 
 	aGame nextTurnPlay.
@@ -381,17 +311,14 @@ HyperJumpTest >> testWhenAShipTakesAHyperJumpThenItsMovesAccordingly [
 { #category : 'tests' }
 HyperJumpTest >> testWhenAllTheParsecsHaveBeenTakenThenTheNextShipTakesTheFirstParsecAgain [
 
-	| twentySquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll oneLap aBlackShip aDistribution someParsecs aGame expectedPosition aWhiteShip aRedShip aPinkShip aRatio aDistributionBuilder aHyperJumpSquare aProbabilityOfOne aPlainSquareProbabilisticEvent zeroReward zeroRewardRewardProbabilisticEvent aCardManager anAllyCard anAllyCardProbabilisticEvent aGameBuilder aRewardManager aParsecJumpOfFive aParsecJumpOfFour aParsecJumpOfSix anotherParsecJumpOfFive |
-	twentySquares := 20.
+	| aBoard someDices aLoadedDice sideToRoll oneLap  aDistribution someParsecs aGame expectedPosition aWhiteShip aRedShip aPinkShip aRatio aDistributionBuilder aHyperJumpSquare aPlainSquareProbabilisticEvent aParsecJumpOfFive aParsecJumpOfFour aParsecJumpOfSix anotherParsecJumpOfFive |
+
 	sideToRoll := #( 7 ) asOrderedCollection.
 	oneLap := 1.
 	aRatio := 1.
 
 	expectedPosition := Position at: 13 in: 1.
 
-	aWormHole := WormHole between: 17 and: 18.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
 	aWhiteShip := Ship called: 'WhiteShip'.
 	aRedShip := Ship called: 'RedShip'.
 	aPinkShip := Ship called: 'PinkShip'.
@@ -409,7 +336,6 @@ HyperJumpTest >> testWhenAllTheParsecsHaveBeenTakenThenTheNextShipTakesTheFirstP
 
 	aDistributionBuilder := ProbablisiticEventsManager new.
 	aHyperJumpSquare := HyperJumpSquare with: someParsecs and: aRatio.
-	aProbabilityOfOne := 1.
 	aPlainSquareProbabilisticEvent := ProbabilisticEvent
 		                                  for: aHyperJumpSquare
 		                                  with: aProbabilityOfOne.
@@ -421,36 +347,15 @@ HyperJumpTest >> testWhenAllTheParsecsHaveBeenTakenThenTheNextShipTakesTheFirstP
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
-	aRewardManager := ProbablisiticEventsManager new.
-	zeroReward := FuelDecreaseReward of: 0.
-	zeroRewardRewardProbabilisticEvent := ProbabilisticEvent
-		                                      for: zeroReward
-		                                      with: aProbabilityOfOne.
-	aRewardManager add: zeroRewardRewardProbabilisticEvent.
-
-	aCardManager := ProbablisiticEventsManager new.
-	anAllyCard := AllyCard new.
-	anAllyCardProbabilisticEvent := ProbabilisticEvent
-		                                for: anAllyCard
-		                                with: aProbabilityOfOne.
-	aCardManager add: anAllyCardProbabilisticEvent.
-
-	someShips := OrderedCollection new.
+	
 	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
 	someShips add: aRedShip.
 	someShips add: aWhiteShip.
 	someShips add: aPinkShip.
 	someDices add: aLoadedDice.
 
-	aGameBuilder := GameBuilder new.
-
 	aGameBuilder setBoard: aBoard.
-	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
 	aGame := aGameBuilder build.
 
 	aGame nextTurnPlay.
@@ -465,17 +370,14 @@ HyperJumpTest >> testWhenAllTheParsecsHaveBeenTakenThenTheNextShipTakesTheFirstP
 { #category : 'tests' }
 HyperJumpTest >> testWhenTheRatioIsTwoAndAShipTakesAHyperJumpThenItsMovesCorrectly [
 
-	| twentySquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll threeLaps aBlackShip aDistribution someParsecs aGame expectedPosition aRatio aDistributionManager aHyperJumpSquare aProbabilityOfOne aPlainSquareProbabilisticEvent aRewardManager zeroReward zeroRewardRewardProbabilisticEvent aGameBuilder aCardManager anAllyCard anAllyCardProbabilisticEvent aParsecJumpOfTwo anotherParsecJumpOfTwo aParsecJumpOfThree anotherParsecJumpOfThree |
-	twentySquares := 20.
+	| aBoard someDices aLoadedDice sideToRoll threeLaps aDistribution someParsecs aGame expectedPosition aRatio aDistributionManager aHyperJumpSquare  aPlainSquareProbabilisticEvent aParsecJumpOfTwo anotherParsecJumpOfTwo aParsecJumpOfThree anotherParsecJumpOfThree |
+
 	sideToRoll := #( 7 ) asOrderedCollection.
 	threeLaps := 3.
 	aRatio := 2.
 
 	expectedPosition := Position at: 13 in: 1.
 
-	aWormHole := WormHole between: 17 and: 18.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
 	aParsecJumpOfTwo := Parsec with: 2.
@@ -490,7 +392,6 @@ HyperJumpTest >> testWhenTheRatioIsTwoAndAShipTakesAHyperJumpThenItsMovesCorrect
 
 	aDistributionManager := ProbablisiticEventsManager new.
 	aHyperJumpSquare := HyperJumpSquare with: someParsecs and: aRatio.
-	aProbabilityOfOne := 1.
 	aPlainSquareProbabilisticEvent := ProbabilisticEvent
 		                                  for: aHyperJumpSquare
 		                                  with: aProbabilityOfOne.
@@ -502,34 +403,13 @@ HyperJumpTest >> testWhenTheRatioIsTwoAndAShipTakesAHyperJumpThenItsMovesCorrect
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
-	aRewardManager := ProbablisiticEventsManager new.
-	zeroReward := FuelDecreaseReward of: 0.
-	zeroRewardRewardProbabilisticEvent := ProbabilisticEvent
-		                                      for: zeroReward
-		                                      with: aProbabilityOfOne.
-	aRewardManager add: zeroRewardRewardProbabilisticEvent.
-
-	aCardManager := ProbablisiticEventsManager new.
-	anAllyCard := AllyCard new.
-	anAllyCardProbabilisticEvent := ProbabilisticEvent
-		                                for: anAllyCard
-		                                with: aProbabilityOfOne.
-	aCardManager add: anAllyCardProbabilisticEvent.
-
-	someShips := OrderedCollection new.
+	
 	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
-
-	aGameBuilder := GameBuilder new.
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setLaps: threeLaps.
-	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
 	aGame := aGameBuilder build.
 
 	aGame nextTurnPlay.
@@ -541,17 +421,13 @@ HyperJumpTest >> testWhenTheRatioIsTwoAndAShipTakesAHyperJumpThenItsMovesCorrect
 { #category : 'tests' }
 HyperJumpTest >> testWhenTheRatioIsTwoAndHasLightYearsThenItsMovesCorrectly [
 
-	| twentySquares aWormHole aBlueShip aBoard someShips someDices aLoadedDice sideToRoll threeLaps aBlackShip aDistribution someParsecs aGame expectedPosition aRatio aDistributionManager aHyperJumpSquare aProbabilityOfOne aPlainSquareProbabilisticEvent aRewardManager zeroReward zeroRewardRewardProbabilisticEvent aGameBuilder aCardManager anAllyCard anAllyCardProbabilisticEvent aLightYearJump aParsecJump anotherLightYearJump anotherParsecJump |
-	twentySquares := 20.
+	| aBoard someDices aLoadedDice sideToRoll threeLaps aDistribution someParsecs aGame expectedPosition aRatio aDistributionManager aHyperJumpSquare  aPlainSquareProbabilisticEvent aLightYearJump aParsecJump anotherLightYearJump anotherParsecJump |
 	sideToRoll := #(7) asOrderedCollection.
 	threeLaps := 3.
 	aRatio := 2.
 
 	expectedPosition := Position at: 13 in: 1.
 
-	aWormHole := WormHole between: 17 and: 18.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 	
 	aLightYearJump := LightYear with: 6.
@@ -569,7 +445,6 @@ HyperJumpTest >> testWhenTheRatioIsTwoAndHasLightYearsThenItsMovesCorrectly [
 
 	aDistributionManager := ProbablisiticEventsManager new.
 	aHyperJumpSquare := HyperJumpSquare with: someParsecs and: aRatio.
-	aProbabilityOfOne := 1.
 	aPlainSquareProbabilisticEvent := ProbabilisticEvent
 		                                  for: aHyperJumpSquare
 		                                  with: aProbabilityOfOne.
@@ -581,32 +456,12 @@ HyperJumpTest >> testWhenTheRatioIsTwoAndHasLightYearsThenItsMovesCorrectly [
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
-	aRewardManager := ProbablisiticEventsManager new.
-	zeroReward := FuelDecreaseReward of: 0.
-	zeroRewardRewardProbabilisticEvent := ProbabilisticEvent
-		                                      for: zeroReward
-		                                      with: aProbabilityOfOne.
-	aRewardManager add: zeroRewardRewardProbabilisticEvent.
-	
-	aCardManager := ProbablisiticEventsManager new.
-	anAllyCard := AllyCard new.
-	anAllyCardProbabilisticEvent := ProbabilisticEvent for: anAllyCard with: aProbabilityOfOne.
-	aCardManager add: anAllyCardProbabilisticEvent.
-
-	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
-
-	aGameBuilder := GameBuilder new.
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setLaps: threeLaps.
-	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
 	aGame := aGameBuilder build.
 
 	aGame nextTurnPlay.
