@@ -123,7 +123,7 @@ OverloadCardTest >> testWhenAShipPlaysAnOverloadCardAndTheRolledNumberIsSmallerT
 { #category : 'tests' }
 OverloadCardTest >> testWhenAShipPlaysAnOverloadCardThenItIsNoLongerInItsHand [
 
-	| aGame sideToRoll aLoadedDice aBoard someDices aDistribution expectedCards anAccelerationCard anAccelerationCardProbabilisticEvent |
+	| aGame sideToRoll aLoadedDice aBoard someDices aDistribution expectedCards anAccelerationCard anAccelerationCardProbabilisticEvent aSetCardManager |
 	sideToRoll := #( 10 ) asOrderedCollection.
 
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
@@ -135,18 +135,26 @@ OverloadCardTest >> testWhenAShipPlaysAnOverloadCardThenItIsNoLongerInItsHand [
 		          and: aWormHole
 		          distributedBy: aDistribution.
 
+	aSetCardManager := SetProbablisiticEventsManager new.
+	anOverloadCard := OverloadCard new.
+	anOverloadCardProbabilisticEvent := ProbabilisticEvent
+		                                    for: anOverloadCard
+		                                    with: aProbabilityOfOne.
+	aSetCardManager add: anOverloadCardProbabilisticEvent.
+
 	anAccelerationCard := AccelerationCard new.
 	anAccelerationCardProbabilisticEvent := ProbabilisticEvent
 		                                        for: anAccelerationCard
 		                                        with: aProbabilityOfOne.
-	aCardManager add: anAccelerationCardProbabilisticEvent.
+	aSetCardManager add: anAccelerationCardProbabilisticEvent.
+
 
 	someDices := OrderedCollection new.
 	someDices add: aLoadedDice.
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setAvailableCards: aCardManager.
+	aGameBuilder setAvailableCards: aSetCardManager.
 	aGame := aGameBuilder build.
 
 	expectedCards := OrderedCollection new.
