@@ -1,37 +1,46 @@
 Class {
 	#name : 'BlackHoleTest',
 	#superclass : 'TestCase',
+	#instVars : [
+		'tenSquares',
+		'aBlueShip',
+		'aBlackShip',
+		'aDistributionManager',
+		'aBlackHoleSquare',
+		'aProbabilityOfOne',
+		'aBlackHoleProbabilisticEvent',
+		'aRewardManager',
+		'zeroReward',
+		'zeroRewardProbabilisticEvent',
+		'aCardManager',
+		'anAllyCard',
+		'anAllyCardProbabilisticEvent',
+		'someShips',
+		'someDices',
+		'aGameBuilder',
+		'aDistributionWithBlackHolesSquares'
+	],
 	#category : 'IngSoft2-Tests',
 	#package : 'IngSoft2-Tests'
 }
 
-{ #category : 'tests' }
-BlackHoleTest >> testWhenAShipLandsOnABlackHoleAndDoesNotHaveEnoughFuelThenItGoesBackToItsInitialPosition [
+{ #category : 'running' }
+BlackHoleTest >> setUp [
 
-	| aDistribution tenSquares sideToRoll expectedPosition aWormHole aBlueShip aBlackShip aLoadedDice aBoard someShips someDices aGame aDistributionManager anBlackHoleSquare aProbabilityOfOne anAtomicBombProbabilisticEvent aRewardManager zeroReward zeroRewardProbabilisticEvent aGameBuilder aCardManager anAllyCard anAllyCardProbabilisticEvent |
+	super setUp.
+
 	tenSquares := 10.
-	sideToRoll := #(2) asOrderedCollection.
-
-	expectedPosition := Position at: 7 in: 1.
-
-	aWormHole := WormHole between: 2 and: 7.
 	aBlueShip := Ship called: 'BlueShip'.
 	aBlackShip := Ship called: 'BlackShip'.
-	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
 	aDistributionManager := ProbablisiticEventsManager new.
-	anBlackHoleSquare := BlackHoleSquare new.
+	aBlackHoleSquare := BlackHoleSquare new.
 	aProbabilityOfOne := 1.
-	anAtomicBombProbabilisticEvent := ProbabilisticEvent
-		                                  for: anBlackHoleSquare
-		                                  with: aProbabilityOfOne.
-	aDistributionManager add: anAtomicBombProbabilisticEvent.
-	aDistribution := aDistributionManager generateFor: tenSquares.
-
-	aBoard := Board
-		          with: tenSquares
-		          and: aWormHole
-		          distributedBy: aDistribution.
+	aBlackHoleProbabilisticEvent := ProbabilisticEvent
+		                                for: aBlackHoleSquare
+		                                with: aProbabilityOfOne.
+	aDistributionManager add: aBlackHoleProbabilisticEvent.
+	aDistributionWithBlackHolesSquares := aDistributionManager generateFor: tenSquares.
 
 	aRewardManager := ProbablisiticEventsManager new.
 	zeroReward := FuelDecreaseReward of: 0.
@@ -39,25 +48,45 @@ BlackHoleTest >> testWhenAShipLandsOnABlackHoleAndDoesNotHaveEnoughFuelThenItGoe
 		                                for: zeroReward
 		                                with: aProbabilityOfOne.
 	aRewardManager add: zeroRewardProbabilisticEvent.
-	
+
 	aCardManager := ProbablisiticEventsManager new.
 	anAllyCard := AllyCard new.
-	anAllyCardProbabilisticEvent := ProbabilisticEvent for: anAllyCard with: aProbabilityOfOne.
+	anAllyCardProbabilisticEvent := ProbabilisticEvent
+		                                for: anAllyCard
+		                                with: aProbabilityOfOne.
 	aCardManager add: anAllyCardProbabilisticEvent.
 
 	someShips := OrderedCollection new.
-	someDices := OrderedCollection new.
 	someShips add: aBlueShip.
 	someShips add: aBlackShip.
-	someDices add: aLoadedDice.
+	someDices := OrderedCollection new.
 
 	aGameBuilder := GameBuilder new.
-
-	aGameBuilder setBoard: aBoard.
-	aGameBuilder setShips: someShips.
-	aGameBuilder setDices: someDices.
 	aGameBuilder setRewards: aRewardManager.
 	aGameBuilder setAvailableCards: aCardManager.
+	aGameBuilder setShips: someShips
+]
+
+{ #category : 'tests' }
+BlackHoleTest >> testWhenAShipLandsOnABlackHoleAndDoesNotHaveEnoughFuelThenItGoesBackToItsInitialPosition [
+
+	| sideToRoll expectedPosition aWormHole aLoadedDice aBoard aGame |
+	sideToRoll := #( 4 ) asOrderedCollection.
+
+	expectedPosition := Position at: 7 in: 1.
+
+	aWormHole := WormHole between: 4 and: 7.
+	aLoadedDice := LoadedDice toRoll: sideToRoll.
+
+	aBoard := Board
+		          with: tenSquares
+		          and: aWormHole
+		          distributedBy: aDistributionWithBlackHolesSquares.
+
+	someDices add: aLoadedDice.
+
+	aGameBuilder setBoard: aBoard.
+	aGameBuilder setDices: someDices.
 	aGame := aGameBuilder build.
 
 	aGame nextTurnPlay.
@@ -70,56 +99,23 @@ BlackHoleTest >> testWhenAShipLandsOnABlackHoleAndDoesNotHaveEnoughFuelThenItGoe
 { #category : 'tests' }
 BlackHoleTest >> testWhenAShipLandsOnABlackHoleAndHasEnoughFuelThenItGoesBackFourSquares [
 
-	| aDistribution tenSquares sideToRoll expectedPosition aWormHole aBlueShip aBlackShip aLoadedDice aBoard someShips someDices aGame aDistributionManager anBlackHoleSquare aProbabilityOfOne anAtomicBombProbabilisticEvent aRewardManager zeroReward zeroRewardProbabilisticEvent aGameBuilder aCardManager anAllyCard anAllyCardProbabilisticEvent |
-	tenSquares := 10.
-	sideToRoll := #(4) asOrderedCollection.
+	| sideToRoll expectedPosition aWormHole aLoadedDice aBoard aGame |
+	sideToRoll := #( 4 ) asOrderedCollection.
 
 	expectedPosition := Position at: 0 in: 1.
 
 	aWormHole := WormHole between: 5 and: 6.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
-
-	aDistributionManager := ProbablisiticEventsManager new.
-	anBlackHoleSquare := BlackHoleSquare new.
-	aProbabilityOfOne := 1.
-	anAtomicBombProbabilisticEvent := ProbabilisticEvent
-		                                  for: anBlackHoleSquare
-		                                  with: aProbabilityOfOne.
-	aDistributionManager add: anAtomicBombProbabilisticEvent.
-	aDistribution := aDistributionManager generateFor: tenSquares.
 
 	aBoard := Board
 		          with: tenSquares
 		          and: aWormHole
-		          distributedBy: aDistribution.
+		          distributedBy: aDistributionWithBlackHolesSquares.
 
-	aRewardManager := ProbablisiticEventsManager new.
-	zeroReward := FuelDecreaseReward of: 0.
-	zeroRewardProbabilisticEvent := ProbabilisticEvent
-		                                for: zeroReward
-		                                with: aProbabilityOfOne.
-	aRewardManager add: zeroRewardProbabilisticEvent.
-	
-	aCardManager := ProbablisiticEventsManager new.
-	anAllyCard := AllyCard new.
-	anAllyCardProbabilisticEvent := ProbabilisticEvent for: anAllyCard with: aProbabilityOfOne.
-	aCardManager add: anAllyCardProbabilisticEvent.
-
-	someShips := OrderedCollection new.
-	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
 
-	aGameBuilder := GameBuilder new.
-
 	aGameBuilder setBoard: aBoard.
-	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
 	aGame := aGameBuilder build.
 
 	aGame nextTurnPlay.
@@ -130,56 +126,23 @@ BlackHoleTest >> testWhenAShipLandsOnABlackHoleAndHasEnoughFuelThenItGoesBackFou
 { #category : 'tests' }
 BlackHoleTest >> testWhenAShipLandsOnABlackHoleOnTheFirstThreeSquaresOfALapThenItGoesBackALapAndToTheAccordingSquare [
 
-	| aDistribution tenSquares sideToRoll expectedPosition aWormHole aBlueShip aBlackShip aLoadedDice aBoard someShips someDices aGame aDistributionManager anBlackHoleSquare aProbabilityOfOne anAtomicBombProbabilisticEvent aRewardManager zeroReward zeroRewardProbabilisticEvent aGameBuilder aCardManager anAllyCard anAllyCardProbabilisticEvent |
-	tenSquares := 10.
-	sideToRoll := #(4) asOrderedCollection.
+	| sideToRoll expectedPosition aWormHole aLoadedDice aBoard aGame |
+	sideToRoll := #( 4 ) asOrderedCollection.
 
 	expectedPosition := Position at: 9 in: 1.
 
 	aWormHole := WormHole between: 4 and: 9.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
-
-	aDistributionManager := ProbablisiticEventsManager new.
-	anBlackHoleSquare := BlackHoleSquare new.
-	aProbabilityOfOne := 1.
-	anAtomicBombProbabilisticEvent := ProbabilisticEvent
-		                                  for: anBlackHoleSquare
-		                                  with: aProbabilityOfOne.
-	aDistributionManager add: anAtomicBombProbabilisticEvent.
-	aDistribution := aDistributionManager generateFor: tenSquares.
 
 	aBoard := Board
 		          with: tenSquares
 		          and: aWormHole
-		          distributedBy: aDistribution.
+		          distributedBy: aDistributionWithBlackHolesSquares.
 
-	aRewardManager := ProbablisiticEventsManager new.
-	zeroReward := FuelDecreaseReward of: 0.
-	zeroRewardProbabilisticEvent := ProbabilisticEvent
-		                                for: zeroReward
-		                                with: aProbabilityOfOne.
-	aRewardManager add: zeroRewardProbabilisticEvent.
-	
-	aCardManager := ProbablisiticEventsManager new.
-	anAllyCard := AllyCard new.
-	anAllyCardProbabilisticEvent := ProbabilisticEvent for: anAllyCard with: aProbabilityOfOne.
-	aCardManager add: anAllyCardProbabilisticEvent.
-
-	someShips := OrderedCollection new.
-	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
 
-	aGameBuilder := GameBuilder new.
-
 	aGameBuilder setBoard: aBoard.
-	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
 	aGame := aGameBuilder build.
 
 	aGame nextTurnPlay.
@@ -194,56 +157,23 @@ BlackHoleTest >> testWhenAShipLandsOnABlackHoleOnTheFirstThreeSquaresOfALapThenI
 { #category : 'tests' }
 BlackHoleTest >> testWhenAShipLandsOnABlackHoleOnTheFirstThreeSquaresOfTheFirstLapItStaysOnTheFirstLap [
 
-	| aDistribution tenSquares sideToRoll expectedPosition aWormHole aBlueShip aBlackShip aLoadedDice aBoard someShips someDices aGame aDistributionManager anBlackHoleSquare aProbabilityOfOne anAtomicBombProbabilisticEvent aRewardManager zeroReward zeroRewardProbabilisticEvent aGameBuilder aCardManager anAllyCard anAllyCardProbabilisticEvent |
-	tenSquares := 10.
-	sideToRoll := #(2) asOrderedCollection.
+	| sideToRoll expectedPosition aWormHole aLoadedDice aBoard aGame |
+	sideToRoll := #( 2 ) asOrderedCollection.
 
 	expectedPosition := Position at: 0 in: 1.
 
 	aWormHole := WormHole between: 5 and: 6.
-	aBlueShip := Ship called: 'BlueShip'.
-	aBlackShip := Ship called: 'BlackShip'.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
-
-	aDistributionManager := ProbablisiticEventsManager new.
-	anBlackHoleSquare := BlackHoleSquare new.
-	aProbabilityOfOne := 1.
-	anAtomicBombProbabilisticEvent := ProbabilisticEvent
-		                                  for: anBlackHoleSquare
-		                                  with: aProbabilityOfOne.
-	aDistributionManager add: anAtomicBombProbabilisticEvent.
-	aDistribution := aDistributionManager generateFor: tenSquares.
 
 	aBoard := Board
 		          with: tenSquares
 		          and: aWormHole
-		          distributedBy: aDistribution.
+		          distributedBy: aDistributionWithBlackHolesSquares.
 
-	aRewardManager := ProbablisiticEventsManager new.
-	zeroReward := FuelDecreaseReward of: 0.
-	zeroRewardProbabilisticEvent := ProbabilisticEvent
-		                                for: zeroReward
-		                                with: aProbabilityOfOne.
-	aRewardManager add: zeroRewardProbabilisticEvent.
-	
-	aCardManager := ProbablisiticEventsManager new.
-	anAllyCard := AllyCard new.
-	anAllyCardProbabilisticEvent := ProbabilisticEvent for: anAllyCard with: aProbabilityOfOne.
-	aCardManager add: anAllyCardProbabilisticEvent.
-
-	someShips := OrderedCollection new.
-	someDices := OrderedCollection new.
-	someShips add: aBlueShip.
-	someShips add: aBlackShip.
 	someDices add: aLoadedDice.
 
-	aGameBuilder := GameBuilder new.
-
 	aGameBuilder setBoard: aBoard.
-	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
 	aGame := aGameBuilder build.
 
 	aGame nextTurnPlay.

@@ -9,10 +9,17 @@ Class {
 }
 
 { #category : 'playing' }
-CancellationCard >> bePlayedBy: aPlayingShip affecting: anAffectedCard and: anAffectedShip in: aGame [
+CancellationCard >> applyEffectPlayedBy: aPlayingShip affecting: anAffectedCard and: anAffectedShip in: aGame [
 
 	aGame remove: anAffectedCard playedBy: anAffectedShip.
 	aGame lastPlayedCard: self
+]
+
+{ #category : 'playing' }
+CancellationCard >> bePlayedBy: aPlayingShip affecting: anAffectedCard and: anAffectedShip in: aGame [
+
+	self applyEffectPlayedBy: aPlayingShip affecting: anAffectedCard and: anAffectedShip in: aGame.
+	aPlayingShip remove: self
 ]
 
 { #category : 'comparing' }

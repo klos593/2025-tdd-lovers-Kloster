@@ -9,11 +9,25 @@ Class {
 }
 
 { #category : 'playing' }
-RepeatCard >> bePlayedBy: aPlayingShip affecting: anAffectedCard and: aTargetShip in: aGame [
+RepeatCard >> applyEffectPlayedBy: aPlayingShip affecting: anAffectedCard and: anAffectedShip in: aGame [
 
-	[ aGame applyLastEffectTo: aTargetShip ]
-		on: Error
-		do: [ :anError |
-			aTargetShip penalizeAndReturnTo: aTargetShip currentPosition ].
+	aGame applyLastEffectTo: anAffectedShip.
 	aGame lastPlayedCard: self
+]
+
+{ #category : 'playing' }
+RepeatCard >> bePlayedBy: aPlayingShip affecting: anAffectedCard and: anAffectedShip in: aGame [
+
+	self
+		applyEffectPlayedBy: aPlayingShip
+		affecting: anAffectedCard
+		and: anAffectedShip
+		in: aGame.
+	aPlayingShip remove: self
+]
+
+{ #category : 'comparing' }
+RepeatCard >> compare: aShip and: anotherShip [
+
+	^ false
 ]
