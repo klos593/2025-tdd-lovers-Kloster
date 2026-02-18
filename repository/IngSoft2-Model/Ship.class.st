@@ -12,7 +12,8 @@ Class {
 		'gravityPenalty',
 		'cards',
 		'allies',
-		'rollModifier'
+		'rollModifier',
+		'activeNitroModifiers'
 	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
@@ -33,7 +34,10 @@ Ship >> addCards: someCards [
 { #category : 'update' }
 Ship >> adjust: aRolledNumber [
 
-	^ aRolledNumber + rollModifier
+	| adjustedNumber |
+	adjustedNumber := aRolledNumber + rollModifier + (self applyModifiers).
+
+	^ adjustedNumber
 ]
 
 { #category : 'accessing' }
@@ -46,6 +50,18 @@ Ship >> amountOfCards [
 Ship >> applyGravityPenalty: aGravitySquare [
 
 	gravityPenalty := aGravitySquare 
+]
+
+{ #category : 'penalty' }
+Ship >> applyModifiers [
+
+	^ activeNitroModifiers sumNumbers: [ :aModifier | aModifier use  ]
+]
+
+{ #category : 'penalty' }
+Ship >> applyNitroCard [
+
+	activeNitroModifiers add: (Modifier of: 3 for: 3).
 ]
 
 { #category : 'penalty' }
@@ -176,7 +192,8 @@ Ship >> initializeCalled: aName [
 	cards := OrderedCollection new.
 	rollModifier := 0.
 	allies := OrderedCollection new.
-	allies add: NullShip new
+	allies add: NullShip new.
+	activeNitroModifiers := OrderedCollection new.
 ]
 
 { #category : 'penalty' }
