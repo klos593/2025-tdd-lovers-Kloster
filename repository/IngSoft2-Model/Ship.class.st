@@ -12,8 +12,8 @@ Class {
 		'gravityPenalty',
 		'cards',
 		'allies',
-		'rollModifier',
-		'activeNitroModifiers'
+		'permanentRollModifier',
+		'activeInstantModifiers'
 	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
@@ -35,7 +35,7 @@ Ship >> addCards: someCards [
 Ship >> adjust: aRolledNumber [
 
 	| adjustedNumber |
-	adjustedNumber := aRolledNumber + rollModifier + (self applyModifiers).
+	adjustedNumber := aRolledNumber + permanentRollModifier + (self applyInstantModifiers).
 
 	^ adjustedNumber
 ]
@@ -53,21 +53,21 @@ Ship >> applyGravityPenalty: aGravitySquare [
 ]
 
 { #category : 'penalty' }
-Ship >> applyModifiers [
+Ship >> applyInstantModifiers [
 
-	^ activeNitroModifiers sumNumbers: [ :aModifier | aModifier use  ]
+	^ activeInstantModifiers sumNumbers: [ :aModifier | aModifier use  ]
 ]
 
 { #category : 'penalty' }
 Ship >> applyNitroCard [
 
-	activeNitroModifiers add: (Modifier of: 3 for: 3).
+	activeInstantModifiers add: (Modifier of: 3 for: 3).
 ]
 
 { #category : 'penalty' }
 Ship >> applyRollModifier: aModifier [
 
-	rollModifier := rollModifier + aModifier
+	permanentRollModifier := permanentRollModifier + aModifier
 ]
 
 { #category : 'move' }
@@ -190,10 +190,10 @@ Ship >> initializeCalled: aName [
 	turnsLeftToWait := 0.
 	gravityPenalty := 0.
 	cards := OrderedCollection new.
-	rollModifier := 0.
+	permanentRollModifier := 0.
 	allies := OrderedCollection new.
 	allies add: NullShip new.
-	activeNitroModifiers := OrderedCollection new.
+	activeInstantModifiers := OrderedCollection new.
 ]
 
 { #category : 'penalty' }
