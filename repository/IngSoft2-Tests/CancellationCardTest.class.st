@@ -103,6 +103,41 @@ CancellationCardTest >> should: anErrorBlock raise: anErrorClass withMessageText
 ]
 
 { #category : 'tests' }
+CancellationCardTest >> testWhenACancellationCardIsUsedAfterALeakCardThenTheEffectIsEliminated [
+
+	| expectedFuel aGame aLeakCard aLeakCardProbabilisticEvent |
+	expectedFuel := Fuel with: 5 upTo: 6 in: HasFuelState new.
+	
+	aLeakCard := LeakCard new.
+	aLeakCardProbabilisticEvent := ProbabilisticEvent
+		                                       for: aLeakCard
+		                                       with: aProbabilityOfOne.
+
+	aSetCardManager add: aLeakCardProbabilisticEvent.
+	aSetCardManager add: aCancellationCardProbabilisticEvent.
+
+	aGameBuilder setAvailableCards: aSetCardManager.
+	aGameBuilder setDices: someDices.
+	aGame := aGameBuilder build.
+
+	aGame
+		play: aLeakCard 
+		by: aBlueShip
+		affecting: aNullCard
+		and: aBlackShip.
+	aGame nextTurnPlay.
+	aGame
+		play: aCancellationCard
+		by: aBlackShip
+		affecting: aLeakCard 
+		and: aBlueShip.
+	aGame nextTurnPlay.
+	
+	self assert: (aBlackShip fuelEquals: expectedFuel)
+
+]
+
+{ #category : 'tests' }
 CancellationCardTest >> testWhenACancellationCardIsUsedAfterAnAccelerationCardThenTheEffectIsEliminated [
 
 	| expectedPosition expectedFuel aGame |

@@ -25,3 +25,9 @@ NitroCard >> bePlayedBy: aPlayingShip affecting: anAffectedCard and: anAffectedS
 		in: aGame.
 	aPlayingShip remove: self
 ]
+
+{ #category : 'comparing' }
+NitroCard >> compare: aShip and: anotherShip [
+
+	^ false
+]

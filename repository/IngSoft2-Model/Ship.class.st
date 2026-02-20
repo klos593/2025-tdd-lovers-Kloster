@@ -13,7 +13,8 @@ Class {
 		'cards',
 		'allies',
 		'permanentRollModifier',
-		'activeInstantModifiers'
+		'activeInstantModifiers',
+		'activeLeakCards'
 	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
@@ -59,9 +60,28 @@ Ship >> applyInstantModifiers [
 ]
 
 { #category : 'penalty' }
+Ship >> applyLeak: aLeakCard [
+	
+	activeLeakCards add: aLeakCard.
+]
+
+{ #category : 'penalty' }
+Ship >> applyLeakTo: aDistance [
+
+	activeLeakCards ifEmpty: [ ^ aDistance ].
+	^ activeLeakCards sumNumbers: [ :aLeakCard | aLeakCard applyTo: aDistance ]
+	
+	
+]
+
+{ #category : 'penalty' }
 Ship >> applyNitroCard [
 
-	activeInstantModifiers add: (Modifier of: 3 for: 3).
+	| aMagnitudeOfThree threeTurns |
+	aMagnitudeOfThree := 3.
+	threeTurns := 3.
+	activeInstantModifiers add:
+		(Modifier of: aMagnitudeOfThree for: threeTurns)
 ]
 
 { #category : 'penalty' }
@@ -110,7 +130,10 @@ Ship >> cards [
 { #category : 'update' }
 Ship >> consumeFuel: squaresToTravel from: initialPosition [
 
-	fuel := fuel consume: squaresToTravel.
+	| fuelToConsume |
+	
+	fuelToConsume := self applyLeakTo: squaresToTravel.
+	fuel := fuel consume: fuelToConsume.
 	fuel borrowBy: self.
 	fuel applyPenaltyTo: self thatStartedFrom: initialPosition
 ]
@@ -194,6 +217,7 @@ Ship >> initializeCalled: aName [
 	allies := OrderedCollection new.
 	allies add: NullShip new.
 	activeInstantModifiers := OrderedCollection new.
+	activeLeakCards := OrderedCollection new.
 ]
 
 { #category : 'penalty' }
@@ -307,6 +331,18 @@ Ship >> removeAlly: anAlly [
 
 	allies remove: anAlly.
 	allies isEmpty ifTrue: [ allies add: NullShip new ]
+]
+
+{ #category : 'removing' }
+Ship >> removeLeakCard: aLeakCard [ 
+	
+	activeLeakCards remove: aLeakCard.
+]
+
+{ #category : 'removing' }
+Ship >> removeLeakCards [
+
+	activeLeakCards removeAll.
 ]
 
 { #category : 'accessing' }

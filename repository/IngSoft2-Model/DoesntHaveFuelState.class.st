@@ -19,6 +19,7 @@ DoesntHaveFuelState >> amountOfFuelNeededBy: someFuel [
 DoesntHaveFuelState >> applyPenaltyTo: aShip thatStartedFrom: aPosition [
 
 	aShip penalizeAndReturnTo: aPosition.
+	aShip removeLeakCards.
 ]
 
 { #category : 'borrowing' }

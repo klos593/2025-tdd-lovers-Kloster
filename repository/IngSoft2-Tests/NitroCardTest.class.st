@@ -84,75 +84,7 @@ NitroCardTest >> should: anErrorBlock raise: anErrorClass withMessageText: anErr
 ]
 
 { #category : 'tests' }
-NitroCardTest >> testWhenAShipPlaysANitroCardAffectingItselfThenAfterThreeTurnsTheBonusIsNoLongerActive [
-
-	| expectedPosition |
-	aCardManager := ProbablisiticEventsManager new.
-	aNitroCard := NitroCard new.
-	aNitroCardProbabilisticEvent := ProbabilisticEvent
-		                                for: aNitroCard
-		                                with: aProbabilityOfOne.
-	aCardManager add: aNitroCardProbabilisticEvent.
-
-	aGameBuilder := GameBuilder new.
-	aGameBuilder setShips: someShips.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setBoard: aBoard.
-	aGameBuilder setDices: someDices.
-	aGameBuilder setAvailableCards: aCardManager.
-	aGame := aGameBuilder build.
-
-	aGame
-		play: aNitroCard
-		by: aBlueShip
-		affecting: aNullCard
-		and: aBlueShip.
-	aGame nextTurnPlay.
-	aGame nextTurnPass.
-	aGame nextTurnPlay.
-	aGame nextTurnPass.
-	aGame nextTurnPlay.
-	aGame nextTurnPass.
-	aGame nextTurnPlay.
-
-	expectedPosition := Position at: 13 in: 1.
-
-	self assert: (aBlueShip currentPositionEquals: expectedPosition)
-]
-
-{ #category : 'tests' }
-NitroCardTest >> testWhenAShipPlaysANitroCardAffectingItselfThenItsrolledNumberIsIncreasedByThree [
-
-	| expectedPosition |
-	aCardManager := ProbablisiticEventsManager new.
-	aNitroCard := NitroCard new.
-	aNitroCardProbabilisticEvent := ProbabilisticEvent
-		                                for: aNitroCard
-		                                with: aProbabilityOfOne.
-	aCardManager add: aNitroCardProbabilisticEvent.
-
-	aGameBuilder := GameBuilder new.
-	aGameBuilder setShips: someShips.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setBoard: aBoard.
-	aGameBuilder setDices: someDices.
-	aGameBuilder setAvailableCards: aCardManager.
-	aGame := aGameBuilder build.
-
-	aGame
-		play: aNitroCard
-		by: aBlueShip
-		affecting: aNullCard
-		and: aBlueShip.
-	aGame nextTurnPlay.
-
-	expectedPosition := Position at: 4 in: 1.
-
-	self assert: (aBlueShip currentPositionEquals: expectedPosition)
-]
-
-{ #category : 'tests' }
-NitroCardTest >> testWhenAShipPlaysANitroCardAndAfterOneTurnPlaysAnotherOneBothAffectingItselfThenTheRolledNumberIsIncreasedCorrectlyAndEachCardLastsThreeTurns [
+NitroCardTest >> testWhenAShipPlaysANitroCardAndAfterOneTurnPlaysAnotherOneThenTheRolledNumberIsIncreasedCorrectlyAndEachCardLastsThreeTurns [
 
 	| expectedPosition |
 	aCardManager := ProbablisiticEventsManager new.
@@ -196,7 +128,75 @@ NitroCardTest >> testWhenAShipPlaysANitroCardAndAfterOneTurnPlaysAnotherOneBothA
 ]
 
 { #category : 'tests' }
-NitroCardTest >> testWhenAShipsPlaysANitroCardThatIsNotInItsHandThenInvalid [
+NitroCardTest >> testWhenAShipPlaysANitroCardThenAfterThreeTurnsTheBonusIsNoLongerActive [
+
+	| expectedPosition |
+	aCardManager := ProbablisiticEventsManager new.
+	aNitroCard := NitroCard new.
+	aNitroCardProbabilisticEvent := ProbabilisticEvent
+		                                for: aNitroCard
+		                                with: aProbabilityOfOne.
+	aCardManager add: aNitroCardProbabilisticEvent.
+
+	aGameBuilder := GameBuilder new.
+	aGameBuilder setShips: someShips.
+	aGameBuilder setRewards: aRewardManager.
+	aGameBuilder setBoard: aBoard.
+	aGameBuilder setDices: someDices.
+	aGameBuilder setAvailableCards: aCardManager.
+	aGame := aGameBuilder build.
+
+	aGame
+		play: aNitroCard
+		by: aBlueShip
+		affecting: aNullCard
+		and: aBlueShip.
+	aGame nextTurnPlay.
+	aGame nextTurnPass.
+	aGame nextTurnPlay.
+	aGame nextTurnPass.
+	aGame nextTurnPlay.
+	aGame nextTurnPass.
+	aGame nextTurnPlay.
+
+	expectedPosition := Position at: 13 in: 1.
+
+	self assert: (aBlueShip currentPositionEquals: expectedPosition)
+]
+
+{ #category : 'tests' }
+NitroCardTest >> testWhenAShipPlaysANitroCardThenItsrolledNumberOfTheAffectedShipIsIncreasedByThree [
+
+	| expectedPosition |
+	aCardManager := ProbablisiticEventsManager new.
+	aNitroCard := NitroCard new.
+	aNitroCardProbabilisticEvent := ProbabilisticEvent
+		                                for: aNitroCard
+		                                with: aProbabilityOfOne.
+	aCardManager add: aNitroCardProbabilisticEvent.
+
+	aGameBuilder := GameBuilder new.
+	aGameBuilder setShips: someShips.
+	aGameBuilder setRewards: aRewardManager.
+	aGameBuilder setBoard: aBoard.
+	aGameBuilder setDices: someDices.
+	aGameBuilder setAvailableCards: aCardManager.
+	aGame := aGameBuilder build.
+
+	aGame
+		play: aNitroCard
+		by: aBlueShip
+		affecting: aNullCard
+		and: aBlueShip.
+	aGame nextTurnPlay.
+
+	expectedPosition := Position at: 4 in: 1.
+
+	self assert: (aBlueShip currentPositionEquals: expectedPosition)
+]
+
+{ #category : 'tests' }
+NitroCardTest >> testWhenAShipTriesToPlayANitroCardThatIsNotInItsHandThenInvalid [
 
 	| anOverloadCard anOverloadCardProbabilisticEvent |
 	aCardManager := ProbablisiticEventsManager new.

@@ -289,7 +289,7 @@ Game >> remove: anAffectedCard playedBy: aShip [
 
 	self validateIsActive: anAffectedCard.
 	activePermanentCards remove: anAffectedCard.
-	anAffectedCard cancelEffectIn: self
+	anAffectedCard cancelEffectIn: self.
 ]
 
 { #category : 'action' }
