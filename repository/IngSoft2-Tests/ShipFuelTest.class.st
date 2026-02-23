@@ -23,7 +23,12 @@ Class {
 		'someShips',
 		'someDices',
 		'aGameBuilder',
-		'aGame'
+		'aGame',
+		'aDeckDistributionManager',
+		'aDeckLength',
+		'aDeckDistribution',
+		'aDeck',
+		'aState'
 	],
 	#category : 'IngSoft2-Tests',
 	#package : 'IngSoft2-Tests'
@@ -65,7 +70,12 @@ ShipFuelTest >> setUp [
 	aCardManager := ProbablisiticEventsManager new.
 	anAllyCard := AllyCard new.
 	anAllyCardProbabilisticEvent := ProbabilisticEvent for: anAllyCard with: aProbabilityOfOne.
-	aCardManager add: anAllyCardProbabilisticEvent.
+	aDeckDistributionManager := ProbablisiticEventsManager new.
+	aDeckDistributionManager add: anAllyCardProbabilisticEvent.
+	aDeckLength := 10.
+	aDeckDistribution := aDeckDistributionManager generateFor: aDeckLength.
+	aState := HasCardsState new.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
 
 	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
@@ -78,7 +88,7 @@ ShipFuelTest >> setUp [
 	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
 	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 ]
 

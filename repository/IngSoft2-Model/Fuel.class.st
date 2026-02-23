@@ -38,9 +38,9 @@ Fuel >> amountOfFuelNeeded [
 ]
 
 { #category : 'penalty' }
-Fuel >> applyPenaltyTo: aShip thatStartedFrom: aPosition [
+Fuel >> applyPenaltyTo: aShip thatStartedFrom: aPosition in: aGame [
 
-	fuelState applyPenaltyTo: aShip thatStartedFrom: aPosition.
+	fuelState applyPenaltyTo: aShip thatStartedFrom: aPosition in: aGame.
 ]
 
 { #category : 'consuming' }

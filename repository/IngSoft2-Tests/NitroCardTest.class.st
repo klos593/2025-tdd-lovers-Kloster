@@ -19,12 +19,17 @@ Class {
 		'sideToRoll',
 		'someDices',
 		'aLoadedDice',
-		'aCardManager',
 		'aNitroCard',
 		'aNitroCardProbabilisticEvent',
 		'aNullCard',
 		'aGameBuilder',
-		'aGame'
+		'aGame',
+		'aDeckLength',
+		'anOverloadCard',
+		'anOverloadCardProbabilisticEvent',
+		'anAccelerationCard',
+		'anAccelerationCardProbabilisticEvent',
+		'aState'
 	],
 	#category : 'IngSoft2-Tests',
 	#package : 'IngSoft2-Tests'
@@ -34,13 +39,13 @@ Class {
 NitroCardTest >> setUp [
 
 	super setUp.
-	
+
 	aBlueShip := Ship called: 'BlueShip'.
 	aBlackShip := Ship called: 'BlackShip'.
 	someShips := OrderedCollection new.
 	someShips add: aBlueShip.
 	someShips add: aBlackShip.
-	
+
 	aProbabilityOfOne := 1.
 	aRewardManager := ProbablisiticEventsManager new.
 	zeroReward := FuelDecreaseReward of: 0.
@@ -48,7 +53,7 @@ NitroCardTest >> setUp [
 		                                      for: zeroReward
 		                                      with: aProbabilityOfOne.
 	aRewardManager add: zeroRewardRewardProbabilisticEvent.
-	
+
 	fortySquares := 40.
 	aWormHole := WormHole between: 38 and: 39.
 	aDistributionManager := ProbablisiticEventsManager new.
@@ -67,10 +72,31 @@ NitroCardTest >> setUp [
 	someDices := OrderedCollection new.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 	someDices add: aLoadedDice.
-	
+
 
 	aNullCard := NullCard new.
 
+	aNitroCard := NitroCard new.
+	aNitroCardProbabilisticEvent := ProbabilisticEvent
+		                                for: aNitroCard
+		                                with: aProbabilityOfOne.
+	anOverloadCard := OverloadCard new.
+	anOverloadCardProbabilisticEvent := ProbabilisticEvent
+		                                    for: anOverloadCard
+		                                    with: aProbabilityOfOne.
+	anAccelerationCard := AccelerationCard new.
+	anAccelerationCardProbabilisticEvent := ProbabilisticEvent
+		                                        for: anAccelerationCard
+		                                        with: aProbabilityOfOne.
+		
+	aDeckLength := 10.
+	aState := HasCardsState new.
+
+	aGameBuilder := GameBuilder new.
+	aGameBuilder setShips: someShips.
+	aGameBuilder setRewards: aRewardManager.
+	aGameBuilder setBoard: aBoard.
+	aGameBuilder setDices: someDices
 ]
 
 { #category : 'asserting' }
@@ -86,20 +112,13 @@ NitroCardTest >> should: anErrorBlock raise: anErrorClass withMessageText: anErr
 { #category : 'tests' }
 NitroCardTest >> testWhenAShipPlaysANitroCardAndAfterOneTurnPlaysAnotherOneThenTheRolledNumberIsIncreasedCorrectlyAndEachCardLastsThreeTurns [
 
-	| expectedPosition |
+	| expectedPosition aDeckDistribution aDeck aCardManager|
 	aCardManager := ProbablisiticEventsManager new.
-	aNitroCard := NitroCard new.
-	aNitroCardProbabilisticEvent := ProbabilisticEvent
-		                                for: aNitroCard
-		                                with: aProbabilityOfOne.
 	aCardManager add: aNitroCardProbabilisticEvent.
+	aDeckDistribution := aCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState .
 
-	aGameBuilder := GameBuilder new.
-	aGameBuilder setShips: someShips.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setBoard: aBoard.
-	aGameBuilder setDices: someDices.
-	aGameBuilder setAvailableCards: aCardManager.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	aGame
@@ -130,20 +149,13 @@ NitroCardTest >> testWhenAShipPlaysANitroCardAndAfterOneTurnPlaysAnotherOneThenT
 { #category : 'tests' }
 NitroCardTest >> testWhenAShipPlaysANitroCardThenAfterThreeTurnsTheBonusIsNoLongerActive [
 
-	| expectedPosition |
+	| expectedPosition aDeckDistribution aDeck aCardManager|
 	aCardManager := ProbablisiticEventsManager new.
-	aNitroCard := NitroCard new.
-	aNitroCardProbabilisticEvent := ProbabilisticEvent
-		                                for: aNitroCard
-		                                with: aProbabilityOfOne.
 	aCardManager add: aNitroCardProbabilisticEvent.
+	aDeckDistribution := aCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState .
 
-	aGameBuilder := GameBuilder new.
-	aGameBuilder setShips: someShips.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setBoard: aBoard.
-	aGameBuilder setDices: someDices.
-	aGameBuilder setAvailableCards: aCardManager.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	aGame
@@ -167,20 +179,13 @@ NitroCardTest >> testWhenAShipPlaysANitroCardThenAfterThreeTurnsTheBonusIsNoLong
 { #category : 'tests' }
 NitroCardTest >> testWhenAShipPlaysANitroCardThenItsrolledNumberOfTheAffectedShipIsIncreasedByThree [
 
-	| expectedPosition |
+	| expectedPosition aCardManager aDeckDistribution aDeck |
 	aCardManager := ProbablisiticEventsManager new.
-	aNitroCard := NitroCard new.
-	aNitroCardProbabilisticEvent := ProbabilisticEvent
-		                                for: aNitroCard
-		                                with: aProbabilityOfOne.
 	aCardManager add: aNitroCardProbabilisticEvent.
+	aDeckDistribution := aCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState .
 
-	aGameBuilder := GameBuilder new.
-	aGameBuilder setShips: someShips.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setBoard: aBoard.
-	aGameBuilder setDices: someDices.
-	aGameBuilder setAvailableCards: aCardManager.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	aGame
@@ -198,20 +203,13 @@ NitroCardTest >> testWhenAShipPlaysANitroCardThenItsrolledNumberOfTheAffectedShi
 { #category : 'tests' }
 NitroCardTest >> testWhenAShipTriesToPlayANitroCardThatIsNotInItsHandThenInvalid [
 
-	| anOverloadCard anOverloadCardProbabilisticEvent |
+	| aCardManager aDeckDistribution aDeck |
 	aCardManager := ProbablisiticEventsManager new.
-	anOverloadCard := OverloadCard new.
-	anOverloadCardProbabilisticEvent := ProbabilisticEvent
-		                                    for: anOverloadCard
-		                                    with: aProbabilityOfOne.
 	aCardManager add: anOverloadCardProbabilisticEvent.
+	aDeckDistribution := aCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState .
 
-	aGameBuilder := GameBuilder new.
-	aGameBuilder setShips: someShips.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setBoard: aBoard.
-	aGameBuilder setDices: someDices.
-	aGameBuilder setAvailableCards: aCardManager.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	self
@@ -228,27 +226,15 @@ NitroCardTest >> testWhenAShipTriesToPlayANitroCardThatIsNotInItsHandThenInvalid
 { #category : 'tests' }
 NitroCardTest >> testWhenAShipsPlaysANitroCardThenItsNoLongerInItsHand [
 
-	| aSetCardManager anAccelerationCard anAccelerationCardProbabilisticEvent expectedCards |
+	| aSetCardManager expectedCards aDeckDistribution aDeck |
 	aSetCardManager := SetProbablisiticEventsManager new.
-	anAccelerationCard := AccelerationCard new.
-	anAccelerationCardProbabilisticEvent := ProbabilisticEvent
-		                                        for: anAccelerationCard
-		                                        with: aProbabilityOfOne.
+	
 	aSetCardManager add: anAccelerationCardProbabilisticEvent.
-
-	aNitroCard := NitroCard new.
-	aNitroCardProbabilisticEvent := ProbabilisticEvent
-		                                for: aNitroCard
-		                                with: aProbabilityOfOne.
 	aSetCardManager add: aNitroCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState .
 
-
-	aGameBuilder := GameBuilder new.
-	aGameBuilder setShips: someShips.
-	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setBoard: aBoard.
-	aGameBuilder setDices: someDices.
-	aGameBuilder setAvailableCards: aSetCardManager.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	expectedCards := OrderedCollection new.

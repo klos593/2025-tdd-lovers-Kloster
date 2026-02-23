@@ -12,7 +12,6 @@ Class {
 		'aRewardManager',
 		'zeroReward',
 		'zeroRewardRewardProbabilisticEvent',
-		'aSetCardManagerWithAllyCards',
 		'anAllyCard',
 		'anAllyCardProbabilisticEvent',
 		'someShips',
@@ -28,7 +27,12 @@ Class {
 		'aWormHole',
 		'aLoadedDice',
 		'aDistribution',
-		'aBoard'
+		'aBoard',
+		'aDeckDistributionManager',
+		'aDeckLength',
+		'aDeckDistribution',
+		'aDeck',
+		'aState'
 	],
 	#category : 'IngSoft2-Tests',
 	#package : 'IngSoft2-Tests'
@@ -72,18 +76,22 @@ AllyCardTest >> setUp [
 		                                      with: aProbabilityOfOne.
 	aRewardManager add: zeroRewardRewardProbabilisticEvent.
 
-	aSetCardManagerWithAllyCards := ProbablisiticEventsManager new.
-
 	anAllyCard := AllyCard new.
 	anAllyCardProbabilisticEvent := ProbabilisticEvent
 		                                for: anAllyCard
 		                                with: aProbabilityOfOne.
-	aSetCardManagerWithAllyCards add: anAllyCardProbabilisticEvent.
 
 	anAccelerationCard := AccelerationCard new.
 	anAccelerationCardProbabilisticEvent := ProbabilisticEvent
 		                                        for: anAccelerationCard
 		                                        with: aProbabilityOfOne.
+		
+	aDeckDistributionManager := ProbablisiticEventsManager new.
+	aDeckDistributionManager add: anAllyCardProbabilisticEvent.
+	aDeckLength := 10.
+	aDeckDistribution := aDeckDistributionManager generateFor: aDeckLength.
+	aState := HasCardsState new.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
 
 	someShips := OrderedCollection new.
 	someDices := OrderedCollection new.
@@ -114,7 +122,7 @@ AllyCardTest >> should: anErrorBlock raise: anErrorClass withMessageText: anErro
 AllyCardTest >> testWhenAShipPlaysAnAllyCardAndNeitherOfTheShipsHaveEnoughFuelThenBothArePenalized [
 
 	| aGame |
-	aGameBuilder setAvailableCards: aSetCardManagerWithAllyCards.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	aGame
@@ -139,7 +147,7 @@ AllyCardTest >> testWhenAShipPlaysAnAllyCardThenItCanUseTheOtherShipsFuelWhenItH
 	expectedPosition := Position at: 3 in: 1.
 	expectedFuel := Fuel with: 1 upTo: 2 in: HasFuelState new.
 
-	aGameBuilder setAvailableCards: aSetCardManagerWithAllyCards.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	aGame
@@ -160,12 +168,14 @@ AllyCardTest >> testWhenAShipPlaysAnAllyCardThenItCanUseTheOtherShipsFuelWhenItH
 { #category : 'tests' }
 AllyCardTest >> testWhenAShipPlaysAnAllyCardThenItIsNoLongerInItsHand [
 
-	| aGame aSetCardManager |
+	| aGame aSetCardManager aSetDeckDistribution aSetDeck |
 	aSetCardManager := SetProbablisiticEventsManager new.
 	aSetCardManager add: anAllyCardProbabilisticEvent.
 	aSetCardManager add: anAccelerationCardProbabilisticEvent.
+	aSetDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aSetDeck := Deck of: aDeckLength distributedBy: aSetDeckDistribution with: aState.
 
-	aGameBuilder setAvailableCards: aSetCardManager.
+	aGameBuilder setDeck: aSetDeck.
 	aGame := aGameBuilder build.
 
 	expectedCards add: anAccelerationCard.
@@ -186,7 +196,7 @@ AllyCardTest >> testWhenAShipPlaysAnAllyCardThenItsAllyCanUseTheShipsFuelWhenItH
 	expectedPosition := Position at: 3 in: 1.
 	expectedFuel := Fuel with: 1 upTo: 2 in: HasFuelState new.
 
-	aGameBuilder setAvailableCards: aSetCardManagerWithAllyCards.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	aGame nextTurnPlay.
@@ -213,7 +223,7 @@ AllyCardTest >> testWhenAShipPlaysTwoAllyCardsAndOneOfItsAlliesDoesNotHaveEnough
 
 	someShips add: aRedShip.
 
-	aGameBuilder setAvailableCards: aSetCardManagerWithAllyCards.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	aGame
@@ -241,10 +251,13 @@ AllyCardTest >> testWhenAShipPlaysTwoAllyCardsAndOneOfItsAlliesDoesNotHaveEnough
 { #category : 'tests' }
 AllyCardTest >> testWhenAShipTriesToPlayAnAllyCardThatIsNotInItsHandThenInvalid [
 
-	| aGame aSetCardManager |
+	| aGame aSetCardManager aSetDeckDistribution aSetDeck |
 	aSetCardManager := SetProbablisiticEventsManager new.
 	aSetCardManager add: anAccelerationCardProbabilisticEvent.
-	aGameBuilder setAvailableCards: aSetCardManager.
+	aSetDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aSetDeck := Deck of: aDeckLength distributedBy: aSetDeckDistribution with: aState.
+	
+	aGameBuilder setDeck: aSetDeck.
 	aGame := aGameBuilder build.
 
 	self
@@ -262,7 +275,7 @@ AllyCardTest >> testWhenAShipTriesToPlayAnAllyCardThatIsNotInItsHandThenInvalid 
 AllyCardTest >> testWhenAShipTriesToPlayAnAllyCardWhenItIsNotItsTurnThenInvalid [
 
 	| aGame |
-	aGameBuilder setAvailableCards: aSetCardManagerWithAllyCards.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	self

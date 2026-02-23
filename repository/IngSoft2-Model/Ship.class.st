@@ -128,14 +128,14 @@ Ship >> cards [
 ]
 
 { #category : 'update' }
-Ship >> consumeFuel: squaresToTravel from: initialPosition [
+Ship >> consumeFuel: squaresToTravel from: initialPosition in: aGame [
 
 	| fuelToConsume |
 	
 	fuelToConsume := self applyLeakTo: squaresToTravel.
 	fuel := fuel consume: fuelToConsume.
 	fuel borrowBy: self.
-	fuel applyPenaltyTo: self thatStartedFrom: initialPosition
+	fuel applyPenaltyTo: self thatStartedFrom: initialPosition in: aGame.
 ]
 
 { #category : 'update' }
@@ -233,12 +233,12 @@ Ship >> modifyFuelBy: aFuelAmount [
 ]
 
 { #category : 'move' }
-Ship >> moveBackwards: aMagnitude in: aBoard [
+Ship >> moveBackwards: aMagnitude in: aBoard in: aGame [
 
 	| shipNewPosition |
 	shipNewPosition := aBoard update: position with: aMagnitude negated.
 
-	self performMovementFrom: position to: shipNewPosition on: aBoard.
+	self performMovementFrom: position to: shipNewPosition on: aBoard in: aGame.
 	^ shipNewPosition.
 	
 ]
@@ -266,7 +266,7 @@ Ship >> penalizeAndReturnTo: shipInitialPosition [
 ]
 
 { #category : 'move' }
-Ship >> performMovementFrom: anInitialPosition to: aFinalPosition on: aBoard [
+Ship >> performMovementFrom: anInitialPosition to: aFinalPosition on: aBoard in: aGame [
 	
 	| squaresTraveled |
 	squaresTraveled := aBoard
@@ -274,7 +274,7 @@ Ship >> performMovementFrom: anInitialPosition to: aFinalPosition on: aBoard [
 		                   and: aFinalPosition.
 
 	self moveTo: aFinalPosition.
-	self consumeFuel: squaresTraveled from: anInitialPosition
+	self consumeFuel: squaresTraveled from: anInitialPosition in: aGame
 ]
 
 { #category : 'move' }
@@ -294,7 +294,7 @@ Ship >> playTurnWith: aRolledNumber on: aBoard in: aGame [
 	positionAfterWormHole := aBoard moveIfWormHoleAt:
 		                         positionBeforeWormHole.
 	self moveTo: positionAfterWormHole.
-	self consumeFuel: squaresTraveledWithDice from: initialPosition.
+	self consumeFuel: squaresTraveledWithDice from: initialPosition in: aGame.
 
 	positionAfterSquareEffect := aBoard
 		                             applyEfectOn: self
@@ -310,6 +310,7 @@ Ship >> playTurnWith: aRolledNumber on: aBoard in: aGame [
 	self
 		consumeFuel: squaresTraveledWithSquareEffect
 		from: initialPosition
+		in: aGame.
 ]
 
 { #category : 'penalty' }
@@ -340,8 +341,9 @@ Ship >> removeLeakCard: aLeakCard [
 ]
 
 { #category : 'removing' }
-Ship >> removeLeakCards [
+Ship >> removeLeakCardsIn: aGame [
 
+	aGame discard: activeLeakCards.
 	activeLeakCards removeAll.
 ]
 

@@ -12,7 +12,9 @@ Class {
 { #category : 'effect' }
 CardSquare >> applyOn: aShip and: aPosition in: aGame [
 
-	aShip addCards: (aGame generateCard).
+	| oneCard |
+	oneCard := 1.
+	aGame deal: oneCard to: aShip.
 	^ aPosition.
 ]
 

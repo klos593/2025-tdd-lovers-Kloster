@@ -12,7 +12,6 @@ Class {
 		'aRewardManager',
 		'zeroReward',
 		'zeroRewardRewardProbabilisticEvent',
-		'aSetCardManagerWithAccelerationCards',
 		'anAccelerationCard',
 		'anAccelerationCardProbabilisticEvent',
 		'anAllyCard',
@@ -25,7 +24,12 @@ Class {
 		'aLoadedDice',
 		'aWormHole',
 		'aDistribution',
-		'aBoard'
+		'aBoard',
+		'aDeckDistributionManager',
+		'aDeckLength',
+		'aDeckDistribution',
+		'aDeck',
+		'aState'
 	],
 	#category : 'IngSoft2-Tests',
 	#package : 'IngSoft2-Tests'
@@ -95,9 +99,14 @@ AccelerationCardTest >> setUp [
 	aGameBuilder setRewards: aRewardManager.
 
 	aNullCard := NullCard new.
-
-	aSetCardManagerWithAccelerationCards := ProbablisiticEventsManager new.
-	aSetCardManagerWithAccelerationCards add: anAccelerationCardProbabilisticEvent
+	
+	aDeckDistributionManager := ProbablisiticEventsManager new.
+	aDeckDistributionManager add: anAccelerationCardProbabilisticEvent.
+	aDeckLength := 10.
+	aDeckDistribution := aDeckDistributionManager generateFor: aDeckLength.
+	aState := HasCardsState new.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
+	
 ]
 
 { #category : 'asserting' }
@@ -117,7 +126,7 @@ AccelerationCardTest >> testWhenAShipPlaysAnAccelerationCardThenAllRolledNumbers
 	expectedPosition := Position at: 2 in: 1.
 	expectedFuel := Fuel with: 0 upTo: 2 in: HasFuelState new.
 
-	aGameBuilder setAvailableCards: aSetCardManagerWithAccelerationCards.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	aGame
@@ -137,12 +146,9 @@ AccelerationCardTest >> testWhenAShipPlaysAnAccelerationCardThenAllRolledNumbers
 { #category : 'tests' }
 AccelerationCardTest >> testWhenAShipPlaysAnAccelerationCardThenItIsNoLongerInItsHand [
 
-	| aGame aSetCardManager expectedCards |
-	aSetCardManager := ProbablisiticEventsManager new.
-	aSetCardManager add: anAllyCardProbabilisticEvent.
-	aSetCardManager add: anAccelerationCardProbabilisticEvent.
+	| aGame expectedCards |
 
-	aGameBuilder setAvailableCards: aSetCardManagerWithAccelerationCards.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	expectedCards := OrderedCollection new.
@@ -160,11 +166,13 @@ AccelerationCardTest >> testWhenAShipPlaysAnAccelerationCardThenItIsNoLongerInIt
 { #category : 'tests' }
 AccelerationCardTest >> testWhenAShipTriesToPlayAnAccelerationCardThatIsNotInItsHandThenInvalid [
 
-	| aGame aSetCardManager |
+	| aGame aSetCardManager aSetDeckDistribution aSetDeck |
 	aSetCardManager := ProbablisiticEventsManager new.
 	aSetCardManager add: anAllyCardProbabilisticEvent.
+	aSetDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aSetDeck := Deck of: aDeckLength distributedBy: aSetDeckDistribution with: aState.
 
-	aGameBuilder setAvailableCards: aSetCardManager.
+	aGameBuilder setDeck: aSetDeck.
 	aGame := aGameBuilder build.
 	self
 		should: [
@@ -181,7 +189,7 @@ AccelerationCardTest >> testWhenAShipTriesToPlayAnAccelerationCardThatIsNotInIts
 AccelerationCardTest >> testWhenAShipTriesToPlayAnAccelerationCardWhenItIsNotItsTurnThenInvalid [
 
 	| aGame |
-	aGameBuilder setAvailableCards: aSetCardManagerWithAccelerationCards.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	self

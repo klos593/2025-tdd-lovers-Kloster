@@ -43,15 +43,15 @@ GameBuilder >> initialize [
 ]
 
 { #category : 'initialization' }
-GameBuilder >> setAvailableCards: aCardManager [ 
-	
-	cardsManager := aCardManager 
-]
-
-{ #category : 'initialization' }
 GameBuilder >> setBoard: aBoard [
 
 	board := aBoard
+]
+
+{ #category : 'initialization' }
+GameBuilder >> setDeck: aCardManager [ 
+	
+	cardsManager := aCardManager 
 ]
 
 { #category : 'initialization' }

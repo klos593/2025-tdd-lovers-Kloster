@@ -17,7 +17,10 @@ Class {
 		'aGameBuilder',
 		'aNullCard',
 		'anAccelerationCard',
-		'anAccelerationCardProbabilisticEvent'
+		'aDeckLength',
+		'aDeckDistribution',
+		'aDeck',
+		'aState'
 	],
 	#category : 'IngSoft2-Tests',
 	#package : 'IngSoft2-Tests'
@@ -49,6 +52,11 @@ RepeatCardTest >> setUp [
 		                                 for: aRepeatCard
 		                                 with: aProbabilityOfOne.
 	aCardManager add: aRepeatCardProbabilisticEvent.
+	
+	aDeckLength := 10.
+	aDeckDistribution := aCardManager generateFor: aDeckLength.
+	aState := HasCardsState new.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
 
 	someShips := OrderedCollection new.
 	someShips add: aBlueShip.
@@ -58,7 +66,7 @@ RepeatCardTest >> setUp [
 
 	aGameBuilder setShips: someShips.
 	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
+	aGameBuilder setDeck: aDeck.
 
 	aNullCard := NullCard new
 ]
@@ -498,7 +506,7 @@ RepeatCardTest >> testWhenAShipPlaysARepeatCardWhenIsNotItsTurnThenItsEffectIsAp
 { #category : 'tests' }
 RepeatCardTest >> testWhenAShipTriesToPlayARepeatCardThatIsNotInItsHandThenInvalid [
 
-	| aGame sideToRoll aLoadedDice aBoard someDices aDistributionManager aDistribution aPlainSquare aPlainSquareProbabilisticEvent anAllyCard anAllyCardProbabilisticEvent |
+	| aGame sideToRoll aLoadedDice aBoard someDices aDistributionManager aDistribution aPlainSquare aPlainSquareProbabilisticEvent anAllyCard anAllyCardProbabilisticEvent aSetDeckDistribution aSetDeck |
 	sideToRoll := #( 10 ) asOrderedCollection.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 
@@ -522,6 +530,8 @@ RepeatCardTest >> testWhenAShipTriesToPlayARepeatCardThatIsNotInItsHandThenInval
 		                                for: anAllyCard
 		                                with: aProbabilityOfOne.
 	aCardManager add: anAllyCardProbabilisticEvent.
+	aSetDeckDistribution := aCardManager generateFor: aDeckLength.
+	aSetDeck := Deck of: aDeckLength distributedBy: aSetDeckDistribution with: aState .
 
 	someDices := OrderedCollection new.
 	someDices add: aLoadedDice.
@@ -532,7 +542,7 @@ RepeatCardTest >> testWhenAShipTriesToPlayARepeatCardThatIsNotInItsHandThenInval
 	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
 	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
+	aGameBuilder setDeck: aSetDeck.
 	aGame := aGameBuilder build.
 
 	self

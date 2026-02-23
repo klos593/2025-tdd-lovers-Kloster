@@ -12,22 +12,26 @@ Class {
 		'winner',
 		'laps',
 		'rewards',
-		'cards',
 		'lastEffect',
 		'lastPlayedCard',
 		'activePermanentCards',
-		'raceGoal'
+		'raceGoal',
+		'deck',
+		'discardPile'
 	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
 }
 
 { #category : 'creation' }
-Game class >> assignCardsTo: someShips from: aCardsManager [
+Game class >> assignCardsTo: someShips from: aDeck [
 
-	| someCards |
-	someCards := aCardsManager generateFor: 2.
-	someShips do: [ :aShip | aShip addCards: someCards ]
+	| finalUpdatedDeck |
+	finalUpdatedDeck := someShips
+		                    inject: aDeck
+		                    into: [ :updatedDeck :aShip |
+		                    updatedDeck deal: 2 to: aShip ].
+	^ finalUpdatedDeck
 ]
 
 { #category : 'creation' }
@@ -63,6 +67,14 @@ Game class >> maximumRoll: someDices [
 	^ someDices sum: [ :aDice | aDice rollMaximum ]
 ]
 
+{ #category : 'as yet unclassified' }
+Game class >> validateEnoughCardsIn: aDeck for: someShips [
+
+	(aDeck hasEnoughCardsFor: someShips size givingEach: 2) ifFalse: [
+		Error signal:
+			'The Deck does not have enough cards to start the game' ]
+]
+
 { #category : 'validation' }
 Game class >> validateSquaresFrom: aBoard with: someDices [
 
@@ -70,13 +82,15 @@ Game class >> validateSquaresFrom: aBoard with: someDices [
 ]
 
 { #category : 'creation' }
-Game class >> with: aBoard for: someLaps and: someShips and: someDices and: aFuelQuantity and: aRewardManager and: aCardsManager [
+Game class >> with: aBoard for: someLaps and: someShips and: someDices and: aFuelQuantity and: aRewardManager and: aDeck [
 
+	| anUpdatedDeck |
 	self hasDices: someDices.
 	self hasShips: someShips.
 	self hasLaps: someLaps.
 	self fuel: someShips with: aFuelQuantity.
-	self assignCardsTo: someShips from: aCardsManager.
+	self validateEnoughCardsIn: aDeck for: someShips.
+	anUpdatedDeck := self assignCardsTo: someShips from: aDeck.
 	self validateSquaresFrom: aBoard with: someDices.
 	^ self new
 		  initializeWith: aBoard
@@ -84,7 +98,7 @@ Game class >> with: aBoard for: someLaps and: someShips and: someDices and: aFue
 		  and: someShips
 		  and: someDices
 		  and: aRewardManager
-			and: aCardsManager
+			and: anUpdatedDeck
 ]
 
 { #category : 'accessing' }
@@ -104,7 +118,7 @@ Game >> applyLastEffectTo: aShip [
 		                           on: shipInitialPosition
 		                           in: self.
 
-	aShip performMovementFrom: shipInitialPosition to: shipPositionAfterEffect on: board
+	aShip performMovementFrom: shipInitialPosition to: shipPositionAfterEffect on: board in: self
 ]
 
 { #category : 'action' }
@@ -132,16 +146,48 @@ Game >> canStillPlay [
 	finished ifTrue: [ Error signal: 'The game has finished.' ]
 ]
 
+{ #category : 'action' }
+Game >> deal: anAmountOfCards to: aShip [
+
+	deck := deck deal: anAmountOfCards to: aShip.
+	deck := deck refillFrom: discardPile in: self.
+]
+
+{ #category : 'validation' }
+Game >> deckAvailableCardsEquals: someCards [
+
+	^ deck availableCardsEquals: someCards.
+]
+
+{ #category : 'action' }
+Game >> discard: someCards [ 
+	
+	someCards do: [ :aCard | discardPile add: aCard].
+	deck := deck refillFrom: discardPile in: self
+]
+
+{ #category : 'accessing' }
+Game >> discardPile [
+	
+	^ discardPile.
+]
+
+{ #category : 'action' }
+Game >> discardPileEquals: someCards [ 
+	
+	^ someCards = discardPile.
+]
+
+{ #category : 'action' }
+Game >> emptyDiscardPile [
+
+	discardPile := OrderedCollection new.
+]
+
 { #category : 'changing state' }
 Game >> finish [
 
 	finished := true
-]
-
-{ #category : 'action' }
-Game >> generateCard [
-
-	^ cards generateFor: 1.
 ]
 
 { #category : 'action' }
@@ -157,7 +203,7 @@ Game >> hasFinished [
 ]
 
 { #category : 'initialization' }
-Game >> initializeWith: aBoard for: someLaps and: someShips and: someDices and: aRewardManager and: aCardMaganer [
+Game >> initializeWith: aBoard for: someLaps and: someShips and: someDices and: aRewardManager and: aDeck [
 
 	board := aBoard.
 	ships := someShips.
@@ -165,12 +211,13 @@ Game >> initializeWith: aBoard for: someLaps and: someShips and: someDices and: 
 	laps := someLaps.
 	finished := false.
 	rewards := aRewardManager.
-	cards := aCardMaganer.
+	deck := aDeck.
 	lastEffect := PlainSquare new.
 	winner := NullShip new.
 	lastPlayedCard := NullCard new.
 	raceGoal := Position at: 0 in: someLaps.
-	activePermanentCards := OrderedCollection new
+	activePermanentCards := OrderedCollection new.
+	discardPile := OrderedCollection new.
 ]
 
 { #category : 'action' }
@@ -200,7 +247,7 @@ Game >> maximumRoll [
 { #category : 'action' }
 Game >> move: aShip backwardsBy: aMagnitude [
 
-	^ aShip moveBackwards: aMagnitude in: board.
+	^ aShip moveBackwards: aMagnitude in: board in: self.
 ]
 
 { #category : 'action' }
@@ -216,7 +263,7 @@ Game >> move: aShip with: rolledNumber [
 { #category : 'action' }
 Game >> moveShipsBackwards: aMagnitude [
 
-	ships do: [ :aShip | aShip moveBackwards: aMagnitude in: board ]
+	ships do: [ :aShip | aShip moveBackwards: aMagnitude in: board in: self ]
 ]
 
 { #category : 'action' }
@@ -290,6 +337,7 @@ Game >> remove: anAffectedCard playedBy: aShip [
 	self validateIsActive: anAffectedCard.
 	activePermanentCards remove: anAffectedCard.
 	anAffectedCard cancelEffectIn: self.
+	self discard: (anAffectedCard asOrderedCollection).
 ]
 
 { #category : 'action' }
