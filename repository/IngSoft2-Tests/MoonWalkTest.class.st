@@ -17,7 +17,12 @@ Class {
 		'anAllyCard',
 		'anAllyCardProbabilisticEvent',
 		'someShips',
-		'aGameBuilder'
+		'aGameBuilder',
+		'aDeckDistributionManager',
+		'aDeckLength',
+		'aDeckDistribution',
+		'aDeck',
+		'aState'
 	],
 	#category : 'IngSoft2-Tests',
 	#package : 'IngSoft2-Tests'
@@ -55,7 +60,12 @@ MoonWalkTest >> setUp [
 	anAllyCardProbabilisticEvent := ProbabilisticEvent
 		                                for: anAllyCard
 		                                with: aProbabilityOfOne.
-	aCardManager add: anAllyCardProbabilisticEvent.
+	aDeckDistributionManager := ProbablisiticEventsManager new.
+	aDeckDistributionManager add: anAllyCardProbabilisticEvent.
+	aDeckLength := 10.
+	aDeckDistribution := aDeckDistributionManager generateFor: aDeckLength.
+	aState := HasCardsState new.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
 
 	someShips := OrderedCollection new.
 	someShips add: aBlueShip.
@@ -64,7 +74,7 @@ MoonWalkTest >> setUp [
 
 	aGameBuilder setShips: someShips.
 	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aCardManager.
+	aGameBuilder setDeck: aDeck.
 ]
 
 { #category : 'asserting' }

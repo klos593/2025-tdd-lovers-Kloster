@@ -9,7 +9,7 @@ Class {
 }
 
 { #category : 'penalty' }
-HasFuelState >> applyPenaltyTo: aShip thatStartedFrom: aPosition [
+HasFuelState >> applyPenaltyTo: aShip thatStartedFrom: aPosition in: aGame [
 ]
 
 { #category : 'borrowing' }

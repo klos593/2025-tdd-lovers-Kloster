@@ -10,19 +10,23 @@ Class {
 
 { #category : 'playing' }
 RedoCard >> applyEffectPlayedBy: aPlayingShip affecting: anAffectedCard and: anAffectedShip in: aGame [
-	"This method is never reached but we consider its presence necessary because of the inherentance design."
 
-	
+	aGame
+		playLastCardBy: aPlayingShip
+		affecting: anAffectedCard
+		and: anAffectedShip.
 ]
 
 { #category : 'playing' }
 RedoCard >> bePlayedBy: aPlayingShip affecting: anAffectedCard and: aTargetShip in: aGame [
 
-	aGame
-		playLastCardBy: aPlayingShip
+	self
+		applyEffectPlayedBy: aPlayingShip
 		affecting: anAffectedCard
-		and: aTargetShip.
-	aPlayingShip remove: self
+		and: aTargetShip
+		in: aGame.
+	aPlayingShip remove: self.
+	aGame discard: (self asOrderedCollection).
 ]
 
 { #category : 'comparing' }

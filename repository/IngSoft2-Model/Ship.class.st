@@ -12,7 +12,9 @@ Class {
 		'gravityPenalty',
 		'cards',
 		'allies',
-		'rollModifier'
+		'permanentRollModifier',
+		'activeInstantModifiers',
+		'activeLeakCards'
 	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
@@ -33,7 +35,10 @@ Ship >> addCards: someCards [
 { #category : 'update' }
 Ship >> adjust: aRolledNumber [
 
-	^ aRolledNumber + rollModifier
+	| adjustedNumber |
+	adjustedNumber := aRolledNumber + permanentRollModifier + (self applyInstantModifiers).
+
+	^ adjustedNumber
 ]
 
 { #category : 'accessing' }
@@ -49,9 +54,40 @@ Ship >> applyGravityPenalty: aGravitySquare [
 ]
 
 { #category : 'penalty' }
+Ship >> applyInstantModifiers [
+
+	^ activeInstantModifiers sumNumbers: [ :aModifier | aModifier use  ]
+]
+
+{ #category : 'penalty' }
+Ship >> applyLeak: aLeakCard [
+	
+	activeLeakCards add: aLeakCard.
+]
+
+{ #category : 'penalty' }
+Ship >> applyLeakTo: aDistance [
+
+	activeLeakCards ifEmpty: [ ^ aDistance ].
+	^ activeLeakCards sumNumbers: [ :aLeakCard | aLeakCard applyTo: aDistance ]
+	
+	
+]
+
+{ #category : 'penalty' }
+Ship >> applyNitroCard [
+
+	| aMagnitudeOfThree threeTurns |
+	aMagnitudeOfThree := 3.
+	threeTurns := 3.
+	activeInstantModifiers add:
+		(Modifier of: aMagnitudeOfThree for: threeTurns)
+]
+
+{ #category : 'penalty' }
 Ship >> applyRollModifier: aModifier [
 
-	rollModifier := rollModifier + aModifier
+	permanentRollModifier := permanentRollModifier + aModifier
 ]
 
 { #category : 'move' }
@@ -92,11 +128,14 @@ Ship >> cards [
 ]
 
 { #category : 'update' }
-Ship >> consumeFuel: squaresToTravel from: initialPosition [
+Ship >> consumeFuel: squaresToTravel from: initialPosition in: aGame [
 
-	fuel := fuel consume: squaresToTravel.
+	| fuelToConsume |
+	
+	fuelToConsume := self applyLeakTo: squaresToTravel.
+	fuel := fuel consume: fuelToConsume.
 	fuel borrowBy: self.
-	fuel applyPenaltyTo: self thatStartedFrom: initialPosition
+	fuel applyPenaltyTo: self thatStartedFrom: initialPosition in: aGame.
 ]
 
 { #category : 'update' }
@@ -174,9 +213,11 @@ Ship >> initializeCalled: aName [
 	turnsLeftToWait := 0.
 	gravityPenalty := 0.
 	cards := OrderedCollection new.
-	rollModifier := 0.
+	permanentRollModifier := 0.
 	allies := OrderedCollection new.
-	allies add: NullShip new
+	allies add: NullShip new.
+	activeInstantModifiers := OrderedCollection new.
+	activeLeakCards := OrderedCollection new.
 ]
 
 { #category : 'penalty' }
@@ -192,12 +233,12 @@ Ship >> modifyFuelBy: aFuelAmount [
 ]
 
 { #category : 'move' }
-Ship >> moveBackwards: aMagnitude in: aBoard [
+Ship >> moveBackwards: aMagnitude in: aBoard in: aGame [
 
 	| shipNewPosition |
 	shipNewPosition := aBoard update: position with: aMagnitude negated.
 
-	self performMovementFrom: position to: shipNewPosition on: aBoard.
+	self performMovementFrom: position to: shipNewPosition on: aBoard in: aGame.
 	^ shipNewPosition.
 	
 ]
@@ -225,7 +266,7 @@ Ship >> penalizeAndReturnTo: shipInitialPosition [
 ]
 
 { #category : 'move' }
-Ship >> performMovementFrom: anInitialPosition to: aFinalPosition on: aBoard [
+Ship >> performMovementFrom: anInitialPosition to: aFinalPosition on: aBoard in: aGame [
 	
 	| squaresTraveled |
 	squaresTraveled := aBoard
@@ -233,7 +274,7 @@ Ship >> performMovementFrom: anInitialPosition to: aFinalPosition on: aBoard [
 		                   and: aFinalPosition.
 
 	self moveTo: aFinalPosition.
-	self consumeFuel: squaresTraveled from: anInitialPosition
+	self consumeFuel: squaresTraveled from: anInitialPosition in: aGame
 ]
 
 { #category : 'move' }
@@ -253,7 +294,7 @@ Ship >> playTurnWith: aRolledNumber on: aBoard in: aGame [
 	positionAfterWormHole := aBoard moveIfWormHoleAt:
 		                         positionBeforeWormHole.
 	self moveTo: positionAfterWormHole.
-	self consumeFuel: squaresTraveledWithDice from: initialPosition.
+	self consumeFuel: squaresTraveledWithDice from: initialPosition in: aGame.
 
 	positionAfterSquareEffect := aBoard
 		                             applyEfectOn: self
@@ -269,6 +310,7 @@ Ship >> playTurnWith: aRolledNumber on: aBoard in: aGame [
 	self
 		consumeFuel: squaresTraveledWithSquareEffect
 		from: initialPosition
+		in: aGame.
 ]
 
 { #category : 'penalty' }
@@ -290,6 +332,19 @@ Ship >> removeAlly: anAlly [
 
 	allies remove: anAlly.
 	allies isEmpty ifTrue: [ allies add: NullShip new ]
+]
+
+{ #category : 'removing' }
+Ship >> removeLeakCard: aLeakCard [ 
+	
+	activeLeakCards remove: aLeakCard.
+]
+
+{ #category : 'removing' }
+Ship >> removeLeakCardsIn: aGame [
+
+	aGame discard: activeLeakCards.
+	activeLeakCards removeAll.
 ]
 
 { #category : 'accessing' }

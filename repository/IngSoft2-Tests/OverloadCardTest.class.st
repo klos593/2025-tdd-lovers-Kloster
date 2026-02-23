@@ -18,7 +18,11 @@ Class {
 		'anOverloadCardProbabilisticEvent',
 		'someShips',
 		'aGameBuilder',
-		'aNullCard'
+		'aNullCard',
+		'aDeckLength',
+		'anOverloadDeckDistribution',
+		'anOverloadDeck',
+		'aState'
 	],
 	#category : 'IngSoft2-Tests',
 	#package : 'IngSoft2-Tests'
@@ -57,6 +61,10 @@ OverloadCardTest >> setUp [
 		                                    for: anOverloadCard
 		                                    with: aProbabilityOfOne.
 	aCardManager add: anOverloadCardProbabilisticEvent.
+	aDeckLength := 10.
+	anOverloadDeckDistribution := aCardManager generateFor: aDeckLength.
+	aState := HasCardsState new.
+	anOverloadDeck := Deck of: aDeckLength distributedBy: anOverloadDeckDistribution with: aState.
 
 	someShips := OrderedCollection new.
 	someShips add: aBlueShip.
@@ -103,7 +111,7 @@ OverloadCardTest >> testWhenAShipPlaysAnOverloadCardAndTheRolledNumberIsSmallerT
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setAvailableCards: aCardManager.
+	aGameBuilder setDeck: anOverloadDeck.
 	aGame := aGameBuilder build.
 
 
@@ -123,7 +131,7 @@ OverloadCardTest >> testWhenAShipPlaysAnOverloadCardAndTheRolledNumberIsSmallerT
 { #category : 'tests' }
 OverloadCardTest >> testWhenAShipPlaysAnOverloadCardThenItIsNoLongerInItsHand [
 
-	| aGame sideToRoll aLoadedDice aBoard someDices aDistribution expectedCards anAccelerationCard anAccelerationCardProbabilisticEvent aSetCardManager |
+	| aGame sideToRoll aLoadedDice aBoard someDices aDistribution expectedCards anAccelerationCard anAccelerationCardProbabilisticEvent aSetCardManager aDeckDistribution aDeck |
 	sideToRoll := #( 10 ) asOrderedCollection.
 
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
@@ -147,6 +155,8 @@ OverloadCardTest >> testWhenAShipPlaysAnOverloadCardThenItIsNoLongerInItsHand [
 		                                        for: anAccelerationCard
 		                                        with: aProbabilityOfOne.
 	aSetCardManager add: anAccelerationCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
 
 
 	someDices := OrderedCollection new.
@@ -154,7 +164,7 @@ OverloadCardTest >> testWhenAShipPlaysAnOverloadCardThenItIsNoLongerInItsHand [
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setAvailableCards: aSetCardManager.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	expectedCards := OrderedCollection new.
@@ -192,7 +202,7 @@ OverloadCardTest >> testWhenAShipPlaysAnOverloadCardThenTheRolledNumberOfTheTarg
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setAvailableCards: aCardManager.
+	aGameBuilder setDeck: anOverloadDeck.
 	aGame := aGameBuilder build.
 
 	aGame nextTurnPlay.
@@ -212,7 +222,7 @@ OverloadCardTest >> testWhenAShipPlaysAnOverloadCardThenTheRolledNumberOfTheTarg
 { #category : 'tests' }
 OverloadCardTest >> testWhenAShipTriesToPlayAnOverloadCardThatIsNotInItsHandThenInvalid [
 
-	| aGame sideToRoll aLoadedDice aBoard someDices anotherCardManager aDistribution anAllyCard anAllyCardProbabilisticEvent |
+	| aGame sideToRoll aLoadedDice aBoard someDices anotherCardManager aDistribution anAllyCard anAllyCardProbabilisticEvent aDeckDistribution aDeck |
 	sideToRoll := #( 10 ) asOrderedCollection.
 
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
@@ -230,13 +240,15 @@ OverloadCardTest >> testWhenAShipTriesToPlayAnOverloadCardThatIsNotInItsHandThen
 		                                for: anAllyCard
 		                                with: aProbabilityOfOne.
 	anotherCardManager add: anAllyCardProbabilisticEvent.
+	aDeckDistribution := anotherCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
 
 	someDices := OrderedCollection new.
 	someDices add: aLoadedDice.
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setAvailableCards: anotherCardManager.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	self
@@ -270,7 +282,7 @@ OverloadCardTest >> testWhenAShipTriesToPlayAnOverloadCardWhenItIsNotItsTurnThen
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setAvailableCards: aCardManager.
+	aGameBuilder setDeck: anOverloadDeck.
 	aGame := aGameBuilder build.
 
 	self

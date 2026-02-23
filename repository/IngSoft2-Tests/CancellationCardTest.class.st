@@ -25,7 +25,9 @@ Class {
 		'aGameBuilder',
 		'anAccelerationCard',
 		'anAccelerationCardProbabilisticEvent',
-		'aSetCardManager'
+		'aSetCardManager',
+		'aDeckLength',
+		'aState'
 	],
 	#category : 'IngSoft2-Tests',
 	#package : 'IngSoft2-Tests'
@@ -38,6 +40,8 @@ CancellationCardTest >> setUp [
 
 	twentySquares := 20.
 	sideToRoll := #( 1 1 3 ) asOrderedCollection.
+	
+	aState := HasCardsState new.
 
 	aWormHole := WormHole between: 18 and: 19.
 	aBlueShip := Ship called: 'BlueShip'.
@@ -89,7 +93,9 @@ CancellationCardTest >> setUp [
 	anAccelerationCard := AccelerationCard new.
 	anAccelerationCardProbabilisticEvent := ProbabilisticEvent
 		                                        for: anAccelerationCard
-		                                        with: aProbabilityOfOne
+		                                        with: aProbabilityOfOne.
+		
+	aDeckLength := 10.
 ]
 
 { #category : 'asserting' }
@@ -103,16 +109,55 @@ CancellationCardTest >> should: anErrorBlock raise: anErrorClass withMessageText
 ]
 
 { #category : 'tests' }
+CancellationCardTest >> testWhenACancellationCardIsUsedAfterALeakCardThenTheEffectIsEliminated [
+
+	| expectedFuel aGame aLeakCard aLeakCardProbabilisticEvent aDeckDistribution aDeck |
+	expectedFuel := Fuel with: 5 upTo: 6 in: HasFuelState new.
+	
+	aLeakCard := LeakCard new.
+	aLeakCardProbabilisticEvent := ProbabilisticEvent
+		                                       for: aLeakCard
+		                                       with: aProbabilityOfOne.
+
+	aSetCardManager add: aLeakCardProbabilisticEvent.
+	aSetCardManager add: aCancellationCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState .
+
+	aGameBuilder setDeck: aDeck.
+	aGameBuilder setDices: someDices.
+	aGame := aGameBuilder build.
+
+	aGame
+		play: aLeakCard 
+		by: aBlueShip
+		affecting: aNullCard
+		and: aBlackShip.
+	aGame nextTurnPlay.
+	aGame
+		play: aCancellationCard
+		by: aBlackShip
+		affecting: aLeakCard 
+		and: aBlueShip.
+	aGame nextTurnPlay.
+	
+	self assert: (aBlackShip fuelEquals: expectedFuel)
+
+]
+
+{ #category : 'tests' }
 CancellationCardTest >> testWhenACancellationCardIsUsedAfterAnAccelerationCardThenTheEffectIsEliminated [
 
-	| expectedPosition expectedFuel aGame |
+	| expectedPosition expectedFuel aGame aDeckDistribution aDeck |
 	expectedPosition := Position at: 3 in: 1.
 	expectedFuel := Fuel with: 3 upTo: 6 in: HasFuelState new.
 
 	aSetCardManager add: anAccelerationCardProbabilisticEvent.
 	aSetCardManager add: aCancellationCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState .
 
-	aGameBuilder setAvailableCards: aSetCardManager.
+	aGameBuilder setDeck: aDeck.
 	aGameBuilder setDices: someDices.
 	aGame := aGameBuilder build.
 
@@ -137,7 +182,7 @@ CancellationCardTest >> testWhenACancellationCardIsUsedAfterAnAccelerationCardTh
 { #category : 'tests' }
 CancellationCardTest >> testWhenACancellationCardIsUsedAfterAnAllyCardThenTheEffectIsEliminated [
 
-	| aGame anAllyCard anAllyCardProbabilisticEvent sidesToRoll anotherLoadedDice someOtherDices |
+	| aGame anAllyCard anAllyCardProbabilisticEvent sidesToRoll anotherLoadedDice someOtherDices aDeckDistribution aDeck |
 	sidesToRoll := #( 1 1 ) asOrderedCollection.
 	anotherLoadedDice := LoadedDice toRoll: sidesToRoll.
 
@@ -150,8 +195,10 @@ CancellationCardTest >> testWhenACancellationCardIsUsedAfterAnAllyCardThenTheEff
 		                                with: aProbabilityOfOne.
 	aSetCardManager add: anAllyCardProbabilisticEvent.
 	aSetCardManager add: aCancellationCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState .
 
-	aGameBuilder setAvailableCards: aSetCardManager.
+	aGameBuilder setDeck: aDeck.
 	aGameBuilder setDices: someOtherDices.
 	aGame := aGameBuilder build.
 
@@ -177,7 +224,7 @@ CancellationCardTest >> testWhenACancellationCardIsUsedAfterAnAllyCardThenTheEff
 { #category : 'tests' }
 CancellationCardTest >> testWhenACancellationCardIsUsedAfterAnOverloadCardThenTheEffectIsEliminated [
 
-	| expectedPosition expectedFuel aGame anOverloadCard anOverloadCardProbabilisticEvent |
+	| expectedPosition expectedFuel aGame anOverloadCard anOverloadCardProbabilisticEvent aDeckDistribution aDeck |
 	expectedPosition := Position at: 1 in: 1.
 	expectedFuel := Fuel with: 5 upTo: 6 in: HasFuelState new.
 
@@ -188,8 +235,10 @@ CancellationCardTest >> testWhenACancellationCardIsUsedAfterAnOverloadCardThenTh
 
 	aSetCardManager add: anOverloadCardProbabilisticEvent.
 	aSetCardManager add: aCancellationCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState .
 
-	aGameBuilder setAvailableCards: aSetCardManager.
+	aGameBuilder setDeck: aDeck.
 	aGameBuilder setDices: someDices.
 	aGame := aGameBuilder build.
 
@@ -213,12 +262,14 @@ CancellationCardTest >> testWhenACancellationCardIsUsedAfterAnOverloadCardThenTh
 { #category : 'tests' }
 CancellationCardTest >> testWhenACancellationCardIsUsedBeforeHavingAnActiveCardThenInvalid [
 
-	| aGame |
+	| aGame aDeckDistribution aDeck |
 	aSetCardManager add: anAccelerationCardProbabilisticEvent.
 	aSetCardManager add: aCancellationCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState .
 
 	aGameBuilder setDices: someDices.
-	aGameBuilder setAvailableCards: aSetCardManager.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	self
@@ -235,12 +286,14 @@ CancellationCardTest >> testWhenACancellationCardIsUsedBeforeHavingAnActiveCardT
 { #category : 'tests' }
 CancellationCardTest >> testWhenAShipPlaysAnCancelationCardThenItIsNoLongerInItsHand [
 
-	| aGame expectedCards |
+	| aGame expectedCards aDeckDistribution aDeck |
 	aSetCardManager add: aCancellationCardProbabilisticEvent.
 	aSetCardManager add: anAccelerationCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState .
 
 	aGameBuilder setDices: someDices.
-	aGameBuilder setAvailableCards: aSetCardManager.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	expectedCards := OrderedCollection new.
@@ -262,11 +315,13 @@ CancellationCardTest >> testWhenAShipPlaysAnCancelationCardThenItIsNoLongerInIts
 { #category : 'tests' }
 CancellationCardTest >> testWhenAShipTriesToPlayACancellationCardThatIsNotInItsHandThenInvalid [
 
-	| aGame |
+	| aGame aDeckDistribution aDeck |
 	aSetCardManager add: anAccelerationCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState .
 
 	aGameBuilder setDices: someDices.
-	aGameBuilder setAvailableCards: aSetCardManager.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	self

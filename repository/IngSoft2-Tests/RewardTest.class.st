@@ -19,7 +19,12 @@ Class {
 		'anAllyCardProbabilisticEvent',
 		'someShips',
 		'someDices',
-		'aGameBuilder'
+		'aGameBuilder',
+		'aDeckDistributionManager',
+		'aDeckLength',
+		'aDeckDistribution',
+		'aDeck',
+		'aState'
 	],
 	#category : 'IngSoft2-Tests',
 	#package : 'IngSoft2-Tests'
@@ -57,7 +62,12 @@ RewardTest >> setUp [
 	anAllyCardProbabilisticEvent := ProbabilisticEvent
 		                                for: anAllyCard
 		                                with: aProbabilityOfOne.
-	aCardManager add: anAllyCardProbabilisticEvent.
+	aDeckDistributionManager := ProbablisiticEventsManager new.
+	aDeckDistributionManager add: anAllyCardProbabilisticEvent.
+	aDeckLength := 10.
+	aDeckDistribution := aDeckDistributionManager generateFor: aDeckLength.
+	aState := HasCardsState new.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
 
 
 	someShips := OrderedCollection new.
@@ -72,7 +82,7 @@ RewardTest >> setUp [
 	aGameBuilder setShips: someShips.
 	aGameBuilder setDices: someDices.
 
-	aGameBuilder setAvailableCards: aCardManager
+	aGameBuilder setDeck: aDeck
 ]
 
 { #category : 'tests' }

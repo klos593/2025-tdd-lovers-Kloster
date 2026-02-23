@@ -20,7 +20,11 @@ Class {
 		'aGameBuilder',
 		'aBoard',
 		'aNullCard',
-		'twentySquares'
+		'twentySquares',
+		'aDeckLength',
+		'aRedoDeckDistribution',
+		'aRedoDeck',
+		'aState'
 	],
 	#category : 'IngSoft2-Tests',
 	#package : 'IngSoft2-Tests'
@@ -33,6 +37,8 @@ RedoCardTest >> setUp [
 
 	fiveSquares := 5.
 	twentySquares := 20.
+	
+	aState := HasCardsState new.
 
 	aWormHole := WormHole between: 18 and: 19.
 	aBlueShip := Ship called: 'BlueShip'.
@@ -60,6 +66,7 @@ RedoCardTest >> setUp [
 		                               for: aRedoCard
 		                               with: aProbabilityOfOne.
 	aSetCardManager add: aRedoCardProbabilisticEvent.
+	aDeckLength := 10.
 
 	someShips := OrderedCollection new.
 	someShips add: aBlueShip.
@@ -69,7 +76,6 @@ RedoCardTest >> setUp [
 
 	aGameBuilder setShips: someShips.
 	aGameBuilder setRewards: aRewardManager.
-	aGameBuilder setAvailableCards: aSetCardManager.
 
 
 	aNullCard := NullCard new
@@ -88,7 +94,7 @@ RedoCardTest >> should: anErrorBlock raise: anErrorClass withMessageText: anErro
 { #category : 'tests' }
 RedoCardTest >> testWhenAShipPlaysARedoCardThenItIsNoLongerInItsHand [
 
-	| aGame sideToRoll aDistribution expectedCards anAccelerationCard anAccelerationCardProbabilisticEvent aLoadedDice someDices |
+	| aGame sideToRoll aDistribution expectedCards anAccelerationCard anAccelerationCardProbabilisticEvent aLoadedDice someDices aDeckDistribution aDeck |
 	sideToRoll := #( 10 ) asOrderedCollection.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
 	someDices := OrderedCollection new.
@@ -106,7 +112,10 @@ RedoCardTest >> testWhenAShipPlaysARedoCardThenItIsNoLongerInItsHand [
 		                                        for: anAccelerationCard
 		                                        with: aProbabilityOfOne.
 	aSetCardManager add: anAccelerationCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
 
+	aGameBuilder setDeck: aDeck.
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setDices: someDices.
 	aGame := aGameBuilder build.
@@ -133,7 +142,7 @@ RedoCardTest >> testWhenAShipPlaysARedoCardThenItIsNoLongerInItsHand [
 { #category : 'tests' }
 RedoCardTest >> testWhenAShipTriesToPlayARedoCardThatIsNotInItsHandThenInvalid [
 
-	| aGame sideToRoll aLoadedDice someDices aDistribution aCardManager anAllyCard anAllyCardProbabilisticEvent |
+	| aGame sideToRoll aLoadedDice someDices aDistribution aCardManager anAllyCard anAllyCardProbabilisticEvent aDeckDistribution aDeck |
 
 	sideToRoll := #( 10 ) asOrderedCollection.
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
@@ -153,13 +162,15 @@ RedoCardTest >> testWhenAShipTriesToPlayARedoCardThatIsNotInItsHandThenInvalid [
 		                                        for: anAllyCard
 		                                        with: aProbabilityOfOne.
 	aCardManager add: anAllyCardProbabilisticEvent.
+	aDeckDistribution := aCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
 
 	someDices := OrderedCollection new.
 	someDices add: aLoadedDice.
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setDices: someDices.
-	aGameBuilder setAvailableCards: aCardManager.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	self
@@ -176,9 +187,9 @@ RedoCardTest >> testWhenAShipTriesToPlayARedoCardThatIsNotInItsHandThenInvalid [
 { #category : 'tests' }
 RedoCardTest >> testWhenAnRedoCardIsUsedAfterACancellationCardThenTheEffectIsAppliedProperly [
 
-	| sideToRoll expectedPosition expectedFuel aLoadedDice aCardSquare aCardSquareProbabilisticEvent aDistribution someDices aGame anAccelerationCard anAccelerationCardProbabilisticEvent aCancellationCard aCancellationCardProbabilisticEvent |
+	| sideToRoll expectedPosition expectedFuel aLoadedDice aCardSquare aCardSquareProbabilisticEvent aDistribution someDices aGame anAccelerationCard anAccelerationCardProbabilisticEvent aCancellationCard aCancellationCardProbabilisticEvent aDeckDistribution aDeck |
 	
-	sideToRoll := #( 1 1 3 ) asOrderedCollection.
+	sideToRoll := #( 1 1 1 3 ) asOrderedCollection.
 
 	expectedPosition := Position at: 2 in: 1.
 	expectedFuel := Fuel with: 5 upTo: 6 in: HasFuelState new.
@@ -210,6 +221,8 @@ RedoCardTest >> testWhenAnRedoCardIsUsedAfterACancellationCardThenTheEffectIsApp
 		
 	aSetCardManager add: aCancellationCardProbabilisticEvent.
 	aSetCardManager add: anAccelerationCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
 	
 	someDices := OrderedCollection new.
 	someDices add: aLoadedDice.
@@ -217,16 +230,17 @@ RedoCardTest >> testWhenAnRedoCardIsUsedAfterACancellationCardThenTheEffectIsApp
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setDices: someDices.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 	
 	aGame nextTurnPlay.
 	aGame nextTurnPlay.
+	aGame nextTurnPass.
 	aGame
 		play: anAccelerationCard
-		by: aBlueShip
+		by: aBlackShip
 		affecting: aNullCard
 		and: aBlackShip.
-	aGame nextTurnPass.
 	aGame
 		play: aRedoCard
 		by: aBlackShip
@@ -238,10 +252,9 @@ RedoCardTest >> testWhenAnRedoCardIsUsedAfterACancellationCardThenTheEffectIsApp
 		by: aBlueShip
 		affecting: anAccelerationCard
 		and: aBlackShip.
-	aGame nextTurnPass.
 	aGame
 		play: aRedoCard
-		by: aBlackShip
+		by: aBlueShip 
 		affecting: anAccelerationCard
 		and: aBlueShip.
 	aGame nextTurnPlay.
@@ -254,7 +267,7 @@ RedoCardTest >> testWhenAnRedoCardIsUsedAfterACancellationCardThenTheEffectIsApp
 { #category : 'tests' }
 RedoCardTest >> testWhenAnRedoCardIsUsedAfterAPermanentCardAndItsNotYourTurnThenItFails [
 
-	| sideToRoll aLoadedDice aDistribution someDices aGame anAccelerationCard anAccelerationCardProbabilisticEvent |
+	| sideToRoll aLoadedDice aDistribution someDices aGame anAccelerationCard anAccelerationCardProbabilisticEvent aDeckDistribution aDeck |
 
 	sideToRoll := #( 1 1 3 ) asOrderedCollection.
 
@@ -274,12 +287,15 @@ RedoCardTest >> testWhenAnRedoCardIsUsedAfterAPermanentCardAndItsNotYourTurnThen
 		                                        with: aProbabilityOfOne.
 
 	aSetCardManager add: anAccelerationCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
 	
 	someDices := OrderedCollection new.
 	someDices add: aLoadedDice.
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setDices: someDices.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	aGame
@@ -304,7 +320,7 @@ RedoCardTest >> testWhenAnRedoCardIsUsedAfterAPermanentCardAndItsNotYourTurnThen
 { #category : 'tests' }
 RedoCardTest >> testWhenAnRedoCardIsUsedAfterARedoCardAfterAnAccelerationCardThenTheEffectIsAppliedProperly [
 
-	| sideToRoll expectedPosition expectedFuel aLoadedDice aDistribution someDices aGame anAccelerationCard anAccelerationCardProbabilisticEvent |
+	| sideToRoll expectedPosition expectedFuel aLoadedDice aDistribution someDices aGame anAccelerationCard anAccelerationCardProbabilisticEvent aDeckDistribution aDeck |
 
 	sideToRoll := #( 1 1 10 ) asOrderedCollection.
 
@@ -326,12 +342,15 @@ RedoCardTest >> testWhenAnRedoCardIsUsedAfterARedoCardAfterAnAccelerationCardThe
 		                                        with: aProbabilityOfOne.
 
 	aSetCardManager add: anAccelerationCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
 
 	someDices := OrderedCollection new.
 	someDices add: aLoadedDice.
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setDices: someDices.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	aGame
@@ -360,7 +379,7 @@ RedoCardTest >> testWhenAnRedoCardIsUsedAfterARedoCardAfterAnAccelerationCardThe
 { #category : 'tests' }
 RedoCardTest >> testWhenAnRedoCardIsUsedAfterARepeatCardThenTheEffectIsAppliedProperly [
 
-	| sideToRoll aLoadedDice aCardSquare aCardSquareProbabilisticEvent aDistribution someDices aGame aRepeatCard aRepeatCardProbabilisticEvent expectedSize |
+	| sideToRoll aLoadedDice aCardSquare aCardSquareProbabilisticEvent aDistribution someDices aGame aRepeatCard aRepeatCardProbabilisticEvent expectedSize aDeckDistribution aDeck |
 
 	sideToRoll := #( 1 1 10 ) asOrderedCollection.
 
@@ -388,12 +407,15 @@ RedoCardTest >> testWhenAnRedoCardIsUsedAfterARepeatCardThenTheEffectIsAppliedPr
 		                                 with: aProbabilityOfOne.
 		
 	aSetCardManager add: aRepeatCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
 
 	someDices := OrderedCollection new.
 	someDices add: aLoadedDice.
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setDices: someDices.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	aGame nextTurnPlay.
@@ -415,7 +437,7 @@ RedoCardTest >> testWhenAnRedoCardIsUsedAfterARepeatCardThenTheEffectIsAppliedPr
 { #category : 'tests' }
 RedoCardTest >> testWhenAnRedoCardIsUsedAfterAnAccelerationCardThenTheEffectIsAppliedProperly [
 
-	| sideToRoll expectedPosition expectedFuel aLoadedDice aDistribution someDices aGame anAccelerationCard anAccelerationCardProbabilisticEvent |
+	| sideToRoll expectedPosition expectedFuel aLoadedDice aDistribution someDices aGame anAccelerationCard anAccelerationCardProbabilisticEvent aDeckDistribution aDeck |
 	sideToRoll := #( 1 1 3 ) asOrderedCollection.
 
 	expectedPosition := Position at: 5 in: 1.
@@ -435,12 +457,15 @@ RedoCardTest >> testWhenAnRedoCardIsUsedAfterAnAccelerationCardThenTheEffectIsAp
 		                                        with: aProbabilityOfOne.
 
 	aSetCardManager add: anAccelerationCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
 
 	someDices := OrderedCollection new.
 	someDices add: aLoadedDice.
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setDices: someDices.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	aGame
@@ -464,7 +489,7 @@ RedoCardTest >> testWhenAnRedoCardIsUsedAfterAnAccelerationCardThenTheEffectIsAp
 { #category : 'tests' }
 RedoCardTest >> testWhenAnRedoCardIsUsedAfterAnAllyCardThenTheEffectIsAppliedProperly [
 
-	| sideToRoll expectedPosition expectedFuel aLoadedDice aDistribution someDices aGame aRedShip aPinkShip anAllyCard anAllyCardProbabilisticEvent |
+	| sideToRoll expectedPosition expectedFuel aLoadedDice aDistribution someDices aGame aRedShip aPinkShip anAllyCard anAllyCardProbabilisticEvent aDeckDistribution aDeck |
 
 	sideToRoll := #( 3 ) asOrderedCollection.
 
@@ -487,8 +512,9 @@ RedoCardTest >> testWhenAnRedoCardIsUsedAfterAnAllyCardThenTheEffectIsAppliedPro
 		                                for: anAllyCard
 		                                with: aProbabilityOfOne.
 
-
 	aSetCardManager add: anAllyCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
 
 	someDices := OrderedCollection new.
 	someShips add: aRedShip.
@@ -497,6 +523,7 @@ RedoCardTest >> testWhenAnRedoCardIsUsedAfterAnAllyCardThenTheEffectIsAppliedPro
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setDices: someDices.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	aGame
@@ -528,7 +555,7 @@ RedoCardTest >> testWhenAnRedoCardIsUsedAfterAnAllyCardThenTheEffectIsAppliedPro
 { #category : 'tests' }
 RedoCardTest >> testWhenAnRedoCardIsUsedAfterAnOverloadCardThenTheEffectIsAppliedProperly [
 
-	| sideToRoll expectedPosition expectedFuel aLoadedDice aDistribution someDices aGame anOverloadCard anOverloadCardProbabilisticEvent |
+	| sideToRoll expectedPosition expectedFuel aLoadedDice aDistribution someDices aGame anOverloadCard anOverloadCardProbabilisticEvent aDeckDistribution aDeck |
 	
 	sideToRoll := #( 3 1 3 ) asOrderedCollection.
 
@@ -551,12 +578,15 @@ RedoCardTest >> testWhenAnRedoCardIsUsedAfterAnOverloadCardThenTheEffectIsApplie
 		                                    with: aProbabilityOfOne.
 
 	aSetCardManager add: anOverloadCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
 
 	someDices := OrderedCollection new.
 	someDices add: aLoadedDice.
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setDices: someDices.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 	aGame
@@ -580,7 +610,7 @@ RedoCardTest >> testWhenAnRedoCardIsUsedAfterAnOverloadCardThenTheEffectIsApplie
 { #category : 'tests' }
 RedoCardTest >> testWhenAnRedoCardIsUsedBeforeAnyCardIsPlayedThenItFails [
 
-	| sideToRoll aLoadedDice aDistribution someDices aGame anAccelerationCard anAccelerationCardProbabilisticEvent  |
+	| sideToRoll aLoadedDice aDistribution someDices aGame anAccelerationCard anAccelerationCardProbabilisticEvent  aDeckDistribution aDeck |
 	sideToRoll := #( 1 1 3 ) asOrderedCollection.
 
 	aLoadedDice := LoadedDice toRoll: sideToRoll.
@@ -597,14 +627,16 @@ RedoCardTest >> testWhenAnRedoCardIsUsedBeforeAnyCardIsPlayedThenItFails [
 		                                        for: anAccelerationCard
 		                                        with: aProbabilityOfOne.
 
-
 	aSetCardManager add: anAccelerationCardProbabilisticEvent.
+	aDeckDistribution := aSetCardManager generateFor: aDeckLength.
+	aDeck := Deck of: aDeckLength distributedBy: aDeckDistribution with: aState.
 
 	someDices := OrderedCollection new.
 	someDices add: aLoadedDice.
 
 	aGameBuilder setBoard: aBoard.
 	aGameBuilder setDices: someDices.
+	aGameBuilder setDeck: aDeck.
 	aGame := aGameBuilder build.
 
 

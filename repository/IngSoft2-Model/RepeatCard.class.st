@@ -23,7 +23,8 @@ RepeatCard >> bePlayedBy: aPlayingShip affecting: anAffectedCard and: anAffected
 		affecting: anAffectedCard
 		and: anAffectedShip
 		in: aGame.
-	aPlayingShip remove: self
+	aPlayingShip remove: self.
+	aGame discard: (self asOrderedCollection) 
 ]
 
 { #category : 'comparing' }
